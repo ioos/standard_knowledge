@@ -26,6 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - name: "Set up Python"
         uses: actions/setup-python@v6
         with:
@@ -80,6 +82,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Configure Rust nightly
         run: rustup default nightly
@@ -128,6 +132,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Build sdist
         run: pipx run build --sdist
@@ -186,6 +192,6 @@ jobs:
         run: rm -f dist/*pyodide_2024_0_wasm32*.whl
 
       - uses: pypa/gh-action-pypi-publish@release/v1
-        # To test uploads to TestPyPI, uncomment the following:
         with:
           repository-url: https://test.pypi.org/legacy/
+          skip-existing: true
