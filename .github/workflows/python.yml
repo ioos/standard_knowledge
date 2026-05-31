@@ -106,7 +106,7 @@ jobs:
         run: rustup target add i686-pc-windows-msvc
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v3.3.1
+        uses: pypa/cibuildwheel@8d2b08b68458a16aeb24b64e68a09ab1c8e82084 # v3.4.1
         env:
           CIBW_PLATFORM: ${{ matrix.platform || 'auto' }}
           # Pin Pyodide to 0.27.7 (uses Emscripten 3.1.58) to avoid Emscripten 4.0.9
