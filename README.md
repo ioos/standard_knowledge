@@ -221,3 +221,15 @@ It will also pick up changes in Rust, both for the Python bindings and changes i
 ### Utils
 
 - `utils/update_standards.py` - Run with `uv run --script utils/update_standards.py` to update the standard names and alias files from CF Conventions that are imported into the Rust library.
+
+### Nox
+
+`./noxfile` has helpers for testing, bumping versions, updating standards, and other things that are easy to forget how to do.
+
+Unless a session is specified, Nox will run all but `release` sessions.
+
+Sessions (use `-s`):
+- `release` -- <patch|minor|major> - Bumps the version of the all the packages for a release.
+- `test_ptyhon-<version>` - Test a Python version as specified in the Github actions matrix.
+- `wheel` - Build Linux wheels for currently supported Python versions.
+- `wheel_wasm` - Build 3.14 WASM wheel.
