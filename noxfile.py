@@ -80,11 +80,45 @@ def wheel_wasm(session: nox.Session) -> None:
         "pyodide",
         "py",
         env={
-            "RUSTUP_TOOLCHAIN": "nightly-2025-01-20",
+            # Must match the toolchain Pyodide expects for this version:
+            # `PYODIDE_ROOT=<xbuildenv> pyodide config get rust_toolchain`.
+            # For Pyodide 314.0.0 that is stable 1.93.0, whose
+            # wasm32-unknown-emscripten target defaults to native wasm
+            # exception handling (matching Pyodide's runtime). An older
+            # nightly defaults to the legacy Emscripten EH/SjLj ABI, which
+            # emits `invoke_*` imports the Pyodide runtime can't resolve
+            # ("Dynamic linking error: cannot resolve symbol invoke_i").
+            "RUSTUP_TOOLCHAIN": "1.93.0",
             "CIBW_BUILD": "cp314-pyodide_wasm32",
             "CIBW_PYODIDE_VERSION": "314.0.0",
         },
     )
+
+
+@nox.session(default=False, python=False)
+def test_wasm(session: nox.Session) -> None:
+    """Create a virtual environment for testing the pyodide wheel."""
+    python_path = ".venv-pyodide/bin/python"
+
+    session.run("pyodide", "venv", ".venv-pyodide")
+    session.run(
+        python_path,
+        "-m",
+        "pip",
+        "install",
+        "wheelhouse/standard_knowledge-0.1.0-cp314-cp314-pyemscripten_2026_0_wasm32.whl",
+    )
+
+    pyproject = nox.project.load_toml("py/pyproject.toml")
+    session.run(
+        python_path,
+        "-m",
+        "pip",
+        "install",
+        *nox.project.dependency_groups(pyproject, "dev"),
+    )
+
+    session.run(python_path, "-m", "pytest")
 
 
 if __name__ == "__main__":
