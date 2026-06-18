@@ -79,19 +79,6 @@ def wheel_wasm(session: nox.Session) -> None:
         "--platform",
         "pyodide",
         "py",
-        env={
-            # Must match the toolchain Pyodide expects for this version:
-            # `PYODIDE_ROOT=<xbuildenv> pyodide config get rust_toolchain`.
-            # For Pyodide 314.0.0 that is stable 1.93.0, whose
-            # wasm32-unknown-emscripten target defaults to native wasm
-            # exception handling (matching Pyodide's runtime). An older
-            # nightly defaults to the legacy Emscripten EH/SjLj ABI, which
-            # emits `invoke_*` imports the Pyodide runtime can't resolve
-            # ("Dynamic linking error: cannot resolve symbol invoke_i").
-            "RUSTUP_TOOLCHAIN": "1.93.0",
-            "CIBW_BUILD": "cp314-pyodide_wasm32",
-            "CIBW_PYODIDE_VERSION": "314.0.0",
-        },
     )
 
 

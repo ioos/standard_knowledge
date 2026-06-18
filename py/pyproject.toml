@@ -37,3 +37,10 @@ cache-keys = [{file = "pyproject.toml"}, {file = "Cargo.toml"}, {file = "src/**/
 # Run the package tests using `pytest` after building wheels
 test-groups = ["dev"]
 test-command = "python -m pytest {project}/py/tests -xv"
+skip = [
+    "cp313-pyodide_wasm32", # not compatible with the pyodide version
+]
+
+[tool.cibuildwheel.pyodide]
+pyodide-version = "314.0.0"
+environment = {"RUSTUP_TOOLCHAIN" = "1.93.0"}

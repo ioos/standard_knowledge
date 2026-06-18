@@ -113,18 +113,8 @@ jobs:
         uses: pypa/cibuildwheel@v4.1.0
         env:
           CIBW_PLATFORM: ${{ matrix.platform || 'auto' }}
-          # Pin Pyodide to 0.27.7 (uses Emscripten 3.1.58) to avoid Emscripten 4.0.9
-          # "invalid export name" issue with Rust-mangled symbols.
-          # See: https://github.com/emscripten-core/emscripten/issues/24825
-          CIBW_PYODIDE_VERSION: ${{ matrix.os == 'pyodide' && '314.0.0' || '' }}
-          # Pyodide 0.27.7 only supports Python 3.13, so limit the build for pyodide
-          CIBW_BUILD: ${{ matrix.os == 'pyodide' && 'cp314-*' || '*' }}
-        #   CIBW_ARCHS: ${{ matrix.archs || 'auto' }}
-        # Can also be configured directly, using `with:`
         with:
           package-dir: py
-        #   output-dir: wheelhouse
-        #   config-file: "{package}/pyproject.toml"
 
       - uses: actions/upload-artifact@v6
         with:
