@@ -106,7 +106,7 @@ jobs:
         run: rustup target add i686-pc-windows-msvc
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v3.3.1
+        uses: pypa/cibuildwheel@v4.1.0
         env:
           CIBW_PLATFORM: ${{ matrix.platform || 'auto' }}
           # Pin Pyodide to 0.27.7 (uses Emscripten 3.1.58) to avoid Emscripten 4.0.9
@@ -161,10 +161,6 @@ jobs:
           path: dist
           merge-multiple: true
 
-      - name: Remove unsupported pyodide wheel
-        working-directory: .
-        run: rm -f dist/*pyodide_2024_0_wasm32*.whl
-
       - uses: pypa/gh-action-pypi-publish@release/v1
         # To test uploads to TestPyPI, uncomment the following:
         # with:
@@ -186,10 +182,6 @@ jobs:
           pattern: cibw-*
           path: dist
           merge-multiple: true
-
-      - name: Remove unsupported pyodide wheel
-        working-directory: .
-        run: rm -f dist/*pyodide_2024_0_wasm32*.whl
 
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
