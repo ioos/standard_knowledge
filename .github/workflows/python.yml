@@ -24,6 +24,10 @@ defaults:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+
     steps:
       - uses: actions/checkout@v6
         with:
@@ -94,8 +98,8 @@ jobs:
       - name: Pin Rust version for pyodide (Emscripten 3.1.58 compatibility)
         if: matrix.os == 'pyodide'
         run: |
-          rustup install nightly-2025-01-20
-          rustup default nightly-2025-01-20
+          rustup install 1.93.0
+          rustup default 1.93.0
 
       - name: Add wasm32-unknown-emscripten target if pyodide
         if: matrix.os == 'pyodide'
@@ -106,21 +110,11 @@ jobs:
         run: rustup target add i686-pc-windows-msvc
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v3.3.1
+        uses: pypa/cibuildwheel@v4.1.0
         env:
           CIBW_PLATFORM: ${{ matrix.platform || 'auto' }}
-          # Pin Pyodide to 0.27.7 (uses Emscripten 3.1.58) to avoid Emscripten 4.0.9
-          # "invalid export name" issue with Rust-mangled symbols.
-          # See: https://github.com/emscripten-core/emscripten/issues/24825
-          CIBW_PYODIDE_VERSION: ${{ matrix.os == 'pyodide' && '0.27.7' || '' }}
-          # Pyodide 0.27.7 only supports Python 3.12, so limit the build for pyodide
-          CIBW_BUILD: ${{ matrix.os == 'pyodide' && 'cp312-*' || '*' }}
-        #   CIBW_ARCHS: ${{ matrix.archs || 'auto' }}
-        # Can also be configured directly, using `with:`
         with:
           package-dir: py
-        #   output-dir: wheelhouse
-        #   config-file: "{package}/pyproject.toml"
 
       - uses: actions/upload-artifact@v6
         with:
@@ -161,10 +155,6 @@ jobs:
           path: dist
           merge-multiple: true
 
-      - name: Remove unsupported pyodide wheel
-        working-directory: .
-        run: rm -f dist/*pyodide_2024_0_wasm32*.whl
-
       - uses: pypa/gh-action-pypi-publish@release/v1
         # To test uploads to TestPyPI, uncomment the following:
         # with:
@@ -186,10 +176,6 @@ jobs:
           pattern: cibw-*
           path: dist
           merge-multiple: true
-
-      - name: Remove unsupported pyodide wheel
-        working-directory: .
-        run: rm -f dist/*pyodide_2024_0_wasm32*.whl
 
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:

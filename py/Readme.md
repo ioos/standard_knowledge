@@ -31,13 +31,15 @@ under_pressure = library.filter().search("pressure")
 
 ## Testing
 
-Test with `uv run pytest`
+Test with `uv run pytest`, or `../noxfile.py -s test_python` to test against multiple versions.
 
 ## Building
 
 Run `uvx cibuildwheel --platform linux py` from the top of the repo to build.
 
 Note: [cibuildwheel only uses official builds](https://github.com/pypa/cibuildwheel/issues/2502), so it'll get ornery with Python from other sources (uv, Pixi, Brew).
+
+`../noxfile.py -s wheel` should run that as well.
 
 ### Building Pyodide/WASM wheels locally
 Pyodide wheels require specific Rust and Pyodide versions due to Emscripten compatibility:
@@ -47,4 +49,7 @@ rustup install nightly-2025-01-20
 rustup target add wasm32-unknown-emscripten --toolchain nightly-2025-01-20
 
 # Build pyodide wheels with pinned Rust toolchain and Pyodide 0.27.7
-RUSTUP_TOOLCHAIN=nightly-2025-01-20 CIBW_PYODIDE_VERSION=0.27.7 uvx cibuildwheel --platform pyodide py
+RUSTUP_TOOLCHAIN=nightly-2025-01-20 CIBW_BUILD=cp314-pyodide_wasm32 CIBW_PYODIDE_VERSION=314.0.0 uvx cibuildwheel --platform pyodide py
+```
+
+Try using `../noxfile.py -s wheel_wasm` which should encapsulate those commands.
