@@ -1,8 +1,12 @@
 [package]
 name = "standard_knowledge_cli"
-version = "0.1.0"
-edition = "2021"
-rust-version = "1.85"
+version.workspace = true
+license.workspace = true
+repository.workspace = true
+readme.workspace = true
+description.workspace = true
+edition.workspace = true
+rust-version.workspace = true
 
 [[bin]]
 name = "standard_knowledge"
@@ -11,7 +15,7 @@ path = "src/main.rs"
 [dependencies]
 clap = { version = "4.5.54", features = ["derive"] }
 serde_yaml_ng = "0.10.0"
-standard_knowledge = { path = "../core" }
+standard_knowledge = { path = "../core", version = "0.1.0" }
 reqwest = { version = "0.13", features = ["blocking"] }
 serde = { version = "1.0.228", features = ["derive"] }
 
