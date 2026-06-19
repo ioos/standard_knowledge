@@ -14,7 +14,7 @@ name = "_standard_knowledge_py"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = "0.27.0"
+pyo3 = "0.29.0"
 standard_knowledge = { path = "../core", version = "0.1.0" }
 dyn-clone = "1.0.20"
 indicium = "0.6.5"
