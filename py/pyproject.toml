@@ -17,7 +17,7 @@ license = "Apache-2.0"
 
 [dependency-groups]
 dev = [
-    "pytest>=8.3.5",
+    "pytest>9",
 ]
 
 [tool.maturin]
@@ -35,7 +35,17 @@ cache-keys = [{file = "pyproject.toml"}, {file = "Cargo.toml"}, {file = "src/**/
 # Uncomment to build rust code in development mode
 # config-settings = { build-args = '--profile=dev' }
 
+[tool.pytest]
+minversion = "9.0"
+addopts = ["-v", "-ra", "--strict-markers", "--strict-config"]
+testpaths = ["tests"]
+xfail_strict = true
+filterwarnings = ["error"]
+log_level = "INFO"
+
 [tool.cibuildwheel]
+# Use the faster uv-backed build frontend
+build-frontend = "build[uv]"
 # Run the package tests using `pytest` after building wheels
 test-groups = ["dev"]
 test-command = "python -m pytest {project}/py/tests -xv"
@@ -46,3 +56,22 @@ skip = [
 [tool.cibuildwheel.pyodide]
 pyodide-version = "314.0.0"
 environment = {"RUSTUP_TOOLCHAIN" = "1.93.0"}
+
+[tool.repo-review]
+ignore = [
+    "MY100", # Mypy
+    "PY004", # Docs folder
+
+    # Missed due to package not in the root
+    "PY003", # License file
+    "PY006", # Pre-commit
+    "PY007", # Nox
+    "GH100", # Github Actions
+]
+
+[tool.ruff]
+lint.extend-select = [
+    "B",  # flake8-bugbear
+    "I",  # isort
+    "UP",  # pyupgrade
+]

@@ -1,4 +1,5 @@
 # standard_knowledge
+
 Programmatically augmenting CF Standards with IOOS operational knowledge.
 
 ```py
@@ -237,9 +238,10 @@ Best run with `./noxfile -s test_js`, but individual tests are listed in the [Ja
 Unless a session is specified, Nox will run all but `update_standards`, `install_cli`, `release`, and `test_wasm_env` sessions.
 
 Sessions (use `-s`):
+
 - `update_standards` - Updates the CF standards.
 - `install_cli` - Install the Rust CLI.
-- `release` -- <patch|minor|major> - Bumps the version of the all the packages for a release.
+- `release` -- \<patch|minor|major> - Bumps the version of the all the packages for a release.
 - `py_test-<version>` - Test a Python version as specified in the Github actions matrix.
 - `py_wheel` - Build Linux wheels for currently supported Python versions.
 - `py_wheel_wasm` - Build 3.14 WASM wheel.

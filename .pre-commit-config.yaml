@@ -8,6 +8,21 @@ repos:
         exclude: docs/mkdocs.yml
       - id: debug-statements
       - id: mixed-line-ending
+
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: 4b2e70d08cb2ccd26d1fba73588de41c7a5d50b7  # frozen: v0.25
+    hooks:
+      - id: validate-pyproject
+        # The package lives in py/, not at the repo root
+        files: 'pyproject\.toml$'
+        additional_dependencies: ["validate-pyproject-schema-store[all]"]
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: f805888065fdb6162e1f800e50bb9460cbd223d6  # frozen: 0.37.2
+    hooks:
+      - id: check-dependabot
+      - id: check-github-workflows
+
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
     rev: '3b3f7c3f57fe9925356faf5fe6230835138be230'  # frozen: v0.15.17
@@ -15,23 +30,27 @@ repos:
       - id: ruff-format
       - id: ruff-check
         args: ["--fix", "--show-fixes"]
+
   - repo: https://github.com/rhysd/actionlint
     rev: 914e7df21a07ef503a81201c76d2b11c789d3fca  # frozen: v1.7.12
     hooks:
       - id: actionlint
         files: ".github/workflows/"
         args: ["-ignore", "SC1090", "-ignore", "SC2046", "-ignore", "SC2086", "-ignore", "SC2129", "-ignore", "SC2155"]
+
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     rev: 9257c6050c0261b8c57e712f632dc4a8010109a9  # frozen: v1.25.2
     hooks:
       - id: zizmor
         files: "^\\.github"
         args: [--persona=pedantic]
+
   - repo: https://github.com/codespell-project/codespell
     # Configuration for codespell is in .codespellrc
     rev: 2ccb47ff45ad361a21071a7eedda4c37e6ae8c5a  # frozen: v2.4.2
     hooks:
       - id: codespell
+
   - repo: local
     hooks:
       - id: rustfmt
@@ -47,8 +66,32 @@ repos:
         language: system
         pass_filenames: false
 
+  - repo: https://github.com/adamchainz/blacken-docs
+    rev: "fda77690955e9b63c6687d8806bafd56a526e45f"  # frozen: 1.20.0
+    hooks:
+      - id: blacken-docs
+        additional_dependencies: [black==24.*]
+
+  - repo: https://github.com/hukkin/mdformat
+    rev: 82912cdaea4fb830f751504486a7879c70526547  # frozen: 1.0.0
+    hooks:
+    - id: mdformat
+
   - repo: https://github.com/biomejs/pre-commit
     rev: "5e270eb5db26a98324ef2f4b96135fc342c5d197"  # frozen: v2.4.16
     hooks:
     -   id: biome-check
         additional_dependencies: ["@biomejs/biome@2.1.1"]
+
+  - repo: https://github.com/scientific-python/cookie
+    rev: "8f0581cc50b14023b14a9c77e9b358738ba637e7" # frozen: 2026.06.18
+    hooks:
+      - id: sp-repo-review
+        name: repo-review (root)
+        entry: repo-review --ignore PY001,PY005,PP301,GH212,PC140,PC170
+      - id: sp-repo-review
+        name: repo-review (py)
+        entry: repo-review py
+
+auto_update:
+  cooldown_days: 7
