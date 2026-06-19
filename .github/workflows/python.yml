@@ -117,6 +117,11 @@ jobs:
         if: matrix.os == 'windows-intel'
         run: rustup target add i686-pc-windows-msvc
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+        with:
+          enable-cache: true
+
       - name: Build wheels
         uses: pypa/cibuildwheel@a0a973acdc9e7b7f8b04ac5c80e6883a5a102615 # v4.1.0
         env:
