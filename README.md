@@ -205,6 +205,11 @@ Knowledge keys:
 
 Cargo as manages the Rust components of the project, while Maturin and uv help keep things inline when working from the Python side of things.
 
+### Releasing
+
+Use `./noxfile.py -s release -- <patch|minor|major>` to bump the version.
+Preferbly in a PR with the changes from the last release included.
+
 ### Rust Testing
 
 `cargo test` will run tests in all the workspaces.

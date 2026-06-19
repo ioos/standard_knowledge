@@ -15,7 +15,7 @@ path = "src/main.rs"
 [dependencies]
 clap = { version = "4.5.54", features = ["derive"] }
 serde_yaml_ng = "0.10.0"
-standard_knowledge = { path = "../core", version = "0.1.0" }
+standard_knowledge = { path = "../core", version = "0.1.1" }
 reqwest = { version = "0.13", features = ["blocking"] }
 serde = { version = "1.0.228", features = ["derive"] }
 
