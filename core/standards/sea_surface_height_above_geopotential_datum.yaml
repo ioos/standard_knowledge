@@ -4,4 +4,5 @@ sibling_standards:
 - tidal_sea_surface_height_above_mean_lower_low_water
 - tidal_sea_surface_height_above_mean_higher_high_water
 common_variable_names:
+- navd88
 - navd88_meters
