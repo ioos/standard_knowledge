@@ -7,10 +7,18 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "wasm": "wasm-pack build . --target web"
+    "wasm": "wasm-pack build . --target web",
+    "test": "vitest run",
+    "test:rust": "wasm-pack test --headless --chrome",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:pack": "node tests/pack-smoke.mjs"
   },
   "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@vitest/browser": "^3.0.0",
+    "playwright": "^1.49.1",
     "vite": "^7.1.7",
-    "vite-plugin-wasm-pack": "^0.1.12"
+    "vitest": "^3.0.0"
   }
 }

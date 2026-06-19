@@ -1,0 +1,164 @@
+name: JavaScript
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - '*'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24.10.0"
+
+      - name: Install dependencies
+        working-directory: js
+        run: npm ci
+
+      - name: Build WASM package
+        working-directory: js
+        run: npm run wasm
+
+      - name: Rust -> WASM binding tests
+        working-directory: js
+        run: wasm-pack test --headless --chrome
+
+      - name: Install Playwright browsers
+        working-directory: js
+        run: npx playwright install --with-deps chromium
+
+      - name: Vitest API tests
+        working-directory: js
+        run: npm test
+
+      - name: Playwright demo E2E
+        working-directory: js
+        run: npm run test:e2e
+
+      - name: Packaged tarball smoke test
+        working-directory: js
+        run: npm run test:pack
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Build WASM
+        run: |
+          # Build WASM package
+          cd js
+          wasm-pack build --target web
+
+          # Create build directory if not exists (first time)
+          mkdir -p build
+
+          # Copy demo files to build directory
+          cp index.html index.js build/
+          cp -r pkg build/pkg
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: wasm-build
+          path: js/build
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: wasm-build
+          path: dist
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: 'dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  upload_npm:
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    # Publish to npm only on a `v*` tag push, matching the gate used by the
+    # PyPI (python.yml) and crates.io (rust.yml) pipelines.
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: read
+      id-token: write # for npm provenance
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24.10.0"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Build WASM package
+        working-directory: js
+        run: wasm-pack build --target web
+
+      - name: Publish to npm
+        working-directory: js
+        run: npm publish ./pkg --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
