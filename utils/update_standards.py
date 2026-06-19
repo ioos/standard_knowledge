@@ -10,9 +10,10 @@
 # exclude-newer = "2025-07-17T00:00:00Z"
 # ///
 from pathlib import Path
+
 import requests
-from bs4 import BeautifulSoup
 import yaml
+from bs4 import BeautifulSoup
 
 commit = "2e7dbf1f335277bb979997c01f513a22056cdfaf"
 version = "94"

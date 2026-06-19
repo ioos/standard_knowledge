@@ -1,0 +1,15 @@
+target-version = "py312"
+
+[lint]
+extend-select = [
+  "B",   # flake8-bugbear
+  "I",   # isort
+  "C4",  # flake8-comprehensions
+  "PGH", # pygrep-hooks
+  "PIE", # flake8-pie
+  "PT",  # flake8-pytest-style
+  "RUF", # Ruff-specific rules
+  "SIM", # flake8-simplify
+  "UP",  # pyupgrade
+  "YTT", # flake8-2020
+]

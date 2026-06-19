@@ -11,10 +11,6 @@ updates:
       - "/py"
     schedule:
       interval: "weekly"
-    groups:
-      cargo:
-        patterns:
-          - "*"
     cooldown:
       default-days: 7
 

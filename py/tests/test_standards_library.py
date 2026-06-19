@@ -1,7 +1,5 @@
 import pytest
-
 import standard_knowledge
-
 
 KNOWLEDGE = {
     "name": "air_pressure_at_mean_sea_level",

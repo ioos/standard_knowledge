@@ -11,20 +11,20 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dynamic = ["version"]
-readme = "Readme.md"
+readme = "README.md"
 description = "Programmatically augmenting CF Standards with operational knowledge."
 license = "Apache-2.0"
 
 [dependency-groups]
 dev = [
-    "pytest>=8.3.5",
+    "pytest>9",
 ]
 
 [tool.maturin]
 features = ["pyo3/extension-module"]
 module-name = "standard_knowledge._standard_knowledge_py"
 python-source = "python"
-exclude = ["Readme.md"]
+exclude = ["README.md"]
 
 
 [tool.uv]
@@ -35,7 +35,24 @@ cache-keys = [{file = "pyproject.toml"}, {file = "Cargo.toml"}, {file = "src/**/
 # Uncomment to build rust code in development mode
 # config-settings = { build-args = '--profile=dev' }
 
+[tool.pytest]
+minversion = "9.0"
+addopts = ["-v", "-ra", "--strict-markers", "--strict-config"]
+testpaths = ["tests"]
+xfail_strict = true
+filterwarnings = [
+    "error",
+    # The compiled extension does not yet declare free-threaded support, so on
+    # free-threaded builds (e.g. 3.14t) CPython re-enables the GIL and warns at
+    # import time. Ignore it until the PyO3 module opts in via Py_mod_gil.
+    # https://pyo3.rs/v0.29.0/free-threading.html
+    "ignore:The global interpreter lock:RuntimeWarning",
+]
+log_level = "INFO"
+
 [tool.cibuildwheel]
+# Use the faster uv-backed build frontend
+build-frontend = "build[uv]"
 # Run the package tests using `pytest` after building wheels
 test-groups = ["dev"]
 test-command = "python -m pytest {project}/py/tests -xv"
@@ -46,3 +63,22 @@ skip = [
 [tool.cibuildwheel.pyodide]
 pyodide-version = "314.0.0"
 environment = {"RUSTUP_TOOLCHAIN" = "1.93.0"}
+
+[tool.repo-review]
+ignore = [
+    "MY100", # Mypy
+    "PY004", # Docs folder
+
+    # Missed due to package not in the root
+    "PY003", # License file
+    "PY006", # Pre-commit
+    "PY007", # Nox
+    "GH100", # Github Actions
+]
+
+[tool.ruff]
+lint.extend-select = [
+    "B",  # flake8-bugbear
+    "I",  # isort
+    "UP",  # pyupgrade
+]

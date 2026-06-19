@@ -44,7 +44,9 @@ Note: [cibuildwheel only uses official builds](https://github.com/pypa/cibuildwh
 `../noxfile.py -s wheel` should run that as well.
 
 ### Building Pyodide/WASM wheels locally
+
 Pyodide wheels require specific Rust and Pyodide versions due to Emscripten compatibility:
+
 ```bash
 # Install the compatible Rust version
 rustup install nightly-2025-01-20
