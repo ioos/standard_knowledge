@@ -1,5 +1,7 @@
 # Standard Knowledge
 
+Programmatically augmenting CF Standards with IOOS operational knowledge.
+
 ```js
 import init, { StandardsLibrary } from "./pkg/standard_knowledge_js.js"
 

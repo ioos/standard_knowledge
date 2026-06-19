@@ -1,5 +1,5 @@
 # standard_knowledge
-Programmatically augmenting CF Standards with operational knowledge.
+Programmatically augmenting CF Standards with IOOS operational knowledge.
 
 ```py
 # uv run python

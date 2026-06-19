@@ -29,9 +29,9 @@ jobs:
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "24.10.0"
+          node-version: "26.3.1"
 
       - name: Install dependencies
         working-directory: js
@@ -148,10 +148,11 @@ jobs:
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "24.10.0"
+          node-version: "26.3.1"
           registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false  # never use caching in release builds
 
       - name: Build WASM package
         working-directory: js

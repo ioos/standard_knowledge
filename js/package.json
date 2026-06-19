@@ -8,7 +8,7 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"wasm": "wasm-pack build . --target web",
-		"test": "vitest run",
+		"test": "vitest run -v",
 		"test:rust": "wasm-pack test --headless --chrome",
 		"test:e2e": "playwright test",
 		"test:e2e:ui": "playwright test --ui",
