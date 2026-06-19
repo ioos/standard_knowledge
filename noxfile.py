@@ -26,6 +26,12 @@ def update_standards(session: nox.Session) -> None:
     session.run("uv", "run", "--script", "utils/update_standards.py")
 
 
+@nox.session(python=False, default=False)
+def install_cli(session: nox.Session) -> None:
+    """Install the CLI tool."""
+    session.run("cargo", "install", "--path", "cli", external=True)
+
+
 @nox.session(default=False)
 def release(session: nox.Session) -> None:
     """
@@ -65,20 +71,20 @@ def release(session: nox.Session) -> None:
 
 
 @nox.session(python=python_versions)
-def test_python(session: nox.Session) -> None:
+def py_test(session: nox.Session) -> None:
     """Run the Python tests."""
     session.cd("py")
     session.run("uv", "run", "pytest")
 
 
 @nox.session
-def wheel(session: nox.Session) -> None:
+def py_wheel(session: nox.Session) -> None:
     """Build Linux wheels for multiple python versions"""
     session.run("uvx", "cibuildwheel", "--platform", "linux", "py")
 
 
 @nox.session
-def wheel_wasm(session: nox.Session) -> None:
+def py_wheel_wasm(session: nox.Session) -> None:
     """Build a wheel for the pyodide target."""
     session.run(
         "uvx",
@@ -90,7 +96,7 @@ def wheel_wasm(session: nox.Session) -> None:
 
 
 @nox.session(default=False, python=False)
-def test_wasm(session: nox.Session) -> None:
+def py_test_wasm_env(session: nox.Session) -> None:
     """Create a virtual environment for testing the pyodide wheel.
 
     Now pytest is automatically run after building WASM wheels.
@@ -119,15 +125,22 @@ def test_wasm(session: nox.Session) -> None:
 
 
 @nox.session(python=False)
-def test_rust(session: nox.Session) -> None:
+def rust_test(session: nox.Session) -> None:
     """Run the Rust tests.
 
     Strips a lingering ``VIRTUAL_ENV`` before invoking cargo. The
-    ``test_wasm`` session leaves ``.venv-pyodide`` activated, and PyO3's
+    ``test_wasm_env`` session leaves ``.venv-pyodide`` activated, and PyO3's
     build script honors ``VIRTUAL_ENV`` (regardless of PATH) to locate the
     interpreter. That venv is a 32-bit wasm32/emscripten target, which makes
     native ``cargo test`` fail with "your Rust target architecture (64-bit)
     does not match your python interpreter (32-bit)".
+
+    Excludes ``standard_knowledge_py``: it has no Rust tests (the bindings are
+    tested with pytest in ``test_python``), and building its lib-test binary
+    links against libpython. After a pyodide wheel build (``wheel_wasm`` /
+    ``test_wasm_env``) the cached PyO3 config points at the emscripten
+    ``/install`` prefix, so that binary fails to load ``libpython*.dylib``.
+    Skipping the crate keeps ``cargo test`` independent of those builds.
     """
     venv = os.environ.pop("VIRTUAL_ENV", None)
     if venv:
@@ -135,13 +148,76 @@ def test_rust(session: nox.Session) -> None:
             f"Ignoring VIRTUAL_ENV={venv!r} so cargo/PyO3 builds against the "
             "host Python interpreter."
         )
-    session.run("cargo", "test", external=True)
+    session.run(
+        "cargo",
+        "test",
+        "--workspace",
+        "--exclude",
+        "standard_knowledge_py",
+        external=True,
+    )
 
 
 @nox.session(python=False, default=False)
-def install_cli(session: nox.Session) -> None:
-    """Install the CLI tool."""
-    session.run("cargo", "install", "--path", "cli", external=True)
+def rust_update_tests(session: nox.Session) -> None:
+    """Update the Rust test fixtures."""
+    session.run(
+        "cargo",
+        "test",
+        "--workspace",
+        "--exclude",
+        "standard_knowledge_py",
+        external=True,
+        env={"TRYCMD": "overwrite"},
+    )
+
+
+@nox.session(python=False)
+def js_test(session: nox.Session) -> None:
+    """Run the JavaScript/WASM tests: Vitest API suite, Playwright demo E2E,
+    and the packaged-tarball smoke test.
+
+    Mirrors the ``test`` job in ``.github/workflows/javascript.yml``.
+    """
+    session.cd("js")
+    session.run("npm", "ci", external=True)
+    session.run("npm", "run", "wasm", external=True)
+    session.run(
+        "npx", "playwright", "install", "--with-deps", "chromium", external=True
+    )
+    session.run("npm", "test", external=True)
+    session.run("npm", "run", "test:e2e", external=True)
+    session.run("npm", "run", "test:pack", external=True)
+
+
+@nox.session(python=False, default=False)
+def js_test_wasm(session: nox.Session) -> None:
+    """Run the Rust->WASM headless binding tests (wasm-pack test).
+
+    Opt-in (not in the default sweep): ``wasm-pack test --chrome`` drives the
+    locally installed Chrome with a chromedriver that wasm-pack downloads to
+    match the *latest* Chrome, so it fails (HTTP 404 on session creation) when
+    the installed Chrome is a major version behind. CI pins a matching pair on
+    Linux and runs this step directly in ``javascript.yml``; locally the same
+    bindings are also exercised by the Vitest browser suite in ``test_js``.
+    Run explicitly with ``nox -s test_js_wasm`` when your Chrome matches.
+    """
+    session.cd("js")
+    session.run("wasm-pack", "test", "--headless", "--chrome", external=True)
+
+
+@nox.session(python=False)
+def js_build(session: nox.Session) -> None:
+    """Build the JavaScript/WASM tool."""
+    session.cd("js")
+    session.run("npm", "run", "build", external=True)
+
+
+@nox.session(python=False, default=False)
+def js_dev(session: nox.Session) -> None:
+    """Run the JavaScript/WASM development environment."""
+    session.cd("js")
+    session.run("npm", "run", "dev", external=True)
 
 
 if __name__ == "__main__":

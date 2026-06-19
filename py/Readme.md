@@ -1,5 +1,7 @@
 # Standard Knowledge
 
+Programmatically augmenting CF Standards with IOOS operational knowledge.
+
 ```py
 # uv run python
 

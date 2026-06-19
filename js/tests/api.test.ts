@@ -1,0 +1,101 @@
+import { beforeAll, describe, expect, test } from "vitest";
+import init, { StandardsLibrary } from "../pkg/standard_knowledge_js.js";
+
+// Exercises the exact ESM + WASM artifact published to npm (the `pkg/`
+// directory). Values asserted here are backed by core Rust/Python tests, so
+// they are stable: see core/src/standards_library.rs and
+// py/tests/test_standards_library.py.
+
+let library: StandardsLibrary;
+
+beforeAll(async () => {
+	// `--target web` build: must instantiate the WASM module before use. In a
+	// browser context Vite serves the sibling .wasm, so the default init works.
+	await init();
+	library = new StandardsLibrary();
+	library.loadCfStandards();
+	library.loadKnowledge();
+	library.loadTestSuites();
+});
+
+describe("get", () => {
+	test("resolves a standard by its CF name", () => {
+		const standard = library.get("air_pressure_at_mean_sea_level");
+		expect(standard.name).toBe("air_pressure_at_mean_sea_level");
+		expect(standard.unit).toBe("Pa");
+	});
+
+	test("resolves a standard by alias", () => {
+		const standard = library.get("air_pressure_at_sea_level");
+		expect(standard.name).toBe("air_pressure_at_mean_sea_level");
+	});
+
+	test("exposes community knowledge once loaded", () => {
+		const standard = library.get("air_pressure_at_mean_sea_level");
+		expect(standard.ioosCategory).toBe("Meteorology");
+		expect(standard.commonVariableNames).toContain("pressure");
+	});
+
+	test("throws for an unknown name (the x-get-standard error path)", () => {
+		expect(() => library.get("not_a_real_standard")).toThrow();
+	});
+});
+
+describe("filter", () => {
+	test("byVariableName matches on a common variable name", () => {
+		const standards = library
+			.filter()
+			.byVariableName("atmospheric_pressure").standards;
+		expect(standards.map((s) => s.name)).toContain(
+			"air_pressure_at_mean_sea_level",
+		);
+	});
+
+	test("byIoosCategory narrows to a single category", () => {
+		const standards = library.filter().byIoosCategory("Meteorology").standards;
+		expect(standards.length).toBeGreaterThan(0);
+		expect(standards.every((s) => s.ioosCategory === "Meteorology")).toBe(true);
+	});
+
+	test("byUnit narrows to a single unit", () => {
+		const standards = library.filter().byUnit("Pa").standards;
+		expect(standards.length).toBeGreaterThan(0);
+		expect(standards.every((s) => s.unit === "Pa")).toBe(true);
+	});
+
+	test("hasQartodTests only returns standards with QARTOD tests", () => {
+		const standards = library.filter().hasQartodTests().standards;
+		expect(standards.length).toBeGreaterThan(0);
+		expect(standards.every((s) => s.qartod.length > 0)).toBe(true);
+	});
+
+	test("chained filters compose", () => {
+		const all = library.filter().standards.length;
+		const filtered = library
+			.filter()
+			.byUnit("Pa")
+			.byIoosCategory("Meteorology").standards;
+		expect(filtered.length).toBeGreaterThan(0);
+		expect(filtered.length).toBeLessThan(all);
+	});
+
+	test("search returns matching standards", () => {
+		const standards = library.filter().search("pressure").standards;
+		expect(standards.length).toBeGreaterThan(0);
+	});
+});
+
+describe("standard metadata", () => {
+	test("attrs() returns suggested xarray attributes", () => {
+		const attrs = library.get("air_pressure_at_mean_sea_level").attrs();
+		const obj = Object.fromEntries(attrs);
+		expect(obj.standard_name).toBe("air_pressure_at_mean_sea_level");
+	});
+
+	test("knownIoosCategories includes the expected categories", () => {
+		const categories = library.knownIoosCategories();
+		expect(categories).toContain("Meteorology");
+		expect(categories).toContain("Temperature");
+		expect(categories).toContain("Wind");
+	});
+});

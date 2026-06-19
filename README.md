@@ -1,5 +1,5 @@
 # standard_knowledge
-Programmatically augmenting CF Standards with operational knowledge.
+Programmatically augmenting CF Standards with IOOS operational knowledge.
 
 ```py
 # uv run python
@@ -208,7 +208,7 @@ Cargo as manages the Rust components of the project, while Maturin and uv help k
 
 `cargo test` will run tests in all the workspaces.
 
-As the CLI changes, it's tests should be updated with `TRYCMD=overwrite cargo test`.
+As the CLI changes, it's tests should be updated with `TRYCMD=overwrite cargo test` or `./noxfile.py -s update_rust_tests`.
 
 For new CLI tests, it's easiest to copy one of the files in `cli/tests/cmd`, and tweak the `args` to match the new command, then run `TRYCMD=overwrite cargo test` to replace the status code, stdout and stderr.
 
@@ -220,6 +220,12 @@ From `py`, `uv run pytest` will run tests.
 It will also pick up changes in Rust, both for the Python bindings and changes in the core library as well.
 `uv run python` will open a shell with the library rebuilt for interactive tinkering.
 
+Can be run with `./noxfile -s test_python`.
+
+### Javascript testing
+
+Best run with `./noxfile -s test_js`, but individual tests are listed in the [Javascript readme](./js/README.md).
+
 ### Utils
 
 - `utils/update_standards.py` - Run with `uv run --script utils/update_standards.py` to update the standard names and alias files from CF Conventions that are imported into the Rust library.
@@ -228,12 +234,18 @@ It will also pick up changes in Rust, both for the Python bindings and changes i
 
 `./noxfile.py` has helpers for testing, bumping versions, updating standards, and other things that are easy to forget how to do.
 
-Unless a session is specified, Nox will run all but `release` sessions.
+Unless a session is specified, Nox will run all but `update_standards`, `install_cli`, `release`, and `test_wasm_env` sessions.
 
 Sessions (use `-s`):
-- `update-standards` - Updates the CF standards.
+- `update_standards` - Updates the CF standards.
+- `install_cli` - Install the Rust CLI.
 - `release` -- <patch|minor|major> - Bumps the version of the all the packages for a release.
-- `test_ptyhon-<version>` - Test a Python version as specified in the Github actions matrix.
-- `wheel` - Build Linux wheels for currently supported Python versions.
-- `wheel_wasm` - Build 3.14 WASM wheel.
--
+- `py_test-<version>` - Test a Python version as specified in the Github actions matrix.
+- `py_wheel` - Build Linux wheels for currently supported Python versions.
+- `py_wheel_wasm` - Build 3.14 WASM wheel.
+- `py_test_wasm` - Create a Pyodide venv, install the wheel, and then probably confuse VS Code as it will try to automatically update the terminal environment. Useful for manually testing the Pyodide environment.
+- `rust_test` - Run `cargo test` against all the Rust crates.
+- `rust_update_tests` - Update the rust test fixtures.
+- `js_test` - Run the full Javascript test suite.
+- `js_build` - Build the Javascript package.
+- `js_dev` - Run the Javascript development server.
