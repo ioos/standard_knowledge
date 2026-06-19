@@ -1,4 +1,6 @@
 /// <reference types="vitest/config" />
+
+import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 
 // The wasm-pack `--target web` output loads its module via
@@ -14,7 +16,7 @@ export default defineConfig({
 			// The `--target web` build initializes WASM by fetching the .wasm over
 			// HTTP, so the public API can only be exercised in a real browser.
 			enabled: true,
-			provider: "playwright",
+			provider: playwright(),
 			headless: true,
 			instances: [{ browser: "chromium" }],
 		},
