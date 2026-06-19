@@ -1,8 +1,12 @@
 [package]
 name = "standard_knowledge_js"
-version = "0.1.0"
-authors = ["Alex Kerney <abk@mac.com>"]
-edition = "2021"
+version.workspace = true
+license.workspace = true
+repository.workspace = true
+readme.workspace = true
+description.workspace = true
+edition.workspace = true
+rust-version.workspace = true
 
 [lib]
 crate-type = ["cdylib", "rlib"]
@@ -12,7 +16,7 @@ default = ["console_error_panic_hook"]
 
 [dependencies]
 wasm-bindgen = "0.2.84"
-standard_knowledge = { path = "../core" }
+standard_knowledge = { path = "../core", version = "0.1.0" }
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
