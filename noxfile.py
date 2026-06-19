@@ -6,6 +6,7 @@
 bump versions for release."""
 
 import argparse
+import os
 
 import nox
 import yaml
@@ -17,6 +18,12 @@ with open("./.github/workflows/python.yml") as f:
     workflow = yaml.safe_load(f)
 
 python_versions = workflow["jobs"]["test"]["strategy"]["matrix"]["python-version"]
+
+
+@nox.session(default=False, python=False)
+def update_standards(session: nox.Session) -> None:
+    """Update CF standards"""
+    session.run("uv", "run", "--script", "utils/update_standards.py")
 
 
 @nox.session(default=False)
@@ -84,7 +91,10 @@ def wheel_wasm(session: nox.Session) -> None:
 
 @nox.session(default=False, python=False)
 def test_wasm(session: nox.Session) -> None:
-    """Create a virtual environment for testing the pyodide wheel."""
+    """Create a virtual environment for testing the pyodide wheel.
+
+    Now pytest is automatically run after building WASM wheels.
+    """
     python_path = ".venv-pyodide/bin/python"
 
     session.run("pyodide", "venv", ".venv-pyodide")
@@ -106,6 +116,32 @@ def test_wasm(session: nox.Session) -> None:
     )
 
     session.run(python_path, "-m", "pytest")
+
+
+@nox.session(python=False)
+def test_rust(session: nox.Session) -> None:
+    """Run the Rust tests.
+
+    Strips a lingering ``VIRTUAL_ENV`` before invoking cargo. The
+    ``test_wasm`` session leaves ``.venv-pyodide`` activated, and PyO3's
+    build script honors ``VIRTUAL_ENV`` (regardless of PATH) to locate the
+    interpreter. That venv is a 32-bit wasm32/emscripten target, which makes
+    native ``cargo test`` fail with "your Rust target architecture (64-bit)
+    does not match your python interpreter (32-bit)".
+    """
+    venv = os.environ.pop("VIRTUAL_ENV", None)
+    if venv:
+        session.warn(
+            f"Ignoring VIRTUAL_ENV={venv!r} so cargo/PyO3 builds against the "
+            "host Python interpreter."
+        )
+    session.run("cargo", "test", external=True)
+
+
+@nox.session(python=False, default=False)
+def install_cli(session: nox.Session) -> None:
+    """Install the CLI tool."""
+    session.run("cargo", "install", "--path", "cli", external=True)
 
 
 if __name__ == "__main__":

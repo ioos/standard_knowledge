@@ -14,11 +14,17 @@ import requests
 from bs4 import BeautifulSoup
 import yaml
 
-standards_url = "https://raw.githubusercontent.com/cf-convention/vocabularies/refs/heads/main/docs/cf-standard-names/current/cf-standard-name-table.xml"
+commit = "2e7dbf1f335277bb979997c01f513a22056cdfaf"
+version = "94"
+standards_url = f"https://raw.githubusercontent.com/cf-convention/vocabularies/{commit}/docs/cf-standard-names/version/{version}/cf-standard-name-table.xml"
 cf_yaml = Path(__file__).parent / "../core/standards/_cf_standards.yaml"
 
 standard_names = {}
 aliases = {}
+
+print(
+    f"Fetching CF standards version {version} from commit {commit}:\n  {standards_url}"
+)
 
 response = requests.get(standards_url)
 
@@ -38,5 +44,18 @@ for node in soup.find_all("alias"):
 
 dump = {"standard_names": standard_names, "aliases": aliases}
 
+with cf_yaml.open() as f:
+    existing = yaml.safe_load(f)
+
 with cf_yaml.open("w") as f:
     yaml.dump(dump, f)
+
+print(
+    f"Updated {len(standard_names)} CF standard names and {len(aliases)} aliases in {cf_yaml}"
+)
+if len(existing["standard_names"]) != len(standard_names) or len(
+    existing["aliases"]
+) != len(aliases):
+    print(
+        f"Previously had {len(existing['standard_names'])} standard names and {len(existing['aliases'])} aliases."
+    )

@@ -55,7 +55,7 @@ let underPressure = library.filter().search("pressure")
 
 A CLI can also be installed for interacting with the standards.
 
-`cargo install --path cli`
+`cargo install --path cli` or `./noxfile.py -s install_cli`
 
 ```sh
 ❯ standard_knowledge --help
@@ -212,6 +212,8 @@ As the CLI changes, it's tests should be updated with `TRYCMD=overwrite cargo te
 
 For new CLI tests, it's easiest to copy one of the files in `cli/tests/cmd`, and tweak the `args` to match the new command, then run `TRYCMD=overwrite cargo test` to replace the status code, stdout and stderr.
 
+Can be run with `./noxfile.py -s test_rust`
+
 ### Python testing
 
 From `py`, `uv run pytest` will run tests.
@@ -224,12 +226,14 @@ It will also pick up changes in Rust, both for the Python bindings and changes i
 
 ### Nox
 
-`./noxfile` has helpers for testing, bumping versions, updating standards, and other things that are easy to forget how to do.
+`./noxfile.py` has helpers for testing, bumping versions, updating standards, and other things that are easy to forget how to do.
 
 Unless a session is specified, Nox will run all but `release` sessions.
 
 Sessions (use `-s`):
+- `update-standards` - Updates the CF standards.
 - `release` -- <patch|minor|major> - Bumps the version of the all the packages for a release.
 - `test_ptyhon-<version>` - Test a Python version as specified in the Github actions matrix.
 - `wheel` - Build Linux wheels for currently supported Python versions.
 - `wheel_wasm` - Build 3.14 WASM wheel.
+-
