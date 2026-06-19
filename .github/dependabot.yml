@@ -25,6 +25,13 @@ updates:
     directory: "/js"
     schedule:
       interval: "weekly"
+    groups:
+      vite:
+        patterns:
+          - "vite*"
+          - "vitest*"
+          - "@vite/*"
+          - "@vitest/*"
     cooldown:
       default-days: 7
 
