@@ -40,7 +40,14 @@ minversion = "9.0"
 addopts = ["-v", "-ra", "--strict-markers", "--strict-config"]
 testpaths = ["tests"]
 xfail_strict = true
-filterwarnings = ["error"]
+filterwarnings = [
+    "error",
+    # The compiled extension does not yet declare free-threaded support, so on
+    # free-threaded builds (e.g. 3.14t) CPython re-enables the GIL and warns at
+    # import time. Ignore it until the PyO3 module opts in via Py_mod_gil.
+    # https://pyo3.rs/v0.29.0/free-threading.html
+    "ignore:The global interpreter lock:RuntimeWarning",
+]
 log_level = "INFO"
 
 [tool.cibuildwheel]
