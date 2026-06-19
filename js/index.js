@@ -1,29 +1,28 @@
-import init, { StandardsLibrary } from "./pkg/standard_knowledge_js.js"
+import init, { StandardsLibrary } from "./pkg/standard_knowledge_js.js";
 
 // Need to initialize WASM before we can use the library
 await init();
 
-
 class Standard extends HTMLElement {
-    #standard
-    #show = false
+	#standard;
+	#show = false;
 
-    set standard(standard) {
-        this.#standard = standard;
-        this.update();
-    }
+	set standard(standard) {
+		this.#standard = standard;
+		this.update();
+	}
 
-    update() {
-        let attrs = Array.from(this.#standard.attrs());
+	update() {
+		const attrs = Array.from(this.#standard.attrs());
 
-        const mapToObj = (m) => {
-            return Array.from(m).reduce((obj, [key, value]) => {
-                obj[key] = value;
-                return obj
-            }, {})
-        }
+		const mapToObj = (m) => {
+			return Array.from(m).reduce((obj, [key, value]) => {
+				obj[key] = value;
+				return obj;
+			}, {});
+		};
 
-        this.innerHTML = `
+		this.innerHTML = `
             <div class="card">
                 <div class="card-header bg-primary-subtle">
                     <h4>
@@ -71,7 +70,10 @@ class Standard extends HTMLElement {
                     <p>${this.#standard.description}</p>
                     </div>
 
-                    ${attrs.length === 0 ? "<p>No attributes</p>" : `
+                    ${
+											attrs.length === 0
+												? "<p>No attributes</p>"
+												: `
                         <h4>Suggested attributes:</h4>
 
                         <details><summary>As JSON</summary>
@@ -83,64 +85,78 @@ class Standard extends HTMLElement {
                         <details><summary>As YAML</summary>
 
                         <pre><code>
-${attrs.map(a => `${a[0]}: ${a[1]}`).join("\n")}
+${attrs.map((a) => `${a[0]}: ${a[1]}`).join("\n")}
                         </code></pre>
                         </details>
 
                         <details><summary>For ERDDAP</summary>
                         <pre><code>
-${attrs.map(a => `&lt;att name="${a[0]}"&gt;${a[1]}&lt;/att&gt;`).join("\n")}
+${attrs.map((a) => `&lt;att name="${a[0]}"&gt;${a[1]}&lt;/att&gt;`).join("\n")}
                         </code></pre>
                         </details>
-                    `}
+                    `
+										}
 
-                    ${this.#standard.comments ? `
+                    ${
+											this.#standard.comments
+												? `
                         <h4>Comments:</h4>
                         <p>${this.#standard.comments}</p>
-                    ` : ""}
+                    `
+												: ""
+										}
 
-                    ${this.#standard.qartod.length > 0 ? `
+                    ${
+											this.#standard.qartod.length > 0
+												? `
                         <h4>QARTOD Tests:</h4>
                         <ul>
-                            ${this.#standard.qartod.map(q => `<li>${q.name} (<code>${q.slug}</code>) <p>${q.description}</p></li>`).join("")}
+                            ${this.#standard.qartod.map((q) => `<li>${q.name} (<code>${q.slug}</code>) <p>${q.description}</p></li>`).join("")}
                         </ul>
-                    ` : ""}
+                    `
+												: ""
+										}
                 </div>
             </div>
         `;
-    }
+	}
 }
 
 customElements.define("x-standard", Standard);
 
 class FilterStandards extends HTMLElement {
-    #library
-    varName = ""
-    ioosCategory = ""
-    unit = ""
-    qartodTests = false
-    search = ""
+	#library;
+	varName = "";
+	ioosCategory = "";
+	unit = "";
+	qartodTests = false;
+	search = "";
 
-    set library(newLibrary) {
-        this.#library = newLibrary;
+	set library(newLibrary) {
+		this.#library = newLibrary;
 
-        this.querySelector("#ioosCategory").outerHTML = `
+		this.querySelector("#ioosCategory").outerHTML = `
             <select id="ioosCategory" name="ioosCategory">
                 <option value="">Select IOOS Category</option>
-                ${this.#library.knownIoosCategories().map(cat => `
+                ${this.#library
+									.knownIoosCategories()
+									.map(
+										(cat) => `
                     <option value="${cat}">${cat}</option>
-                `).join("")}
+                `,
+									)
+									.join("")}
             </select>
-        `
+        `;
 
-        this.querySelector("#ioosCategory").addEventListener("input", (e) => {
-            this.ioosCategory = e.target.value;
-            this.update();
-        });
-    }
+		this.querySelector("#ioosCategory").addEventListener("input", (e) => {
+			this.ioosCategory = e.target.value;
+			this.update();
+		});
+	}
 
-    connectedCallback() {
-        this.innerHTML = `
+	connectedCallback() {
+		this.innerHTML = `
             <div class="accordion-item">
                 <div class="accordion-header">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="true" aria-controls="collapseFilter">
@@ -184,85 +200,87 @@ class FilterStandards extends HTMLElement {
             </div>
         `;
 
-        this.querySelector("#varName").addEventListener("input", (e) => {
-            this.varName = e.target.value;
-            this.update()
-        });
+		this.querySelector("#varName").addEventListener("input", (e) => {
+			this.varName = e.target.value;
+			this.update();
+		});
 
-        this.querySelector("#unit").addEventListener("input", (e) => {
-            this.unit = e.target.value;
-            this.update();
-        });
+		this.querySelector("#unit").addEventListener("input", (e) => {
+			this.unit = e.target.value;
+			this.update();
+		});
 
-        this.querySelector("#qartodTests").addEventListener("change", (e) => {
-            this.qartodTests = e.target.checked;
-            this.update();
-        });
+		this.querySelector("#qartodTests").addEventListener("change", (e) => {
+			this.qartodTests = e.target.checked;
+			this.update();
+		});
 
-        this.querySelector("#search").addEventListener("input", (e) => {
-            this.search = e.target.value;
-            this.update();
-        });
-    }
+		this.querySelector("#search").addEventListener("input", (e) => {
+			this.search = e.target.value;
+			this.update();
+		});
+	}
 
-    update() {
-        let filter = this.#library.filter()
+	update() {
+		let filter = this.#library.filter();
 
-        if (this.varName) {
-            filter = filter.byVariableName(this.varName)
-        }
+		if (this.varName) {
+			filter = filter.byVariableName(this.varName);
+		}
 
-        if (this.ioosCategory) {
-            filter = filter.byIoosCategory(this.ioosCategory)
-        }
+		if (this.ioosCategory) {
+			filter = filter.byIoosCategory(this.ioosCategory);
+		}
 
-        if (this.unit) {
-            filter = filter.byUnit(this.unit)
-        }
+		if (this.unit) {
+			filter = filter.byUnit(this.unit);
+		}
 
-        if (this.qartodTests) {
-            filter = filter.hasQartodTests(this.qartodTests)
-        }
+		if (this.qartodTests) {
+			filter = filter.hasQartodTests(this.qartodTests);
+		}
 
-        if (this.search) {
-            filter = filter.search(this.search)
-        }
+		if (this.search) {
+			filter = filter.search(this.search);
+		}
 
-        let standards = filter.standards
+		const standards = filter.standards;
 
-        if (standards.length === this.#library.filter().standards.length) {
-            this.querySelector("#filterResult").innerHTML = `
+		if (standards.length === this.#library.filter().standards.length) {
+			this.querySelector("#filterResult").innerHTML = `
                 <div class="alert alert-info" role="alert">
                     Please enter filters
                 </div>
             `;
-        } else if (standards.length === 0) {
-            this.querySelector("#filterResult").innerHTML = `
+		} else if (standards.length === 0) {
+			this.querySelector("#filterResult").innerHTML = `
                 <div class="alert alert-warning" role="alert">
                     No standards found
                 </div>
             `;
-        } else {
-            this.querySelector("#filterResult").innerHTML = `
+		} else {
+			this.querySelector("#filterResult").innerHTML = `
                 <ul>
-                    ${standards.map(s => {
-                        if (s.longName) {
-                            return `<li>${s.longName} - <span class="bg-primary-subtle">${s.name}</span></li>`;
-                        }
+                    ${standards
+											.map((s) => {
+												if (s.longName) {
+													return `<li>${s.longName} - <span class="bg-primary-subtle">${s.name}</span></li>`;
+												}
 
-                        return `<li><span class="bg-primary-subtle">${s.name}</span></li>`;
-                    }).join("")}
+												return `<li><span class="bg-primary-subtle">${s.name}</span></li>`;
+											})
+											.join("")}
                 </ul>
             `;
-        }
-    }
+		}
+	}
 }
 
 customElements.define("x-filter-standards", FilterStandards);
 
 class GetStandard extends HTMLElement {
-    connectedCallback() {
-        this.innerHTML = `
+	connectedCallback() {
+		this.innerHTML = `
         <div class="accordion-item">
             <div class="accordion-header">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGet" aria-expanded="true" aria-controls="collapseGet">
@@ -281,60 +299,57 @@ class GetStandard extends HTMLElement {
                 </div>
             </div>
         </div>
-        `
+        `;
 
-        this.querySelector("form").onsubmit = (e) => {
-            e.preventDefault();
-            const data = new FormData(e.target)
-            const name = data.get("name").toString().trim();
+		this.querySelector("form").onsubmit = (e) => {
+			e.preventDefault();
+			const data = new FormData(e.target);
+			const name = data.get("name").toString().trim();
 
-            if (name) {
-                try {
-                    let standard = this.library.get(name); // Just to see if it exists
-                    this.querySelector("#result").innerHTML = `
+			if (name) {
+				try {
+					const standard = this.library.get(name); // Just to see if it exists
+					this.querySelector("#result").innerHTML = `
                         <x-standard></x-standard>
                     `;
-                    this.querySelector("x-standard").standard = standard;
-                } catch (error) {
-                    this.querySelector("#result").innerHTML = `
+					this.querySelector("x-standard").standard = standard;
+				} catch (error) {
+					this.querySelector("#result").innerHTML = `
                     <div class="alert alert-danger" role="alert">
                         Could not find standard with name <strong>${name}</strong>
                     </div>
-                    `
-                    console.error(error);
-                }
-            }
-        }
-    }
+                    `;
+					console.error(error);
+				}
+			}
+		};
+	}
 }
 
 customElements.define("x-get-standard", GetStandard);
 
 class App extends HTMLElement {
-    connectedCallback() {
-        this.textContent = "Invalid standard"
+	connectedCallback() {
+		this.textContent = "Invalid standard";
 
-        this.library = new StandardsLibrary();
-        this.library.loadCfStandards();
-        this.library.loadKnowledge();
-        this.library.loadTestSuites();
+		this.library = new StandardsLibrary();
+		this.library.loadCfStandards();
+		this.library.loadKnowledge();
+		this.library.loadTestSuites();
 
-        this.innerHTML = `
+		this.innerHTML = `
         <div class="accordion">
             <x-filter-standards></x-filter-standards>
             <x-get-standard></x-get-standard>
         </div>
         `;
 
-        this.querySelector("x-get-standard").library = this.library;
-        this.querySelector("x-filter-standards").library = this.library;
-    }
+		this.querySelector("x-get-standard").library = this.library;
+		this.querySelector("x-filter-standards").library = this.library;
+	}
 }
 
 customElements.define("x-app", App);
-
-
-
 
 // const app = () => {
 //     customElements.define("x-standard", Standard);
