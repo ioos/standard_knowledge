@@ -1,0 +1,22 @@
+# zizmor configuration
+# https://docs.zizmor.sh/configuration/
+rules:
+  # Caches live only in the test/build jobs. The publishing jobs (PyPI, npm,
+  # crates.io) and the Pages deploy run in isolated jobs that do a fresh
+  # checkout and never restore these caches, so a poisoned cache cannot reach a
+  # release. The caches are worth keeping for CI speed.
+  cache-poisoning:
+    ignore:
+      - python.yml
+      - rust.yml
+      - javascript.yml
+  # dtolnay/rust-toolchain is used deliberately to install a specific toolchain
+  # and the wasm32-unknown-unknown target; the bare runner rustup does not.
+  superfluous-actions:
+    ignore:
+      - javascript.yml
+  # copilot-setup-steps runs on demand for Copilot and does not need a
+  # concurrency group (see the GitHub Copilot setup-steps docs).
+  concurrency-limits:
+    ignore:
+      - copilot-setup-steps.yml

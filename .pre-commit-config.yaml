@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c  # frozen: v6.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -10,20 +10,26 @@ repos:
       - id: mixed-line-ending
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: 'v0.12.5'
+    rev: '3b3f7c3f57fe9925356faf5fe6230835138be230'  # frozen: v0.15.17
     hooks:
       - id: ruff-format
       - id: ruff-check
         args: ["--fix", "--show-fixes"]
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.7
+    rev: 914e7df21a07ef503a81201c76d2b11c789d3fca  # frozen: v1.7.12
     hooks:
       - id: actionlint
         files: ".github/workflows/"
         args: ["-ignore", "SC1090", "-ignore", "SC2046", "-ignore", "SC2086", "-ignore", "SC2129", "-ignore", "SC2155"]
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: 9257c6050c0261b8c57e712f632dc4a8010109a9  # frozen: v1.25.2
+    hooks:
+      - id: zizmor
+        files: "^\\.github"
+        args: [--persona=pedantic]
   - repo: https://github.com/codespell-project/codespell
     # Configuration for codespell is in .codespellrc
-    rev: v2.4.1
+    rev: 2ccb47ff45ad361a21071a7eedda4c37e6ae8c5a  # frozen: v2.4.2
     hooks:
       - id: codespell
   - repo: local
@@ -42,7 +48,7 @@ repos:
         pass_filenames: false
 
   - repo: https://github.com/biomejs/pre-commit
-    rev: "v2.0.6"  # Use the sha / tag you want to point at
+    rev: "5e270eb5db26a98324ef2f4b96135fc342c5d197"  # frozen: v2.4.16
     hooks:
     -   id: biome-check
         additional_dependencies: ["@biomejs/biome@2.1.1"]
