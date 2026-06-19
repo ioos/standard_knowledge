@@ -55,7 +55,7 @@ let underPressure = library.filter().search("pressure")
 
 A CLI can also be installed for interacting with the standards.
 
-`cargo install --path cli` or `./noxfile.py -s install_cli`
+`cargo install --path cli` or `./noxfile.py -s install_cli` from the repo, or `cargo install standard_knowledge_cli` for the published version.
 
 ```sh
 ❯ standard_knowledge --help
