@@ -28,6 +28,8 @@ exclude = ["Readme.md"]
 
 
 [tool.uv]
+# Only resolve dependencies released at least 7 days ago (supply-chain cooldown)
+exclude-newer = "7 days"
 # Rebuild package when any rust files change
 cache-keys = [{file = "pyproject.toml"}, {file = "Cargo.toml"}, {file = "src/**/*.rs"}, {file = "python/**/*.py"}, {file = "../core/standards/*.yaml"}, {file = "../core/src/**/*.rs"}]
 # Uncomment to build rust code in development mode
