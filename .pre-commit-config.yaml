@@ -79,7 +79,7 @@ repos:
     - id: mdformat
 
   - repo: https://github.com/biomejs/pre-commit
-    rev: "5e270eb5db26a98324ef2f4b96135fc342c5d197"  # frozen: v2.4.16
+    rev: "16e7f97478690d1e4fab107fcab1c56f0080d28b"  # frozen: v2.5.0
     hooks:
     -   id: biome-check
         additional_dependencies: ["@biomejs/biome@2.5.0"]
