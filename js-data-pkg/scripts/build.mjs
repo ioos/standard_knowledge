@@ -1,5 +1,6 @@
 /**
- * Generates tree-shakable ESM modules from core/standards/*.yaml.
+ * Generates tree-shakable ESM modules from the pre-built data/ directory
+ * (produced by utils/generate_partitions.py).
  *
  * Output (all gitignored — regenerate with `npm run build`):
  *   all-standards.js         — full CF vocabulary
@@ -12,24 +13,16 @@
  * Consumers load a partition by importing the specific subpath:
  *   import met from "standard_knowledge_data/partitions/meteorology"
  *
- * Run: npm run build  (requires `npm ci` first)
+ * Run: npm run build  (requires data/ to exist — run generate_partitions.py first)
  */
 
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { basename, dirname, join } from "node:path";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { parse as parseYaml } from "yaml";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const standardsDir = join(__dirname, "../../core/standards");
+const dataDir = join(__dirname, "../../data");
 const outDir = join(__dirname, "..");
-
-function slugify(name) {
-	return name
-		.toLowerCase()
-		.replace(/[^a-z0-9]+/g, "_")
-		.replace(/^_|_$/g, "");
-}
 
 function writeModule(path, data) {
 	writeFileSync(
@@ -38,98 +31,38 @@ function writeModule(path, data) {
 	);
 }
 
-// ── Load CF vocabulary ────────────────────────────────────────────────────────
+// ── all-standards ─────────────────────────────────────────────────────────────
 
-const cfYamlText = readFileSync(
-	join(standardsDir, "_cf_standards.yaml"),
-	"utf-8",
+const allStandards = JSON.parse(
+	readFileSync(join(dataDir, "all-standards.json"), "utf-8"),
 );
-const cfRaw = parseYaml(cfYamlText);
-
-// YAML parses bare numbers (e.g. `unit: 1`) as JS numbers, but Rust's
-// CfStandard.{unit,description} are String fields. Coerce before JSON encoding.
-for (const std of Object.values(cfRaw.standard_names ?? {})) {
-	if (typeof std.unit === "number") std.unit = String(std.unit);
-	if (typeof std.description === "number")
-		std.description = String(std.description);
-}
-
-// ── Load community knowledge ──────────────────────────────────────────────────
-
-const knowledgeFiles = readdirSync(standardsDir)
-	.filter((f) => f.endsWith(".yaml") && f !== "_cf_standards.yaml")
-	.sort();
-
-const knowledge = knowledgeFiles.map((file) => {
-	const stem = basename(file, ".yaml");
-	const raw = parseYaml(readFileSync(join(standardsDir, file), "utf-8")) ?? {};
-	return {
-		name: raw.name ?? stem,
-		long_name: raw.long_name ?? null,
-		ioos_category: raw.ioos_category ?? null,
-		common_variable_names: raw.common_variable_names ?? [],
-		related_standards: raw.related_standards ?? [],
-		sibling_standards: raw.sibling_standards ?? [],
-		extra_attrs: raw.extra_attrs ?? {},
-		other_units: raw.other_units ?? [],
-		comments: raw.comments ?? raw.comment ?? null,
-		qc: raw.qc ?? null,
-	};
-});
-
-function subsetCf(nameSet) {
-	return {
-		standard_names: Object.fromEntries(
-			Object.entries(cfRaw.standard_names ?? {}).filter(([k]) =>
-				nameSet.has(k),
-			),
-		),
-		aliases: Object.fromEntries(
-			Object.entries(cfRaw.aliases ?? {}).filter(([, v]) => nameSet.has(v)),
-		),
-	};
-}
-
-// ── Emit all-standards ────────────────────────────────────────────────────────
-
-writeModule(join(outDir, "all-standards.js"), {
-	cf_standards: {
-		standard_names: cfRaw.standard_names ?? {},
-		aliases: cfRaw.aliases ?? {},
-	},
-});
+writeModule(join(outDir, "all-standards.js"), allStandards);
 console.log("build: wrote all-standards.js");
 
-// ── Emit per-category partitions ──────────────────────────────────────────────
+// ── per-category partitions ───────────────────────────────────────────────────
 
 mkdirSync(join(outDir, "partitions"), { recursive: true });
 
-const categories = {};
-for (const item of knowledge) {
-	if (item.ioos_category) {
-		if (!categories[item.ioos_category]) categories[item.ioos_category] = [];
-		categories[item.ioos_category].push(item);
-	}
-}
+const partitionFiles = readdirSync(join(dataDir, "partitions")).filter((f) =>
+	f.endsWith(".json"),
+);
 
-for (const [category, items] of Object.entries(categories)) {
-	const slug = slugify(category);
-	const names = new Set(items.map((i) => i.name));
-	writeModule(join(outDir, "partitions", `${slug}.js`), {
-		cf_standards: subsetCf(names),
-		knowledge: items,
-	});
+for (const file of partitionFiles) {
+	const slug = file.slice(0, -5); // strip .json
+	const data = JSON.parse(
+		readFileSync(join(dataDir, "partitions", file), "utf-8"),
+	);
+	writeModule(join(outDir, "partitions", `${slug}.js`), data);
 }
 
 console.log(
-	`build: wrote ${Object.keys(categories).length} category partitions → partitions/`,
+	`build: wrote ${partitionFiles.length} category partitions → partitions/`,
 );
 
-// ── Emit all-knowledge ────────────────────────────────────────────────────────
+// ── all-knowledge ─────────────────────────────────────────────────────────────
 
-const allNames = new Set(knowledge.map((i) => i.name));
-writeModule(join(outDir, "all-knowledge.js"), {
-	cf_standards: subsetCf(allNames),
-	knowledge,
-});
+const allKnowledge = JSON.parse(
+	readFileSync(join(dataDir, "all-knowledge.json"), "utf-8"),
+);
+writeModule(join(outDir, "all-knowledge.js"), allKnowledge);
 console.log("build: wrote all-knowledge.js");

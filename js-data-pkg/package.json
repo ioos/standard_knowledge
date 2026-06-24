@@ -14,9 +14,7 @@
 	"scripts": {
 		"build": "node scripts/build.mjs"
 	},
-	"devDependencies": {
-		"yaml": "^2.7.0"
-	},
+	"devDependencies": {},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/ioos/standard-knowledge.git",
