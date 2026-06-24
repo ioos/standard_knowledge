@@ -13,8 +13,20 @@ wasm_bindgen_test_configure!(run_in_browser);
 
 fn loaded_library() -> StandardsLibraryJS {
     let mut library = StandardsLibraryJS::new();
-    library.load_cf_standards();
-    library.load_knowledge();
+
+    // Load the full CF vocabulary from the source YAML (embedded at compile
+    // time so the test binary is self-contained, no dev server required).
+    library
+        .load_cf_standards_from_yaml(include_str!("../../core/standards/_cf_standards.yaml"))
+        .expect("CF standards YAML");
+
+    // Load the knowledge entries exercised by these tests.
+    library
+        .load_knowledge_from_json(
+            r#"[{"name":"air_pressure_at_mean_sea_level","long_name":"Atmospheric Pressure at Sea Level","ioos_category":"Meteorology","common_variable_names":["pressure","air_pressure","atmospheric_pressure","sea_level_pressure","pressure_atmosphere"],"related_standards":["air_pressure"],"sibling_standards":[],"extra_attrs":{},"other_units":["kPa","bar","millibars","mbar"],"comments":"Raw pressure sensor values on buoys may need to be adjusted based on sensor tower height.\n","qc":null}]"#,
+        )
+        .expect("knowledge JSON");
+
     library.load_test_suites();
     library
 }
