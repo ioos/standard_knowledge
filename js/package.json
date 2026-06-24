@@ -7,7 +7,8 @@
 		"dev": "vite",
 		"build": "vite build",
 		"preview": "vite preview",
-		"wasm": "wasm-pack build . --target web",
+		"gen-data": "node scripts/gen-data.mjs",
+		"wasm": "wasm-pack build . --target web && node scripts/gen-data.mjs",
 		"test": "vitest run -v",
 		"test:rust": "wasm-pack test --headless --chrome",
 		"test:e2e": "playwright test",
@@ -20,6 +21,7 @@
 		"@vitest/browser-playwright": "^4.1.8",
 		"playwright": "^1.49.1",
 		"vite": "^8.0.16",
-		"vitest": "^4.1.8"
+		"vitest": "^4.1.8",
+		"yaml": "^2.7.0"
 	}
 }

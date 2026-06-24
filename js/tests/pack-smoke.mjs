@@ -28,6 +28,8 @@ try {
 	// 3. Import and exercise the installed package as a consumer would. The
 	//    `--target web` build fetches its .wasm by URL, which Node's fetch won't
 	//    do for file:// — so pass the wasm bytes to init() explicitly.
+	//    Data is loaded from the generated public/ directory (produced by gen-data).
+	const publicDir = join(js, "public");
 	const smoke = join(work, "smoke.mjs");
 	writeFileSync(
 		smoke,
@@ -39,9 +41,12 @@ const require = createRequire(import.meta.url);
 const wasmPath = require.resolve('standard_knowledge_js/standard_knowledge_js_bg.wasm');
 await init({ module_or_path: readFileSync(wasmPath) });
 
+const cfYaml = readFileSync(${JSON.stringify(join(publicDir, "cf_standards.yaml"))}, 'utf-8');
+const knowledgeJson = readFileSync(${JSON.stringify(join(publicDir, "knowledge.json"))}, 'utf-8');
+
 const library = new StandardsLibrary();
-library.loadCfStandards();
-library.loadKnowledge();
+library.loadCfStandardsFromYaml(cfYaml);
+library.loadKnowledgeFromJson(knowledgeJson);
 
 const standard = library.get('air_pressure_at_mean_sea_level');
 if (standard.name !== 'air_pressure_at_mean_sea_level') {

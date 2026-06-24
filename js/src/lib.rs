@@ -24,14 +24,78 @@ impl StandardsLibraryJS {
         }
     }
 
+    /// Load CF standards from the WASM-embedded compressed vocabulary.
+    /// Only available when built with the `embedded-data` feature.
+    #[cfg(feature = "embedded-data")]
     #[wasm_bindgen(js_name = loadCfStandards)]
     pub fn load_cf_standards(&mut self) {
         self.inner.load_cf_standards();
     }
 
+    /// Load CF standards from a YAML string (e.g. fetched from the network).
+    #[wasm_bindgen(js_name = loadCfStandardsFromYaml)]
+    pub fn load_cf_standards_from_yaml(&mut self, yaml: &str) -> Result<(), JsValue> {
+        self.inner
+            .load_cf_standards_from_yaml(yaml)
+            .map_err(|e| JsValue::from_str(&e))
+    }
+
+    /// Load CF standards from a JSON string.
+    #[wasm_bindgen(js_name = loadCfStandardsFromJson)]
+    pub fn load_cf_standards_from_json(&mut self, json: &str) -> Result<(), JsValue> {
+        self.inner
+            .load_cf_standards_from_json(json)
+            .map_err(|e| JsValue::from_str(&e))
+    }
+
+    /// Load CF standards from a parsed JS value (the CF vocabulary object).
+    /// The value is serialised to JSON internally and passed to the Rust parser.
+    #[wasm_bindgen(js_name = loadStandards)]
+    pub fn load_cf_standards_from_value(&mut self, data: JsValue) -> Result<(), JsValue> {
+        let json = js_sys::JSON::stringify(&data)
+            .map_err(|_| JsValue::from_str("Failed to stringify standards data"))?
+            .as_string()
+            .ok_or_else(|| JsValue::from_str("Failed to convert standards data to string"))?;
+        self.inner
+            .load_cf_standards_from_json(&json)
+            .map_err(|e| JsValue::from_str(&e))
+    }
+
+    /// Load community knowledge from the WASM-embedded compressed data.
+    /// Only available when built with the `embedded-data` feature.
+    #[cfg(feature = "embedded-data")]
     #[wasm_bindgen(js_name = loadKnowledge)]
     pub fn load_knowledge(&mut self) {
         self.inner.load_knowledge();
+    }
+
+    /// Load community knowledge from a YAML string (e.g. fetched from the network).
+    #[wasm_bindgen(js_name = loadKnowledgeFromYaml)]
+    pub fn load_knowledge_from_yaml(&mut self, yaml: &str) -> Result<(), JsValue> {
+        self.inner
+            .load_knowledge_from_yaml(yaml)
+            .map_err(|e| JsValue::from_str(&e))
+    }
+
+    /// Load community knowledge from a JSON string.
+    #[wasm_bindgen(js_name = loadKnowledgeFromJson)]
+    pub fn load_knowledge_from_json(&mut self, json: &str) -> Result<(), JsValue> {
+        self.inner
+            .load_knowledge_from_json(json)
+            .map_err(|e| JsValue::from_str(&e))
+    }
+
+    /// Load community knowledge from a parsed JS array of knowledge objects.
+    /// The value is serialised to JSON internally and passed to the Rust parser.
+    #[wasm_bindgen(js_name = loadKnowledgeObjects)]
+    pub fn load_knowledge_from_value(&mut self, data: JsValue) -> Result<(), JsValue> {
+        let json = js_sys::JSON::stringify(&data)
+            .map_err(|_| JsValue::from_str("Failed to stringify knowledge data"))?
+            .as_string()
+            .ok_or_else(|| JsValue::from_str("Failed to convert knowledge data to string"))?;
+        self.inner
+            .load_knowledge_from_json(&json)
+            .map_err(|e| JsValue::from_str(&e))
     }
 
     #[wasm_bindgen(js_name = loadTestSuites)]

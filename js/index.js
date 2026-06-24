@@ -329,12 +329,17 @@ class GetStandard extends HTMLElement {
 customElements.define("x-get-standard", GetStandard);
 
 class App extends HTMLElement {
-	connectedCallback() {
-		this.textContent = "Invalid standard";
+	async connectedCallback() {
+		this.textContent = "Loading standards…";
 
 		this.library = new StandardsLibrary();
-		this.library.loadCfStandards();
-		this.library.loadKnowledge();
+
+		const [cfResp, knowledgeResp] = await Promise.all([
+			fetch("./cf_standards.yaml"),
+			fetch("./knowledge.json"),
+		]);
+		this.library.loadCfStandardsFromYaml(await cfResp.text());
+		this.library.loadKnowledgeFromJson(await knowledgeResp.text());
 		this.library.loadTestSuites();
 
 		this.innerHTML = `
