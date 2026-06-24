@@ -111,3 +111,56 @@ describe("standard metadata", () => {
 		expect(categories).toContain("Wind");
 	});
 });
+
+describe("partition loading", () => {
+	test("meteorology partition is self-contained", async () => {
+		const resp = await fetch("/data/partitions/meteorology.json");
+		if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+		const { cf_standards, knowledge } = await resp.json();
+
+		const partLib = new StandardsLibrary();
+		partLib.loadStandards(cf_standards);
+		partLib.loadKnowledgeObjects(knowledge);
+		partLib.loadTestSuites();
+
+		// Meteorology standard resolves with enriched knowledge
+		const std = partLib.get("air_temperature");
+		expect(std.ioosCategory).toBe("Meteorology");
+		expect(std.commonVariableNames).toContain("temperature");
+
+		// Standard from a different category is absent from this partition
+		expect(() => partLib.get("sea_surface_temperature")).toThrow();
+	});
+
+	test("all-knowledge partition covers every knowledge entry", async () => {
+		const resp = await fetch("/data/all-knowledge.json");
+		if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+		const { cf_standards, knowledge } = await resp.json();
+
+		const partLib = new StandardsLibrary();
+		partLib.loadStandards(cf_standards);
+		partLib.loadKnowledgeObjects(knowledge);
+
+		// Both meteorology and temperature knowledge should be present
+		expect(partLib.get("air_temperature").ioosCategory).toBe("Meteorology");
+		expect(partLib.get("sea_surface_temperature").ioosCategory).toBe(
+			"Temperature",
+		);
+	});
+
+	test("all-standards partition loads the full CF vocabulary", async () => {
+		const resp = await fetch("/data/all-standards.json");
+		if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+		const { cf_standards } = await resp.json();
+
+		const partLib = new StandardsLibrary();
+		partLib.loadStandards(cf_standards);
+
+		// Any CF standard name should be resolvable (no knowledge enrichment)
+		const std = partLib.get("air_pressure_at_mean_sea_level");
+		expect(std.name).toBe("air_pressure_at_mean_sea_level");
+		expect(std.unit).toBe("Pa");
+		// ioosCategory is absent without knowledge (Option::None → undefined)
+		expect(std.ioosCategory).toBeUndefined();
+	});
+});

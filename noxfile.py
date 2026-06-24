@@ -195,6 +195,26 @@ def rust_update_tests(session: nox.Session) -> None:
     )
 
 
+@nox.session(python=False, default=False)
+def generate_partitions(session: nox.Session) -> None:
+    """Generate per-IOOS-category, all-knowledge, and all-standards partition
+    files (JSON + YAML) from core/standards/*.yaml → data/.
+
+    These are the canonical release artifacts consumed by Phase 2e CI uploads
+    and (eventually) the npm data package. The JS dev/test workflow generates
+    its own copy via ``npm run wasm`` → gen-data.mjs → public/data/.
+
+    Run: nox -s generate_partitions
+    """
+    session.run(
+        "uv",
+        "run",
+        "--script",
+        "utils/generate_partitions.py",
+        external=True,
+    )
+
+
 @nox.session(python=False)
 def js_test(session: nox.Session) -> None:
     """Run the JavaScript/WASM tests: Vitest API suite, Playwright demo E2E,

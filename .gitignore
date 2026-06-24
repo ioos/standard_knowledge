@@ -33,3 +33,6 @@ cli/dump
 # find_standards_app
 utils/migrations
 utils/db.sqlite3
+
+# Generated partition artifacts (produced by utils/generate_partitions.py)
+data/
