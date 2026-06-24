@@ -10,11 +10,32 @@ pub struct StandardsLibrary {
 }
 
 impl StandardsLibrary {
-    /// Load CF standards from library
+    /// Load CF standards from the embedded compressed data.
+    #[cfg(feature = "embedded-data")]
     pub fn load_cf_standards(&mut self) {
         use crate::cf::cf_standards;
 
         self.standards.extend(cf_standards());
+    }
+
+    /// Load CF standards from a YAML string.
+    pub fn load_cf_standards_from_yaml(&mut self, yaml: &str) -> Result<(), String> {
+        self.standards
+            .extend(crate::cf::cf_standards_from_yaml(yaml)?);
+        Ok(())
+    }
+
+    /// Load CF standards from a JSON string.
+    pub fn load_cf_standards_from_json(&mut self, json: &str) -> Result<(), String> {
+        self.standards
+            .extend(crate::cf::cf_standards_from_json(json)?);
+        Ok(())
+    }
+
+    /// Load CF standards from an already-deserialized vec.
+    pub fn load_cf_standards_from_vec(&mut self, standards: Vec<Standard>) {
+        self.standards
+            .extend(standards.into_iter().map(|s| (s.name.clone(), s)));
     }
 
     pub fn filter(&self) -> StandardsFilter {
@@ -77,10 +98,25 @@ impl StandardsLibrary {
         }
     }
 
-    /// Load community knowledge
+    /// Load community knowledge from the embedded compressed data.
+    #[cfg(feature = "embedded-data")]
     pub fn load_knowledge(&mut self) {
         let knowledge = crate::library_knowledge::load_knowledge();
         self.apply_knowledge(knowledge);
+    }
+
+    /// Load community knowledge from a YAML string.
+    pub fn load_knowledge_from_yaml(&mut self, yaml: &str) -> Result<(), String> {
+        let knowledge = crate::library_knowledge::load_knowledge_from_yaml(yaml)?;
+        self.apply_knowledge(knowledge);
+        Ok(())
+    }
+
+    /// Load community knowledge from a JSON string.
+    pub fn load_knowledge_from_json(&mut self, json: &str) -> Result<(), String> {
+        let knowledge = crate::library_knowledge::load_knowledge_from_json(json)?;
+        self.apply_knowledge(knowledge);
+        Ok(())
     }
 
     /// Load test suites
@@ -112,12 +148,46 @@ impl StandardsLibrary {
 mod tests {
     use super::*;
 
+    const FIXTURE_CF_YAML: &str = r#"
+aliases:
+  air_pressure_at_sea_level: air_pressure_at_mean_sea_level
+standard_names:
+  air_pressure_at_mean_sea_level:
+    description: Air pressure at mean sea level
+    unit: Pa
+  sea_surface_wave_mean_period:
+    description: Mean wave period
+    unit: s
+"#;
+
+    const FIXTURE_CF_JSON: &str = r#"{
+  "aliases": {"air_pressure_at_sea_level": "air_pressure_at_mean_sea_level"},
+  "standard_names": {
+    "air_pressure_at_mean_sea_level": {"description": "Air pressure at mean sea level", "unit": "Pa"}
+  }
+}"#;
+
+    const FIXTURE_KNOWLEDGE_YAML: &str = r#"
+- name: air_pressure_at_mean_sea_level
+  long_name: Air Pressure at Sea Level
+  common_variable_names:
+    - pressure
+    - airPressure
+"#;
+
+    const FIXTURE_KNOWLEDGE_JSON: &str = r#"[
+  {"name": "air_pressure_at_mean_sea_level", "long_name": "Air Pressure at Sea Level",
+   "common_variable_names": ["pressure"]}
+]"#;
+
+    #[cfg(feature = "embedded-data")]
     #[test]
     fn can_load_standards() {
         let mut library = StandardsLibrary::default();
         library.load_cf_standards();
     }
 
+    #[cfg(feature = "embedded-data")]
     #[test]
     fn can_get_standard() {
         let mut library = StandardsLibrary::default();
@@ -126,6 +196,7 @@ mod tests {
         assert_eq!(pressure.name, "air_pressure_at_mean_sea_level");
     }
 
+    #[cfg(feature = "embedded-data")]
     #[test]
     fn can_get_standard_by_alias() {
         let mut library = StandardsLibrary::default();
@@ -134,6 +205,7 @@ mod tests {
         assert_eq!(pressure.name, "air_pressure_at_mean_sea_level");
     }
 
+    #[cfg(feature = "embedded-data")]
     #[test]
     fn can_apply_knowledge() {
         let mut library = StandardsLibrary::default();
@@ -160,6 +232,7 @@ mod tests {
         assert_ne!(pressure, updated_pressure);
     }
 
+    #[cfg(feature = "embedded-data")]
     #[test]
     fn can_find_by_variable_name() {
         let mut library = StandardsLibrary::default();
@@ -178,6 +251,7 @@ mod tests {
         assert_eq!(pressure.name, "air_pressure_at_mean_sea_level");
     }
 
+    #[cfg(feature = "embedded-data")]
     #[test]
     fn can_find_by_variable_name_case_insensitive() {
         let mut library = StandardsLibrary::default();
@@ -213,5 +287,63 @@ mod tests {
         let filtered = library.filter().by_variable_name("AIR_PRESSURE");
         assert_eq!(filtered.standards.len(), 1);
         assert_eq!(filtered.standards[0].name, "air_pressure_at_mean_sea_level");
+    }
+
+    #[test]
+    fn load_cf_standards_from_yaml_works() {
+        let mut library = StandardsLibrary::default();
+        library
+            .load_cf_standards_from_yaml(FIXTURE_CF_YAML)
+            .unwrap();
+        let pressure = library.get("air_pressure_at_mean_sea_level").unwrap();
+        assert_eq!(pressure.unit, "Pa");
+        assert!(pressure
+            .aliases
+            .contains(&"air_pressure_at_sea_level".to_string()));
+    }
+
+    #[test]
+    fn load_cf_standards_from_json_works() {
+        let mut library = StandardsLibrary::default();
+        library
+            .load_cf_standards_from_json(FIXTURE_CF_JSON)
+            .unwrap();
+        let pressure = library.get("air_pressure_at_mean_sea_level").unwrap();
+        assert_eq!(pressure.unit, "Pa");
+    }
+
+    #[test]
+    fn load_knowledge_from_yaml_works() {
+        let mut library = StandardsLibrary::default();
+        library
+            .load_cf_standards_from_yaml(FIXTURE_CF_YAML)
+            .unwrap();
+        library
+            .load_knowledge_from_yaml(FIXTURE_KNOWLEDGE_YAML)
+            .unwrap();
+        let pressure = library.get("air_pressure_at_mean_sea_level").unwrap();
+        assert_eq!(
+            pressure.long_name.as_deref(),
+            Some("Air Pressure at Sea Level")
+        );
+        assert!(pressure
+            .common_variable_names
+            .contains(&"pressure".to_string()));
+    }
+
+    #[test]
+    fn load_knowledge_from_json_works() {
+        let mut library = StandardsLibrary::default();
+        library
+            .load_cf_standards_from_yaml(FIXTURE_CF_YAML)
+            .unwrap();
+        library
+            .load_knowledge_from_json(FIXTURE_KNOWLEDGE_JSON)
+            .unwrap();
+        let pressure = library.get("air_pressure_at_mean_sea_level").unwrap();
+        assert_eq!(
+            pressure.long_name.as_deref(),
+            Some("Air Pressure at Sea Level")
+        );
     }
 }

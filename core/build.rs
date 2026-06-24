@@ -124,8 +124,10 @@ fn write_knowledge() {
 }
 
 fn main() {
-    write_cf_standards_from_yaml();
-    write_knowledge();
+    if std::env::var("CARGO_FEATURE_EMBEDDED_DATA").is_ok() {
+        write_cf_standards_from_yaml();
+        write_knowledge();
+    }
 
     println!("cargo::rerun-if-changed=build.rs");
     println!("cargo::rerun-if-changed=standards/")
