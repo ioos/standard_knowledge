@@ -4,9 +4,9 @@ use std::collections::HashMap;
 
 use wasm_bindgen::prelude::*;
 
-// Initialize panic hook for better error messages
 #[wasm_bindgen(start)]
 pub fn start() {
+    #[cfg(feature = "console_error_panic_hook")]
     console_error_panic_hook::set_once();
 }
 
