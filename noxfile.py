@@ -7,6 +7,7 @@ bump versions for release."""
 
 import argparse
 import os
+import tomllib
 
 import nox
 import yaml
@@ -68,6 +69,19 @@ def release(session: nox.Session) -> None:
 
     session.log(f"Bumping the {version!r} version")
     session.run("cargo", "set-version", "--bump", version, external=True)
+
+    with open("Cargo.toml", "rb") as f:
+        new_version = tomllib.load(f)["workspace"]["package"]["version"]
+    session.log(f"Syncing standard_knowledge_data to version {new_version}")
+    session.run(
+        "npm",
+        "version",
+        new_version,
+        "--no-git-tag-version",
+        "--prefix",
+        "js-data-pkg",
+        external=True,
+    )
 
 
 @nox.session(python=python_versions)
@@ -221,7 +235,15 @@ def js_test(session: nox.Session) -> None:
     and the packaged-tarball smoke test.
 
     Mirrors the ``test`` job in ``.github/workflows/javascript.yml``.
+    Generates data/ first (gen-data.mjs reads from it).
     """
+    session.run(
+        "uv",
+        "run",
+        "--script",
+        "utils/generate_partitions.py",
+        external=True,
+    )
     session.cd("js")
     session.run("npm", "ci", external=True)
     session.run("npm", "run", "wasm", external=True)
@@ -282,12 +304,19 @@ def find_standards(session: nox.Session) -> None:
 def data_pkg_build(session: nox.Session) -> None:
     """Build the standard_knowledge_data npm package.
 
-    Reads core/standards/*.yaml and emits tree-shakable ESM modules to
-    data-pkg/ (all-standards.js, all-knowledge.js, partitions/{slug}.js).
+    Runs generate_partitions.py first, then emits tree-shakable ESM modules to
+    js-data-pkg/ (all-standards.js, all-knowledge.js, partitions/{slug}.js).
     Output is gitignored; CI regenerates it before publishing.
 
     Run: nox -s data_pkg_build
     """
+    session.run(
+        "uv",
+        "run",
+        "--script",
+        "utils/generate_partitions.py",
+        external=True,
+    )
     session.cd("js-data-pkg")
     session.run("npm", "ci", external=True)
     session.run("npm", "run", "build", external=True)

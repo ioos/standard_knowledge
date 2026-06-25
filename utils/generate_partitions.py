@@ -8,6 +8,7 @@ Generate per-IOOS-category, all-knowledge, and all-standards partition
 files from core/standards/*.yaml.
 
 Writes compact JSON and human-readable YAML to data/:
+  data/cf_standards.yaml                  — raw CF vocabulary YAML (for JS YAML-ingestion path)
   data/all-standards.{json,yaml}          — full CF vocabulary
   data/all-knowledge.{json,yaml}          — CF standards with knowledge + all knowledge
   data/partitions/{category}.{json,yaml}  — per-IOOS-category subset (self-contained)
@@ -27,6 +28,7 @@ Run: uv run --script utils/generate_partitions.py
 
 import json
 import re
+import shutil
 from pathlib import Path
 
 import yaml
@@ -112,6 +114,11 @@ def emit(stem: Path, data: dict) -> None:
 def main() -> None:
     cf = load_cf()
     knowledge = load_knowledge()
+
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+    # 0. Raw CF YAML — needed by gen-data.mjs (JS YAML-ingestion path)
+    shutil.copy(STANDARDS_DIR / "_cf_standards.yaml", DATA_DIR / "cf_standards.yaml")
 
     # 1. all-standards — the full CF vocabulary (no knowledge enrichment)
     emit(
