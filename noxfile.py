@@ -278,5 +278,20 @@ def find_standards(session: nox.Session) -> None:
     )
 
 
+@nox.session(python=False, default=False)
+def data_pkg_build(session: nox.Session) -> None:
+    """Build the standard_knowledge_data npm package.
+
+    Reads core/standards/*.yaml and emits tree-shakable ESM modules to
+    data-pkg/ (all-standards.js, all-knowledge.js, partitions/{slug}.js).
+    Output is gitignored; CI regenerates it before publishing.
+
+    Run: nox -s data_pkg_build
+    """
+    session.cd("js-data-pkg")
+    session.run("npm", "ci", external=True)
+    session.run("npm", "run", "build", external=True)
+
+
 if __name__ == "__main__":
     nox.main()

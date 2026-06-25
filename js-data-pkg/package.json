@@ -1,0 +1,33 @@
+{
+	"name": "standard_knowledge_data",
+	"version": "0.1.1",
+	"description": "Pre-generated IOOS community knowledge and CF standard name partitions as tree-shakable ESM modules",
+	"type": "module",
+	"exports": {
+		"./*": "./*.js",
+		"./partitions/*": "./partitions/*.js"
+	},
+	"files": [
+		"*.js",
+		"partitions/"
+	],
+	"scripts": {
+		"build": "node scripts/build.mjs"
+	},
+	"devDependencies": {
+		"yaml": "^2.7.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ioos/standard-knowledge.git",
+		"directory": "js-data-pkg"
+	},
+	"license": "Apache-2.0",
+	"keywords": [
+		"ioos",
+		"oceanography",
+		"standards",
+		"cf-conventions",
+		"qartod"
+	]
+}
