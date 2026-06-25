@@ -11,18 +11,23 @@ pub struct Knowledge {
     pub ioos_category: Option<String>,
 
     /// Common variable names in a dataset
+    #[serde(default)]
     pub common_variable_names: Vec<String>,
 
     /// Other standards to consider
+    #[serde(default)]
     pub related_standards: Vec<String>,
 
     /// Standards that are usually used together
+    #[serde(default)]
     pub sibling_standards: Vec<String>,
 
     /// Extra attributes that are usually included in Xarray or NetCDF metadata
+    #[serde(default)]
     pub extra_attrs: BTreeMap<String, String>,
 
     /// Other units that may be seen
+    #[serde(default)]
     pub other_units: Vec<String>,
 
     /// Community comments on standard usage
