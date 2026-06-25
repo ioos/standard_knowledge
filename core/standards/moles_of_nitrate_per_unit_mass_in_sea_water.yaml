@@ -1,0 +1,6 @@
+common_variable_names:
+- nitrate
+- nitrate_adjusted
+- ntaw
+ioos_category: Dissolved Nutrients
+standard_name: moles_of_nitrate_per_unit_mass_in_sea_water

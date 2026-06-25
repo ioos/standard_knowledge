@@ -1,0 +1,9 @@
+common_variable_names:
+- lwrad_down
+- lwn_1136
+- cfnlf
+- ql_136
+- csdlf
+- ql
+ioos_category: Other
+standard_name: surface_net_downward_longwave_flux

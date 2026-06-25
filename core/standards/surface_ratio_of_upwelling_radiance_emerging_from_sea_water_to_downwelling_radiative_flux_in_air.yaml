@@ -1,0 +1,4 @@
+common_variable_names:
+- rrs
+ioos_category: Optical Properties
+standard_name: surface_ratio_of_upwelling_radiance_emerging_from_sea_water_to_downwelling_radiative_flux_in_air

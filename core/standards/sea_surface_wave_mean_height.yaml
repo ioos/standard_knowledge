@@ -1,0 +1,4 @@
+common_variable_names:
+- sea_surface_wave_mean_height
+ioos_category: Surface Waves
+standard_name: sea_surface_wave_mean_height

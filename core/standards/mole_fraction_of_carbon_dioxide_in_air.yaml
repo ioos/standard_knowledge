@@ -1,0 +1,7 @@
+common_variable_names:
+- xco2_atm_dry_interp
+- xco2_atm_dry_actual
+- gvco2
+- co2
+ioos_category: CO2
+standard_name: mole_fraction_of_carbon_dioxide_in_air

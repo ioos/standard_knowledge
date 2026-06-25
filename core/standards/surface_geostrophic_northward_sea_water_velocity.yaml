@@ -1,0 +1,7 @@
+common_variable_names:
+- vgos
+- vinside_cyclo
+- vinside_anti
+- v_current
+ioos_category: Currents
+standard_name: surface_geostrophic_northward_sea_water_velocity

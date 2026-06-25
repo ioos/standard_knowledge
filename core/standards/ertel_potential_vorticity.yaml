@@ -1,0 +1,4 @@
+common_variable_names:
+- pvort
+ioos_category: Time
+standard_name: ertel_potential_vorticity

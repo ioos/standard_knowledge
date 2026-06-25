@@ -1,0 +1,5 @@
+common_variable_names:
+- s_w
+- s_rho
+ioos_category: Location
+standard_name: ocean_s_coordinate_g2

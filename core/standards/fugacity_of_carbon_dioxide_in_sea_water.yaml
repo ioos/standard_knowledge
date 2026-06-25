@@ -1,0 +1,6 @@
+common_variable_names:
+- fco2_sw_sat
+- sw_fco2_wet
+- fco2
+ioos_category: CO2
+standard_name: fugacity_of_carbon_dioxide_in_sea_water

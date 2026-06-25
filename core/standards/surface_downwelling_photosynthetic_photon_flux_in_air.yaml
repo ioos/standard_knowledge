@@ -1,0 +1,12 @@
+common_variable_names:
+- par_air
+- surface_downwelling_photosynthetic_photon_flux_in_air
+- lgh4
+- par
+- surface_downwelling_photosynthetic_photon_flux_in_air_cm_time__sum_over_pt15m
+- photosynthetic_radiation
+- surface_par_den
+- surface_downwelling_photosynthetic_photon_flux_in_air_cm_time__mean
+- par5minutetotal
+ioos_category: Unknown
+standard_name: surface_downwelling_photosynthetic_photon_flux_in_air

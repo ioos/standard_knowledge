@@ -1,0 +1,4 @@
+common_variable_names:
+- weasd
+ioos_category: Ice Distribution
+standard_name: surface_snow_amount

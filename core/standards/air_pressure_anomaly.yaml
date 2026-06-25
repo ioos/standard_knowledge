@@ -1,0 +1,4 @@
+common_variable_names:
+- pres # codespell:ignore
+ioos_category: Pressure
+standard_name: air_pressure_anomaly

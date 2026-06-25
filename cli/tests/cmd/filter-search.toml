@@ -32,7 +32,6 @@ stdout = """
 - histogram_of_backscattering_ratio_in_air_over_height_above_reference_ellipsoid - 1
 - histogram_of_equivalent_reflectivity_factor_over_height_above_reference_ellipsoid - 1
 - magnitude_of_sea_ice_displacement - m
-- mass_flux_of_carbon_from_biomass_into_geological_storage - kg m-2 s-1
 - northward_northward_derivative_of_geopotential - s-2
 - northward_sea_ice_displacement - m
 - northward_upward_derivative_of_geopotential - s-2
@@ -47,7 +46,6 @@ stdout = """
 - scene_type_of_dvorak_tropical_cyclone_eye_region - 1
 - sea_floor_depth_below_geoid - m
 - sea_floor_depth_below_geopotential_datum - m
-- sea_floor_sediment_age_before_1950 - s
 - sea_ice_x_displacement - m
 - sea_ice_y_displacement - m
 - sea_surface_height_above_geoid - m

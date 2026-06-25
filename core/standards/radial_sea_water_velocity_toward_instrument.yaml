@@ -1,0 +1,4 @@
+common_variable_names:
+- velo
+ioos_category: Currents
+standard_name: radial_sea_water_velocity_toward_instrument

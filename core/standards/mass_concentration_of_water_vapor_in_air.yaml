@@ -1,0 +1,4 @@
+common_variable_names:
+- humidity
+ioos_category: Meteorology
+standard_name: mass_concentration_of_water_vapor_in_air

@@ -1,0 +1,4 @@
+common_variable_names:
+- cdom
+ioos_category: Unknown
+standard_name: concentration_of_colored_dissolved_organic_matter_in_sea_water

@@ -1,0 +1,4 @@
+common_variable_names:
+- pr_wtr
+ioos_category: Meteorology
+standard_name: atmosphere_mass_content_of_water

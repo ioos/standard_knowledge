@@ -1,0 +1,5 @@
+common_variable_names:
+- vflx
+- momentum_flux_v_component_surface
+ioos_category: Wind
+standard_name: downward_northward_momentum_flux_in_air

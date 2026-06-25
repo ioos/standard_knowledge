@@ -1,0 +1,7 @@
+common_variable_names:
+- radiation_wavelength
+- absorbance_350nm
+- absorbance_254nm
+- wavelength
+ioos_category: Other
+standard_name: radiation_wavelength

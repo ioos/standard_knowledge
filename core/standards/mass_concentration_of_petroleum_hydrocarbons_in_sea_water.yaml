@@ -1,0 +1,4 @@
+common_variable_names:
+- crudeoil
+ioos_category: Unknown
+standard_name: mass_concentration_of_petroleum_hydrocarbons_in_sea_water

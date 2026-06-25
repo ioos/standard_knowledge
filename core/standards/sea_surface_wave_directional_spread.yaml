@@ -1,0 +1,9 @@
+common_variable_names:
+- sea_surface_wave_directional_spread
+- wave_spread
+- meandirectionalspread
+- peakspread
+- wave_directional_spread
+- directional_spread
+ioos_category: Surface Waves
+standard_name: sea_surface_wave_directional_spread

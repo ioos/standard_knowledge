@@ -1,0 +1,5 @@
+common_variable_names:
+- uflx
+- momentum_flux_u_component_surface
+ioos_category: Wind
+standard_name: downward_eastward_momentum_flux_in_air

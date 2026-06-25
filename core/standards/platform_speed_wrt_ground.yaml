@@ -1,0 +1,18 @@
+common_variable_names:
+- speed_over_ground
+- sog
+- sog_filtered
+- ship_speed
+- m_speed
+- zonal_bottom_track_velocity
+- vertical_bottom_track_velocity
+- meridional_bottom_track_velocity
+- calc_speed
+- gps_speed_over_ground
+- speed_over_ground_north
+- speed_over_ground_east
+- speedoverground
+- speed
+- ground_speed
+ioos_category: Currents
+standard_name: platform_speed_wrt_ground

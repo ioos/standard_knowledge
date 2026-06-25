@@ -1,0 +1,13 @@
+common_variable_names:
+- slp
+- pres # codespell:ignore
+- pair
+- vertical_velocity_pressure_isobaric
+- stationairpressure
+- pressure_surface
+- pressure_adiabatic_condensation_lifted
+- licor_atm_pressure
+- barometric_pressure
+- atmosphericpressure
+ioos_category: Pressure
+standard_name: surface_air_pressure

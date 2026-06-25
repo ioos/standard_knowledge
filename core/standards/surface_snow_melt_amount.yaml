@@ -1,0 +1,4 @@
+common_variable_names:
+- snom
+ioos_category: Ice Distribution
+standard_name: surface_snow_melt_amount

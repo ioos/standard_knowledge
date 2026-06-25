@@ -1,0 +1,16 @@
+common_variable_names:
+- water_body_phosphate_deepest_depth
+- qf_var_4
+- phosphate
+- po4_filt_um_l
+- water_body_phosphate_deepest
+- g2phosphatef
+- g2phosphate
+- upperlimitofphosphatedepthrange_m
+- phosphatef
+- phosphate_phosphorus_umol_l
+- phosphate_phosphorus_umol_kg
+- phosphate_phosphorus
+- llpd
+ioos_category: Dissolved Nutrients
+standard_name: mass_concentration_of_phosphate_in_sea_water

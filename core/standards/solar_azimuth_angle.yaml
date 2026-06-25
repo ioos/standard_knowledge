@@ -1,0 +1,3 @@
+common_variable_names:
+- sol_azimuth
+standard_name: solar_azimuth_angle

@@ -1,0 +1,5 @@
+common_variable_names:
+- cloud_lw_descending
+- cloud_lw_ascending
+ioos_category: Meteorology
+standard_name: atmosphere_mass_content_of_cloud_liquid_water

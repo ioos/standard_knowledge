@@ -1,0 +1,9 @@
+common_variable_names:
+- water_surface_height_above_reference_datum_above_localstationdatum
+- water_surface_height_above_reference_datum_above_navd88
+- slev
+- wl_value
+- water_level
+- mean
+ioos_category: Hydrology
+standard_name: water_surface_height_above_reference_datum

@@ -1,0 +1,4 @@
+common_variable_names:
+- eastward_sea_ice_velocity
+ioos_category: Currents
+standard_name: eastward_sea_ice_velocity

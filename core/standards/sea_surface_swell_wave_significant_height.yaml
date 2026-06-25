@@ -1,0 +1,8 @@
+common_variable_names:
+- sea_surface_swell_wave_significant_height
+- shgt
+- significant_height_of_swell_waves_surface
+- significant_height_of_combined_wind_waves_and_swell_surface
+- waveheight
+ioos_category: Surface Waves
+standard_name: sea_surface_swell_wave_significant_height

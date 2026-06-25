@@ -1,0 +1,4 @@
+common_variable_names:
+- icet
+ioos_category: Ice Distribution
+standard_name: sea_ice_thickness

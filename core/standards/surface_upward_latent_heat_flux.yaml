@@ -1,0 +1,5 @@
+common_variable_names:
+- lhtfl
+- qlat
+ioos_category: Heat Flux
+standard_name: surface_upward_latent_heat_flux

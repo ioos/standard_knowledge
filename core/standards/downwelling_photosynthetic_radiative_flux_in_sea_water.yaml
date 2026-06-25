@@ -1,0 +1,5 @@
+common_variable_names:
+- par_905
+- par
+ioos_category: Unknown
+standard_name: downwelling_photosynthetic_radiative_flux_in_sea_water

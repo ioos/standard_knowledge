@@ -1,0 +1,5 @@
+common_variable_names:
+- weasd
+- water_equivalent_of_accumulated_snow_depth_surface
+ioos_category: Ice Distribution
+standard_name: liquid_water_content_of_surface_snow

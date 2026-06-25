@@ -1,0 +1,4 @@
+common_variable_names:
+- longwaveatmradiation
+ioos_category: Heat Flux
+standard_name: surface_upwelling_longwave_flux_in_air

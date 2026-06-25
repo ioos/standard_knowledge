@@ -1,0 +1,4 @@
+common_variable_names:
+- veg
+ioos_category: Biology
+standard_name: vegetation_area_fraction

@@ -1,0 +1,5 @@
+common_variable_names:
+- m_altitude
+- cl1
+ioos_category: Other
+standard_name: cloud_base_altitude

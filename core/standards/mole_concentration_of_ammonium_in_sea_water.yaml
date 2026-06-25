@@ -1,0 +1,28 @@
+common_variable_names:
+- mole_concentration_of_ammonium_in_sea_water
+- concentration_of_ammonium_in_sea_water
+- sea_water_ammonium_concentration
+- nh4_1923
+- ammonium
+- nh4_um_l
+- nh4_1924
+- water_body_ammonium
+- water_body_ammonium_deepest
+- nh4_1925
+- nh4
+- mole_concentration_of_ammonium_in_sea_water_micromol_l
+- wc_nh4
+- water_body_ammonium_deepest_depth
+- upperlimitofammoniumdepthrange_m
+- nh4_1995
+- llad
+- ic_nh4_super1_lod
+- ic_nh4_super1_conc
+- ic_nh4_super1_blank
+- ic_nh4_sub1_lod
+- ic_nh4_sub1_conc
+- ic_nh4_sub1_blank
+- ammonium_nitrogen_umol_l
+- ammonium_nitrogen_umol_kg
+ioos_category: Dissolved Nutrients
+standard_name: mole_concentration_of_ammonium_in_sea_water

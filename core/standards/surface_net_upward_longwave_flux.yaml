@@ -1,0 +1,5 @@
+common_variable_names:
+- lwnet
+- csulf
+ioos_category: Heat Flux
+standard_name: surface_net_upward_longwave_flux

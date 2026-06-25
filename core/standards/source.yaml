@@ -1,0 +1,4 @@
+common_variable_names:
+- seaice_source
+ioos_category: Other
+standard_name: source

@@ -1,0 +1,5 @@
+common_variable_names:
+- wave_period_max
+- sea_surface_wave_maximum_period
+ioos_category: Surface Waves
+standard_name: sea_surface_wave_maximum_period

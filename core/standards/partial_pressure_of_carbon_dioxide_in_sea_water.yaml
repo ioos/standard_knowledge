@@ -1,0 +1,10 @@
+common_variable_names:
+- partial_pressure
+- pco2
+- partial_pressure_of_carbon_dioxide_in_sea_water
+- pco2_in_pa
+- pco2_uatm
+- partial_pressure_of_carbon_dioxide_in_sea_water_profiler_depth_enabled
+- contros_pco2
+ioos_category: CO2
+standard_name: partial_pressure_of_carbon_dioxide_in_sea_water

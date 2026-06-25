@@ -1,0 +1,5 @@
+common_variable_names:
+- ic_so4_sub1
+- ic_so4_super1
+ioos_category: Optical Properties
+standard_name: mass_concentration_of_sulfate_dry_aerosol_particles_in_air

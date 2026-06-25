@@ -1,0 +1,4 @@
+common_variable_names:
+- sea_ice_speed
+ioos_category: Currents
+standard_name: sea_ice_speed

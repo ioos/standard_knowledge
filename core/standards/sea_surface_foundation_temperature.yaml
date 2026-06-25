@@ -1,0 +1,6 @@
+common_variable_names:
+- analysed_sst
+- sst
+- mean_sst
+ioos_category: Temperature
+standard_name: sea_surface_foundation_temperature

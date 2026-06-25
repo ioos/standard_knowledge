@@ -1,0 +1,3 @@
+common_variable_names:
+- bbp700
+standard_name: acoustic_volume_backscattering_strength_in_sea_water

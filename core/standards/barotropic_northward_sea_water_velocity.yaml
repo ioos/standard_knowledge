@@ -1,0 +1,4 @@
+common_variable_names:
+- water_velocity_northward
+ioos_category: Other
+standard_name: barotropic_northward_sea_water_velocity

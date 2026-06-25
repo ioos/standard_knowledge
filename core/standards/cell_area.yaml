@@ -1,0 +1,5 @@
+common_variable_names:
+- cell_area
+- gridcell_area_2d
+ioos_category: Unknown
+standard_name: cell_area

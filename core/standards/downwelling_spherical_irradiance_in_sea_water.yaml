@@ -1,0 +1,5 @@
+common_variable_names:
+- ed532
+- ed490
+- ed380
+standard_name: downwelling_spherical_irradiance_in_sea_water

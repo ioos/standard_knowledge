@@ -1,0 +1,7 @@
+common_variable_names:
+- rain
+- pratesfc
+- prate
+- precip
+ioos_category: Meteorology
+standard_name: precipitation_flux

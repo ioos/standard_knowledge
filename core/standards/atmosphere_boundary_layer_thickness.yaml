@@ -1,0 +1,4 @@
+common_variable_names:
+- hpbl
+ioos_category: Time
+standard_name: atmosphere_boundary_layer_thickness

@@ -1,0 +1,12 @@
+common_variable_names:
+- shum
+- specific_humidity
+- qq_h
+- specific_humidity_surface
+- specific_humidity_pressure_difference_layer
+- specific_humidity_isobaric
+- specific_humidity_hybrid
+- qair
+- coare35_specific_humidity
+ioos_category: Meteorology
+standard_name: specific_humidity

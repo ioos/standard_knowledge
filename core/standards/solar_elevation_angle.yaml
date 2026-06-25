@@ -1,0 +1,3 @@
+common_variable_names:
+- sol_altitude
+standard_name: solar_elevation_angle

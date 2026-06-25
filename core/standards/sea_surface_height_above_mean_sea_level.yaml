@@ -1,0 +1,5 @@
+common_variable_names:
+- ssha
+- ssh
+ioos_category: Sea Level
+standard_name: sea_surface_height_above_mean_sea_level

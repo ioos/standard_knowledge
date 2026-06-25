@@ -1,0 +1,5 @@
+common_variable_names:
+- land
+- lfrac
+ioos_category: Identifier
+standard_name: land_area_fraction

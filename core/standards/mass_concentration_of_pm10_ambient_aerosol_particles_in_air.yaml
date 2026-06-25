@@ -1,0 +1,3 @@
+common_variable_names:
+- mass_concentration_of_pm10_ambient_aerosol_particles_in_air
+standard_name: mass_concentration_of_pm10_ambient_aerosol_particles_in_air

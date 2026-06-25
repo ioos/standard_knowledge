@@ -1,0 +1,4 @@
+common_variable_names:
+- mixing_ratio
+ioos_category: Other
+standard_name: humidity_mixing_ratio

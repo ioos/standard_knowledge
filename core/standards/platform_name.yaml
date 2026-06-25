@@ -1,0 +1,11 @@
+common_variable_names:
+- platform_name
+- stationname
+- platform
+- station
+- vessel_name
+- station_id
+- metastationname
+- stn_nam
+ioos_category: Identifier
+standard_name: platform_name

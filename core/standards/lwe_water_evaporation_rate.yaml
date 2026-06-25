@@ -1,0 +1,6 @@
+common_variable_names:
+- pevpr
+- e_250
+- lwe_water_evaporation_rate
+ioos_category: Meteorology
+standard_name: lwe_water_evaporation_rate

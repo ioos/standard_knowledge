@@ -1,0 +1,20 @@
+common_variable_names:
+- temperature_oxygen
+- oxy4_temp
+- internal_instrument_temperature
+- oxy3835_wphase_temp
+- oxy3835_temp
+- temp_doxy
+- ancil2_std_temp
+- ancil2_last_temp
+- ancil1_tr_temp
+- optode_water_temperature
+- average_pressuresensortemperature
+- oxygen_concentration
+- doxy_temp
+- temperature_of_sensor_for_oxygen
+- oxytaaop
+- o2_temperature
+- o2_temp
+ioos_category: Other
+standard_name: temperature_of_sensor_for_oxygen_in_sea_water

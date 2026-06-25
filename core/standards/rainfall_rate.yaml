@@ -1,0 +1,8 @@
+common_variable_names:
+- rain_rate
+- rainrate
+- rain
+- rainfall_rate
+- precip_int
+ioos_category: Meteorology
+standard_name: rainfall_rate

@@ -1,0 +1,4 @@
+common_variable_names:
+- direction_of_sea_ice_velocity
+ioos_category: Currents
+standard_name: direction_of_sea_ice_velocity

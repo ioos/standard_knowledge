@@ -1,0 +1,3 @@
+common_variable_names:
+- ad2cp_roll
+standard_name: platform_roll_starboard_down

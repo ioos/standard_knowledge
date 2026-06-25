@@ -1,0 +1,4 @@
+common_variable_names:
+- cdom_fluorometer
+ioos_category: Unknown
+standard_name: ocean_mass_content_of_dissolved_organic_carbon

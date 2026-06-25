@@ -1,0 +1,21 @@
+common_variable_names:
+- uwnd
+- eastward_wind
+- wind_u
+- wnd_vcmp_height_above_ground
+- wnd_ucmp_height_above_ground
+- uwind
+- ugrd10m
+- u_wind
+- uwnd_descending
+- uwnd_ascending
+- wspu
+- u_component_of_wind_maximum_wind
+- eastward_wind_8451met_a
+- wu_422
+- wspe
+- uwnd_corr
+- qvflux
+- quflux
+ioos_category: Wind
+standard_name: eastward_wind

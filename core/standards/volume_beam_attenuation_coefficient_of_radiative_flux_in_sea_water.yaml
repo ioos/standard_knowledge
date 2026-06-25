@@ -1,0 +1,15 @@
+common_variable_names:
+- beam_attenuation
+- attn
+- bat
+- csbat
+- beamattenuation
+- beam_attenuation_down
+- beam_attenuation_up
+- attenuation
+- volume_beam_attenuation_coefficient_of_radiative_flux_in_sea_water
+- lisst_beamc
+- attenuation_coefficient_at
+- transmission
+ioos_category: Optical Properties
+standard_name: volume_beam_attenuation_coefficient_of_radiative_flux_in_sea_water

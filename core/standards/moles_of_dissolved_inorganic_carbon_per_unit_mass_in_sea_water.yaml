@@ -1,0 +1,5 @@
+common_variable_names:
+- moles_of_dissolved_inorganic_carbon_per_unit_mass_in_sea_water
+- ticw
+ioos_category: CO2
+standard_name: moles_of_dissolved_inorganic_carbon_per_unit_mass_in_sea_water

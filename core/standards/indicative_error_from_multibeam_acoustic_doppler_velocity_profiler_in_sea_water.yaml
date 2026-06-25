@@ -1,0 +1,5 @@
+common_variable_names:
+- lerrap
+- ervv
+ioos_category: Currents
+standard_name: indicative_error_from_multibeam_acoustic_doppler_velocity_profiler_in_sea_water

@@ -1,0 +1,4 @@
+common_variable_names:
+- ozone
+ioos_category: Contaminants
+standard_name: mole_fraction_of_ozone_in_air

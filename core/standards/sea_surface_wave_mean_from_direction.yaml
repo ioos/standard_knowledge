@@ -1,0 +1,7 @@
+common_variable_names:
+- mdir
+- mean_wave_direction
+- wdir
+- wave_mean_direction
+ioos_category: Surface Waves
+standard_name: sea_surface_wave_mean_from_direction

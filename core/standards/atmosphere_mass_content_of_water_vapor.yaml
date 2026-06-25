@@ -1,0 +1,5 @@
+common_variable_names:
+- water_vapor_descending
+- water_vapor_ascending
+ioos_category: Meteorology
+standard_name: atmosphere_mass_content_of_water_vapor

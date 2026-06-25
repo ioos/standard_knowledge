@@ -1,0 +1,5 @@
+common_variable_names:
+- sea_water_salinity_at_sea_floor
+- salinity_at_sea_floor
+ioos_category: Salinity
+standard_name: sea_water_practical_salinity_at_sea_floor

@@ -1,0 +1,10 @@
+common_variable_names:
+- temp_ir_sea_wing_uncomp
+- sea_surface_temperature
+- temp_ir_uncomp
+- temp_ir_uncor
+- tskin
+- sst
+- temp_ir_sea_hull_uncomp
+ioos_category: Temperature
+standard_name: sea_surface_skin_temperature

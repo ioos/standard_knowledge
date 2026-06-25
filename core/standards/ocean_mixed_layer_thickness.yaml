@@ -1,0 +1,6 @@
+common_variable_names:
+- omld
+- mlp
+- mld
+ioos_category: Physical Oceanography
+standard_name: ocean_mixed_layer_thickness

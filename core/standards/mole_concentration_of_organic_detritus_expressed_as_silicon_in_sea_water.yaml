@@ -1,0 +1,4 @@
+common_variable_names:
+- biogenic_silicon
+ioos_category: dissolved_nutrients
+standard_name: mole_concentration_of_organic_detritus_expressed_as_silicon_in_sea_water

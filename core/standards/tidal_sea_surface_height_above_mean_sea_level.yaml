@@ -1,0 +1,4 @@
+common_variable_names:
+- msl_meters
+ioos_category: Sea Level
+standard_name: tidal_sea_surface_height_above_mean_sea_level

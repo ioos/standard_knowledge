@@ -1,0 +1,14 @@
+common_variable_names:
+- sea_water_absolute_salinity
+- salinity
+- salt
+- abs_salinity
+- asal
+- absolute_salinity
+- abs_salinity_lag_correct
+- amon
+- sa
+- global_ppabsal
+- global_mwabsal
+ioos_category: Salinity
+standard_name: sea_water_absolute_salinity

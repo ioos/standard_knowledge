@@ -1,0 +1,4 @@
+common_variable_names:
+- sbsno
+ioos_category: Heat Flux
+standard_name: surface_snow_sublimation_heat_flux

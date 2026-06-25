@@ -1,0 +1,4 @@
+common_variable_names:
+- qt_210
+ioos_category: Heat Flux
+standard_name: surface_downward_heat_flux_in_sea_water

@@ -1,0 +1,18 @@
+common_variable_names:
+- mole_concentration_of_silicate_in_sea_water
+- water_body_silicate_deepest
+- si_range
+- si_min
+- si_mean
+- si_max
+- si_ltmin
+- si_ltmax
+- water_body_silicate
+- var_6
+- sea_water_silicate_concentration
+- silicon
+- si
+- silicate_sio4_mol_l
+- silicate
+ioos_category: Dissolved Nutrients
+standard_name: mole_concentration_of_silicate_in_sea_water

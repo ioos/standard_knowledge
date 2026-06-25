@@ -1,0 +1,9 @@
+common_variable_names:
+- lght
+- downwelling_photosynthetic_photon_flux_in_sea_water
+- par
+- downwelling_par
+- light
+- underwater_par
+ioos_category: Unknown
+standard_name: downwelling_photosynthetic_photon_flux_in_sea_water

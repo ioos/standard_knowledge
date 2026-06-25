@@ -1,0 +1,7 @@
+common_variable_names:
+- downwelling_shortwave_flux_in_air
+- shortwave_radiation
+- solarrad_std
+- solarrad_avg
+ioos_category: Heat Flux
+standard_name: downwelling_shortwave_flux_in_air

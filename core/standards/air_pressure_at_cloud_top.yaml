@@ -1,0 +1,5 @@
+common_variable_names:
+- pc_ir
+- pc
+- pc_pcdist
+standard_name: air_pressure_at_cloud_top

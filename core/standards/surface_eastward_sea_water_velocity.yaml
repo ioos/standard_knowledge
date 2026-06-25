@@ -1,0 +1,8 @@
+common_variable_names:
+- ewct
+- water_u
+- u
+- su
+- ve
+ioos_category: Currents
+standard_name: surface_eastward_sea_water_velocity

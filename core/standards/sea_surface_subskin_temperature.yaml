@@ -1,0 +1,5 @@
+common_variable_names:
+- sea_surface_temperature
+- sst
+ioos_category: Temperature
+standard_name: sea_surface_subskin_temperature

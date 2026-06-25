@@ -1,0 +1,5 @@
+common_variable_names:
+- runoff
+- runof
+ioos_category: Hydrology
+standard_name: surface_runoff_amount

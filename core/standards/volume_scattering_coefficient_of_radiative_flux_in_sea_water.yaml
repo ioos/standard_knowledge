@@ -1,0 +1,6 @@
+common_variable_names:
+- backscatter
+- volume_scattering_at
+- total_volume_scattering_at
+ioos_category: Other
+standard_name: volume_scattering_coefficient_of_radiative_flux_in_sea_water

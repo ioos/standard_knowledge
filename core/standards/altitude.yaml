@@ -1,0 +1,15 @@
+common_variable_names:
+- z
+- altitude
+- elevation
+- m_altitude
+- level
+- height
+- zlev
+- height_above_floor
+- altitude_ft
+- water_level_height
+- altitude_result_value_type
+- altitude_m
+ioos_category: Location
+standard_name: altitude

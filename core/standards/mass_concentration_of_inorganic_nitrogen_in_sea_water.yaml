@@ -1,0 +1,4 @@
+common_variable_names:
+- water_body_dissolved_inorganic_nitrogen_28din_29
+ioos_category: Statistics
+standard_name: mass_concentration_of_inorganic_nitrogen_in_sea_water

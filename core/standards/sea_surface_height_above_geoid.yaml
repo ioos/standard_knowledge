@@ -1,0 +1,8 @@
+common_variable_names:
+- ssh
+- zos
+- sshd
+- water_surface_elevation
+- sea_surface_height_above_geoid
+ioos_category: sea_level
+standard_name: sea_surface_height_above_geoid

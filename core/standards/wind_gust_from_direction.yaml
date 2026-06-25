@@ -1,0 +1,7 @@
+common_variable_names:
+- wind_gust_from_direction
+- gdir
+- gust_direction
+- wind_spd_gust_dir
+ioos_category: Wind
+standard_name: wind_gust_from_direction

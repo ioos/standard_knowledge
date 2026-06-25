@@ -1,0 +1,4 @@
+common_variable_names:
+- qr_139
+ioos_category: Heat Flux
+standard_name: temperature_flux_due_to_rainfall_expressed_as_heat_flux_into_sea_water

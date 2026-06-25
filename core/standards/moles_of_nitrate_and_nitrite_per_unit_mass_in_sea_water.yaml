@@ -1,0 +1,5 @@
+common_variable_names:
+- n_n
+- nitrate_nitrite
+ioos_category: Dissolved Nutrients
+standard_name: moles_of_nitrate_and_nitrite_per_unit_mass_in_sea_water

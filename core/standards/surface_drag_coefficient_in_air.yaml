@@ -1,0 +1,5 @@
+common_variable_names:
+- ecdrag_coefficient
+- coare35_drag_coefficient
+ioos_category: Unknown
+standard_name: surface_drag_coefficient_in_air

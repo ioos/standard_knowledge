@@ -1,0 +1,10 @@
+common_variable_names:
+- backscatter
+- bbp
+- volume_backwards_scattering_coefficient_of_radiative_flux_in_sea_water
+- volume_backwards_scattering_at
+- total_volume_backwards_scattering_at
+- bb_556
+- backscattering_calculated
+ioos_category: Other
+standard_name: volume_backwards_scattering_coefficient_of_radiative_flux_in_sea_water

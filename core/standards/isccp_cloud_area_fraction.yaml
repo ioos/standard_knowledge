@@ -1,0 +1,5 @@
+common_variable_names:
+- cldamt
+- n_pcdist
+- cldamt_ir
+standard_name: isccp_cloud_area_fraction

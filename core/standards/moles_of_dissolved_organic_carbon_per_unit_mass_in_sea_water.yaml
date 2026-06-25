@@ -1,0 +1,4 @@
+common_variable_names:
+- corg
+ioos_category: Ocean Color
+standard_name: moles_of_dissolved_organic_carbon_per_unit_mass_in_sea_water

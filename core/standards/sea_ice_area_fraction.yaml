@@ -1,0 +1,15 @@
+common_variable_names:
+- sea_ice_fraction
+- ice
+- cdr_seaice_conc_monthly
+- cdr_seaice_conc
+- crw_seaice
+- icec
+- sic
+- nsidc_nt_seaice_conc_monthly
+- nsidc_nt_seaice_conc
+- nsidc_bt_seaice_conc_monthly
+- nsidc_bt_seaice_conc
+- seaice_conc
+ioos_category: Ice Distribution
+standard_name: sea_ice_area_fraction

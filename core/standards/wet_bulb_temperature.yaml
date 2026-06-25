@@ -1,0 +1,6 @@
+common_variable_names:
+- wet_bulb_temperature
+- tw2
+- tw1
+ioos_category: Temperature
+standard_name: wet_bulb_temperature

@@ -1,0 +1,4 @@
+common_variable_names:
+- taxon_name
+ioos_category: Taxonomy
+standard_name: biological_taxon_name

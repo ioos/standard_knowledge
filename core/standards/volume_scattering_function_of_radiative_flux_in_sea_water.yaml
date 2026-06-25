@@ -1,0 +1,10 @@
+common_variable_names:
+- sci_flbbcd_bb_units
+- backscatter
+- vbsc
+- sci_flbbbbv1
+- beta
+- sci_bb2flsv2
+- sci_bb2fls
+ioos_category: Other
+standard_name: volume_scattering_function_of_radiative_flux_in_sea_water

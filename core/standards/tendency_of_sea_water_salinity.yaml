@@ -1,0 +1,4 @@
+common_variable_names:
+- surface_salinity_trend
+ioos_category: Salinity
+standard_name: tendency_of_sea_water_salinity

@@ -1,0 +1,3 @@
+common_variable_names:
+- lw_net_irrad
+standard_name: net_downward_longwave_flux_in_air

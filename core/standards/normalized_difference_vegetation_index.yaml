@@ -1,0 +1,4 @@
+common_variable_names:
+- ndvi
+ioos_category: Biology
+standard_name: normalized_difference_vegetation_index

@@ -1,0 +1,18 @@
+common_variable_names:
+- potential_temperature
+- sea_water_potential_temperature
+- potentialtemperature
+- potemp
+- ptemp
+- potential_temp
+- theta
+- temp
+- potem
+- temperature
+- tpot
+- sea_water_potential_temperature_merc
+- sea_water_potential_temperature_clm
+- pott
+- global_mwpottemp
+ioos_category: Temperature
+standard_name: sea_water_potential_temperature

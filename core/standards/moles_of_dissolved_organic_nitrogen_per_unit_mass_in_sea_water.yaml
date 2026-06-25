@@ -1,0 +1,4 @@
+common_variable_names:
+- nodw
+ioos_category: Unknown
+standard_name: moles_of_dissolved_organic_nitrogen_per_unit_mass_in_sea_water

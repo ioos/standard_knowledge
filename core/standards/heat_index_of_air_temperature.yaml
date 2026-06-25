@@ -1,0 +1,6 @@
+common_variable_names:
+- humidex
+- heatindex
+- heat_index
+ioos_category: Temperature
+standard_name: heat_index_of_air_temperature

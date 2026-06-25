@@ -1,0 +1,5 @@
+common_variable_names:
+- ptdy
+- pres_tend_amt_pst3hrs
+ioos_category: Pressure
+standard_name: tendency_of_air_pressure

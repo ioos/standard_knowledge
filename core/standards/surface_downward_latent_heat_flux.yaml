@@ -1,0 +1,7 @@
+common_variable_names:
+- lhtfl
+- ql_137
+- latent_heat_net_flux_surface
+- lhfx
+ioos_category: Heat Flux
+standard_name: surface_downward_latent_heat_flux

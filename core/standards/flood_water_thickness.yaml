@@ -1,0 +1,9 @@
+common_variable_names:
+- flood
+- flood_static
+- flood_historic_no_mangroves
+- flood_historic_mangroves
+- flood_annual_no_mangroves
+- flood_annual_mangroves
+ioos_category: Sea Level
+standard_name: flood_water_thickness

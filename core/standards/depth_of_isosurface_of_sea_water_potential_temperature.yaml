@@ -1,0 +1,7 @@
+common_variable_names:
+- iso26c
+- iso20c
+- d26
+- d20
+ioos_category: Dissolved O2
+standard_name: depth_of_isosurface_of_sea_water_potential_temperature

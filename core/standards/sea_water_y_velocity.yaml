@@ -1,0 +1,7 @@
+common_variable_names:
+- v
+- vvelocity
+- current_y
+- sea_water_y_velocity
+ioos_category: Currents
+standard_name: sea_water_y_velocity

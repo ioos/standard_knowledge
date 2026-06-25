@@ -1,0 +1,7 @@
+common_variable_names:
+- sea_water_temperature_at_sea_floor
+- temperature_at_sea_floor
+- temperature_at_seafloor
+- temperature_at_lander
+ioos_category: Temperature
+standard_name: sea_water_temperature_at_sea_floor

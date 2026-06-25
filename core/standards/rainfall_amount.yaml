@@ -1,0 +1,5 @@
+common_variable_names:
+- rainfall_amount
+- rain
+ioos_category: Meteorology
+standard_name: rainfall_amount

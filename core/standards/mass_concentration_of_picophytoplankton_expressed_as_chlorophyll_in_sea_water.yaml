@@ -1,0 +1,4 @@
+common_variable_names:
+- chla_gff_3um
+- chla_gff_2um
+standard_name: mass_concentration_of_picophytoplankton_expressed_as_chlorophyll_in_sea_water

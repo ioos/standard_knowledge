@@ -1,0 +1,4 @@
+common_variable_names:
+- gpa
+ioos_category: Temperature
+standard_name: geopotential_height_anomaly

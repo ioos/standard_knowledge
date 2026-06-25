@@ -1,0 +1,8 @@
+common_variable_names:
+- soil_temperature
+- tsoil
+- soil_temp
+- soiltemp
+- earthtemp
+ioos_category: Temperature
+standard_name: soil_temperature

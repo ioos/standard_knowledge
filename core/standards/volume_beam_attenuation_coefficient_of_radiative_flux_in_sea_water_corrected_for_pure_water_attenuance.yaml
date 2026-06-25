@@ -1,0 +1,3 @@
+common_variable_names:
+- c_star_at
+standard_name: volume_beam_attenuation_coefficient_of_radiative_flux_in_sea_water_corrected_for_pure_water_attenuance

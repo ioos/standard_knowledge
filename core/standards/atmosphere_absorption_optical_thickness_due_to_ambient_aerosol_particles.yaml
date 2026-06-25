@@ -1,0 +1,8 @@
+common_variable_names:
+- aod_440
+- aod_380
+- aod_675
+- aod_500
+- aod_870
+ioos_category: Optical Properties
+standard_name: atmosphere_absorption_optical_thickness_due_to_ambient_aerosol_particles

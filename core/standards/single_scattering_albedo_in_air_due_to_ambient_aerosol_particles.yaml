@@ -1,0 +1,4 @@
+common_variable_names:
+- ssa_660
+ioos_category: Optical Properties
+standard_name: single_scattering_albedo_in_air_due_to_ambient_aerosol_particles

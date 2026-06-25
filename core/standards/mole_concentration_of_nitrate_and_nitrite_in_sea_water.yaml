@@ -1,0 +1,6 @@
+common_variable_names:
+- mole_concentration_of_nitrate_and_nitrite_in_sea_water
+- nitrate_and_nitrite_in_sea_water
+- suna_nitrate_conc_avg
+ioos_category: Dissolved Nutrients
+standard_name: mole_concentration_of_nitrate_and_nitrite_in_sea_water

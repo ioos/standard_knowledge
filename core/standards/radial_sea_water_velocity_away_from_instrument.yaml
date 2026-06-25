@@ -1,0 +1,5 @@
+common_variable_names:
+- rdva
+- minv
+- maxv
+standard_name: radial_sea_water_velocity_away_from_instrument

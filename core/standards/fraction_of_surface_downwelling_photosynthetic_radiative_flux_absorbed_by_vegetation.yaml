@@ -1,0 +1,3 @@
+common_variable_names:
+- fapar
+standard_name: fraction_of_surface_downwelling_photosynthetic_radiative_flux_absorbed_by_vegetation

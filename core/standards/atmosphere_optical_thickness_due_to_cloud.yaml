@@ -1,0 +1,4 @@
+common_variable_names:
+- tau_ir
+- tau
+standard_name: atmosphere_optical_thickness_due_to_cloud

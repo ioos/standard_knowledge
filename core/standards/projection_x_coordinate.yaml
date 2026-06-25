@@ -1,0 +1,8 @@
+common_variable_names:
+- x
+- cols
+- xgrid
+- columns
+- gridx
+ioos_category: Location
+standard_name: projection_x_coordinate

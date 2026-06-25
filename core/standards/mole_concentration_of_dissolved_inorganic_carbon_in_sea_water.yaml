@@ -1,0 +1,5 @@
+common_variable_names:
+- dic
+- dissolved_inorganic_carbon
+ioos_category: Ocean Color
+standard_name: mole_concentration_of_dissolved_inorganic_carbon_in_sea_water

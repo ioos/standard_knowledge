@@ -1,0 +1,9 @@
+common_variable_names:
+- cdom_fluorescence
+- colored_dissolved_organic_matter
+- cdom_absorption
+- cdom_absortion_at
+- optical_absorption_spectra_at
+- adg_445
+ioos_category: Optical Properties
+standard_name: volume_absorption_coefficient_of_radiative_flux_in_sea_water_due_to_dissolved_organic_matter

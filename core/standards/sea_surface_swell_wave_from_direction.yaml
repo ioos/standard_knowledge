@@ -1,0 +1,6 @@
+common_variable_names:
+- sea_surface_swell_wave_from_direction
+- sdir
+- wdir
+ioos_category: Surface Waves
+standard_name: sea_surface_swell_wave_from_direction

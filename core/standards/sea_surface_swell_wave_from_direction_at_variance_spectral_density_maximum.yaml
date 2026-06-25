@@ -1,0 +1,4 @@
+common_variable_names:
+- thtp
+ioos_category: Surface Waves
+standard_name: sea_surface_swell_wave_from_direction_at_variance_spectral_density_maximum

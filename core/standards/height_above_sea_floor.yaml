@@ -1,0 +1,5 @@
+common_variable_names:
+- altitude_above_seafloor
+- height_above_sea_floor
+ioos_category: Other
+standard_name: height_above_sea_floor

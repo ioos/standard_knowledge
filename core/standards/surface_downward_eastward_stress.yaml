@@ -1,0 +1,9 @@
+common_variable_names:
+- upstr
+- taux
+- vpstr
+- stress_u
+- x_tau
+- taue
+ioos_category: Wind
+standard_name: surface_downward_eastward_stress

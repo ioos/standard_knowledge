@@ -1,0 +1,3 @@
+common_variable_names:
+- ad2cp_pitch
+standard_name: platform_pitch_fore_up

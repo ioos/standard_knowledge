@@ -1,0 +1,6 @@
+common_variable_names:
+- energy_period
+- energyperiod
+- sea_surface_wave_mean_period_from_variance_spectral_density_inverse_frequency_moment
+ioos_category: Surface Waves
+standard_name: sea_surface_wave_mean_period_from_variance_spectral_density_inverse_frequency_moment

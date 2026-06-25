@@ -1,0 +1,6 @@
+common_variable_names:
+- speed
+- descent_rate
+- platform_speed
+ioos_category: Unknown
+standard_name: platform_speed_wrt_sea_water

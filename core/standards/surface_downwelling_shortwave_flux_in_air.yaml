@@ -1,0 +1,20 @@
+common_variable_names:
+- short_wave_radiation
+- surface_downwelling_shortwave_flux_in_air
+- shortwaveatmradiation
+- sw_irrad_total
+- surface_downwelling_shortwave_flux_in_air_li_cor
+- sinc
+- sw_unmasked_irrad_center
+- sw_unmasked_irrad_6det
+- cslr
+- sw
+- surface_downwelling_shortwave_flux_in_air_eppley
+- rsds
+- netshortwaveradiation
+- uvrad
+- surface_dwnwelling_srtwv
+- solar_radiation
+- solar
+ioos_category: Heat Flux
+standard_name: surface_downwelling_shortwave_flux_in_air

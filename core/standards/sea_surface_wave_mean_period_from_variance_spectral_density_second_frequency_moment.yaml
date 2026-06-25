@@ -1,0 +1,9 @@
+common_variable_names:
+- vtm02
+- meanwaveperiod_tm02
+- mean_wave_period_tm02
+- wavetz
+- sea_surface_wave_mean_period_from_variance_spectral_density_second_frequency_moment
+- energy_wave_period
+ioos_category: Statistics
+standard_name: sea_surface_wave_mean_period_from_variance_spectral_density_second_frequency_moment

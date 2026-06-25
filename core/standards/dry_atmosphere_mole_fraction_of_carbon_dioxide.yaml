@@ -1,0 +1,5 @@
+common_variable_names:
+- xco2_air_dry
+- xco2_atm_dry
+ioos_category: CO2
+standard_name: dry_atmosphere_mole_fraction_of_carbon_dioxide

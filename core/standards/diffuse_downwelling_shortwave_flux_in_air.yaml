@@ -1,0 +1,5 @@
+common_variable_names:
+- sw_irrad_diffuse
+- insolation
+ioos_category: Heat Flux
+standard_name: diffuse_downwelling_shortwave_flux_in_air

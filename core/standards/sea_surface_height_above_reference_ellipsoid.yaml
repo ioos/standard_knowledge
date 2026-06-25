@@ -1,0 +1,5 @@
+common_variable_names:
+- navd_88
+- navd_88_meters
+ioos_category: Sea Level
+standard_name: sea_surface_height_above_reference_ellipsoid

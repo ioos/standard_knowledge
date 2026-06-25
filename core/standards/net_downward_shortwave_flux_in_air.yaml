@@ -1,0 +1,5 @@
+common_variable_names:
+- qs_133
+- net_downward_shortwave_flux_in_air
+ioos_category: Unknown
+standard_name: net_downward_shortwave_flux_in_air

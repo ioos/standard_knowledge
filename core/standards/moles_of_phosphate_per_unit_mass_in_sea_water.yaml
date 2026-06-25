@@ -1,0 +1,7 @@
+common_variable_names:
+- water_body_phosphate
+- phosphate
+- water_body_phosphate_deepest
+- phow
+ioos_category: Statistics
+standard_name: moles_of_phosphate_per_unit_mass_in_sea_water
