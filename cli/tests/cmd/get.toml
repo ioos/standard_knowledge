@@ -4,7 +4,14 @@ stdout = """
 air_pressure_at_mean_sea_level - Atmospheric Pressure at Sea Level - Pa
   Aliases: air_pressure_at_sea_level
   IOOS Category: Meteorology
-  Common variables: air_pressure_at_mean_sea_level, atmospheric_pressure, sealevelairpressure, pressure_eqi, pressure_atmosphere, pressure, atmpres
+  Common variables:
+  - air_pressure_at_mean_sea_level
+  - atmospheric_pressure
+  - sealevelairpressure
+  - pressure_eqi
+  - pressure_atmosphere
+  - pressure
+  - atmpres
   Related standards: air_pressure
   Other units: kPa, bar, millibars, mbar
 

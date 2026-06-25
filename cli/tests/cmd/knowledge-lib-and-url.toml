@@ -4,22 +4,41 @@ stderr = ""
 stdout = """
 air_temperature - Weird Air Temperature - K
   IOOS Category: Meteorology
-  Common variables: air_temperature, dryt, air, airtemperature, temp_air_mean, atmp, air_temp, tair, airtemp, airt, tmin, tmax, tmp_2maboveground, temp_air, ta, temp, buoy_air_temperature, at, float_temp
+  Common variables:
+  - air_temperature
+  - dryt
+  - air
+  - airtemperature
+  - temp_air_mean
+  - atmp
+  - air_temp
+  - tair
+  - airtemp
+  - airt
+  - tmin
+  - tmax
+  - tmp_2maboveground
+  - temp_air
+  - ta
+  - temp
+  - buoy_air_temperature
+  - at
+  - float_temp
   Sibling standards: air_pressure
   Extra attributes:
- {
-  "comment": "Air temperature is the temperature of air in situ. (IOOS)",
-  "coverage_content_type": "physicalMeasurement",
-  "ioos_category": "Meteorology",
-  "long_name": "Weird Air Temperature",
-  "ncei_name": "AIR TEMPERATURE",
-  "standard_name": "air_temperature",
-  "standard_name_url": "https://vocab.nerc.ac.uk/collection/P07/current/CFSN0023",
-  "units": "K",
-}
+    {
+      "comment": "Air temperature is the temperature of air in situ. (IOOS)",
+      "coverage_content_type": "physicalMeasurement",
+      "ioos_category": "Meteorology",
+      "long_name": "Weird Air Temperature",
+      "ncei_name": "AIR TEMPERATURE",
+      "standard_name": "air_temperature",
+      "standard_name_url": "https://vocab.nerc.ac.uk/collection/P07/current/CFSN0023",
+      "units": "K",
+    }
 
-QARTOD Test Suites:
-- GLOS Seagull (glos): QARTOD tests that GLOS uses for Seagull data
+  QARTOD Test Suites:
+  - GLOS Seagull (glos): QARTOD tests that GLOS uses for Seagull data
 
 Air temperature is the bulk temperature of the air, not the surface (skin) temperature. It is strongly recommended that a variable with this standard name should have a units_metadata attribute, with one of the values "on-scale" or "difference", whichever is appropriate for the data, because it is essential to know whether the temperature is on-scale (meaning relative to the origin of the scale indicated by the units) or refers to temperature differences (implying that the origin of the temperature scale is irrevelant), in order to convert the units correctly (cf. https://cfconventions.org/cf-conventions/cf-conventions.html#temperature-units).
 """
