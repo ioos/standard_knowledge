@@ -1,3 +1,4 @@
+standard_name: sea_water_velocity_to_direction
 long_name: Current Direction
 ioos_category: Currents
 extra_attrs:
@@ -5,8 +6,18 @@ extra_attrs:
   ncei_name: CURRENT METER - DIRECTION
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/5D4D7YMF
 common_variable_names:
+- sea_water_velocity_to_direction
+- current_direction_calculated
+- velocity_direction
+- direction_of_sea_water_velocity
 - current_direction
+- curr_dir
+- direction_2d
+- direction
 - cdir
+- currdirto
+- midas_current_direction
+- hcdt
 sibling_standards:
 - sea_water_speed
 - eastward_sea_water_velocity

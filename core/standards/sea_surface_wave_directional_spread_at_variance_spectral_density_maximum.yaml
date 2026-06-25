@@ -1,3 +1,4 @@
+standard_name: sea_surface_wave_directional_spread_at_variance_spectral_density_maximum
 long_name: Mean Wave Direction Spreading
 ioos_category: Surface Waves
 extra_attrs:
@@ -5,9 +6,12 @@ extra_attrs:
   ncei_name: WAVE DIRECTION - SPREAD
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/X37RPE7M
 common_variable_names:
+- sea_surface_wave_directional_spread_at_variance_spectral_density_maximum
 - mean_wave_direction_spread
 - mwds
 - peakDirectionalSpread
+- peakdirectionalspread
+- sprtp
 sibling_standards:
 - sea_surface_wave_significant_height
 - sea_surface_wave_period_at_variance_spectral_density_maximum

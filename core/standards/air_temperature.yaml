@@ -1,10 +1,26 @@
+standard_name: air_temperature
 long_name: Air Temperature
 ioos_category: Meteorology
 common_variable_names:
-- temp
-- temperature
+- air_temperature
+- dryt
+- air
+- airtemperature
+- temp_air_mean
+- atmp
 - air_temp
+- tair
 - airtemp
+- airt
+- tmin
+- tmax
+- tmp_2maboveground
+- temp_air
+- ta
+- temp
+- buoy_air_temperature
+- at
+- float_temp
 other_units:
 - C
 - celsius
@@ -15,20 +31,19 @@ other_units:
 sibling_standards:
 - air_pressure
 extra_attrs:
+  comment: Air temperature is the temperature of air in situ. (IOOS)
   coverage_content_type: physicalMeasurement
   ncei_name: AIR TEMPERATURE
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0023
-  comment: "Air temperature is the temperature of air in situ. (IOOS)"
 comment: |
   Air temperature does what it says on the tin.
 
   Pretty much everyone actually uses celsius as a unit rather than kelvin.
 qc:
   glos:
+    description: QARTOD tests that GLOS uses for air temperature data on Seagull.
     name: GLOS Seagull
     summary: QARTOD tests that GLOS uses for Seagull data
-    description: |
-      QARTOD tests that GLOS uses for air temperature data on Seagull.
     tests:
       qartod:
         # flat_line_test:
@@ -36,14 +51,12 @@ qc:
         #   suspect_threshold: 2
         #   tolerance: 0.1
         gross_range_test:
-          fail_span: [
-            227.55,
-            338.75
-          ]
-          suspect_span: [
-            255.45,
-            310.95
-          ]
+          fail_span:
+          - 227.55
+          - 338.75
+          suspect_span:
+          - 255.45
+          - 310.95
         rate_of_change_test:
           threshold: 3.3
         spike_test:

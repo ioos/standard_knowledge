@@ -1,8 +1,46 @@
+standard_name: mass_concentration_of_chlorophyll_in_sea_water
 long_name: Chlorophyll_fluorescence
 ioos_category: Ocean Color
 common_variable_names:
+- mass_concentration_of_chlorophyll_in_sea_water
 - chlorophyll
-- chl
+- chlorophyll_concentration
+- sci_flbbcd_chlor_units
+- chlor_wetlabs_mean
+- chlor_a
+- mass_concentration_of_chlorophyll
+- fluorescence
+- chlorophyll_raw
+- fch_906
+- chlor_rbr_mean
+- chlor_rbr_stddev
+- chlor_wetlabs_stddev
+- chlor_stddev
+- chlor_mean
+- mass_concentration_of_chlorophyll_in_sea_water_eco
+- mass_concentration_of_chlorophyll_in_sea_water_ctd
+- sci_bbfl2s_chlor_scaled
+- mass_concentration_of_chlorophyll_in_sea_water_surface
+- mass_concentration_of_chlorophyll_in_sea_water_bottom
+- cphl
+- chl_nominal
+- chlorophyll_a_fluorometer
+- mass_concentration_of_chlorophyll_in_sea_water__rfu
+- mass_concentration_of_chlorophyll_in_sea_water__microg_l
+- w94_mass_concentration_of_chlorophyll_a
+- hhr_mass_concentration_of_chlorophyll_a
+- fws_973
+- water_body_chlorophyll_a
+- mass_concentration_of_chlorophyll_in_sea_water_rfu
+- mass_concentration_of_chlorophyll_in_sea_water_micrograms
+- flc
+- f_903
+- ctd_fluor
+- chla_bulk_gff
+- ca3_937
+- water_body_chlorophyll_a_deepest
+- fluorometer
+- chlor_fluorescence
 other_units:
 - ug/L
 - chl/m3

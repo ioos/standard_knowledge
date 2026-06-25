@@ -1,3 +1,21 @@
+standard_name: solar_irradiance
+ioos_category: Unknown
+common_variable_names:
+- solar_irradiance
+- solar_irradiance_cm_time__mean_over_pt1h
+- solar_irradiance_cm_time__minimum_over_pt1h_min
+- solar_irradiance_cm_time__mean
+- solar_irradiance_cm_time__maximum_over_pt1h_max
+- solar_uv_irradiance
+- radiation
+- pyr_solar
+- solar_irradiance_out
+- solar_irradiance_in
+- solarrad
+- solar_irradiance_clear_sky
+- sr3
+- sr1
+- solar_irradiance_cm_time__maximum_over_pt1h
 qc:
   glos:
     name: GLOS Seagull

@@ -1,2 +1,17 @@
-ioos_category: CO2
+standard_name: sea_water_ph_reported_on_total_scale
+ioos_category: Salinity
 long_name: Sea Water pH
+common_variable_names:
+- sea_water_ph_reported_on_total_scale
+- ph
+- ph_raw
+- phtot
+- ph_corrected
+- ph_159
+- phph
+- ph_in_situ_total_adjusted
+- ph_in_situ_total
+- sea_water_ph_reported_on_total_scale_seaphox
+- sea_water_ph_reported_on_total_scale_seafet
+- ph_t
+- alky

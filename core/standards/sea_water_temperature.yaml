@@ -1,3 +1,4 @@
+standard_name: sea_water_temperature
 long_name: Water Temperature
 ioos_category: Temperature
 extra_attrs:
@@ -6,8 +7,95 @@ extra_attrs:
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0335
 common_variable_names:
 - temperature
+- sea_water_temperature
 - temp
+- tempdoxy
+- seatemperature
+- temp_sbe37
+- temp_depth_halfmeter
+- potemp2
+- wtmp
+- bsipar_temp
+- temp_ctd_rbr
+- temp_o2_rbr
+- sci_oxy4_temp
+- sci_oxy3835_temp
+- water_temp
+- sci_obsvr_temp
+- sea_water_temperature_surface
+- temp_ctd
+- sea_water_temperature_suna
+- temp_o2_aanderaa
+- sci_oxy3835_wphase_temp
+- temp_adjusted
+- sci_water_temp
+- sea_water_temperature_at
+- water_temperature
+- sea_water_temperature_bottom
+- sea_water_temperature_tide
+- sea_surface_temperature
+- rinkoii_temperature
+- its_90_water_temperature
+- ctdtmp_4211
+- watertemp
+- sst
+- sbe16plus_temperature
+- ctd_idronaut_temperature
+- ztmp
+- water_temperature_hobo
+- water_temperature_fluorometer
+- temperature_relerr
+- sea_water_temperature_shipboard
+- sea_water_temperature_seaphox_o2_optode
+- sea_water_temperature_seaphox
+- sea_water_temperature_seafet_internal
+- sea_water_temperature_seafet
+- sea_water_temperature_current_meter
+- fr_temp
+- ctd_temperature
+- zcel_wtmp
+- average_temperature
 - wt
+- water_temperature_surface
+- ts_temperature
+- topside_temp
+- tmes
+- temperature_surface
+- temp_sea_filtered
+- temp_1033
+- t_an
+- sst_temp
+- sea_water_temperature_upper_well
+- sbe_temp
+- sbe56_t
+- ref_temperature
+- err_sst
+- bucket_temperature
+- tfor
+- tempst
+- temperature_sensor_at
+- temperature_sea_surface
+- temperature_degc
+- temp_c
+- surface_temperature
+- sstp
+- ssjt_adjusted
+- ssjt
+- sea_bottom_temperature
+- sbe_37_t
+- sami_t
+- oxy_temperature
+- mwtemp
+- mean_temperature
+- internal_temp
+- global_mwtemp
+- global_mwconstemp
+- exo2_temperature
+- diverctd8975_t
+- diverctd8967_t
+- ctd_wtmp
+- avg_sea_sfc_temp_pst10mts_1
+- avg_sea_sfc_temp_pst10mts
 other_units:
 - C
 - celsius
@@ -23,8 +111,7 @@ qc:
   glos:
     name: GLOS Seagull
     summary: QARTOD tests that GLOS uses for Seagull data
-    description: |
-      QARTOD tests that GLOS uses for water temperature data on Seagull.
+    description: QARTOD tests that GLOS uses for water temperature data on Seagull.
     tests:
       qartod:
         # flat_line_test:
@@ -32,14 +119,12 @@ qc:
         #   suspect_threshold: 2
         #   tolerance: 0.1
         gross_range_test:
-          fail_span: [
-            268.15,
-            323.15
-          ]
-          suspect_span: [
-            273.15,
-            308.15
-          ]
+          fail_span:
+          - 268.15
+          - 323.15
+          suspect_span:
+          - 273.15
+          - 308.15
         rate_of_change_test:
           threshold: 1.5
         spike_test:

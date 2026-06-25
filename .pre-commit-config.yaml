@@ -66,6 +66,13 @@ repos:
         entry: cargo clippy
         language: system
         pass_filenames: false
+      - id: duplicate-common-variable-names
+        name: duplicate-common-variable-names
+        description: Check for duplicate common variable names in standards
+        entry: uv run utils/error_on_duplicate_variables.py
+        language: python
+        pass_filenames: false
+        files: ^core/standards/.*\.yaml$
 
   - repo: https://github.com/adamchainz/blacken-docs
     rev: "fda77690955e9b63c6687d8806bafd56a526e45f"  # frozen: 1.20.0

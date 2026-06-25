@@ -1,7 +1,38 @@
+standard_name: fractional_saturation_of_oxygen_in_sea_water
 long_name: Saturated Dissolved Oxygen
 ioos_category: Dissolved O2
 common_variable_names:
-- dissolvedOxygenSaturated
+- oxygen_saturation
+- fractional_saturation_of_oxygen_in_sea_water
+- oxy4_saturation
+- oxy3835_wphase_saturation
+- o2_sat_sbe37
+- sci_oxy4_saturation
+- sci_rinkoii_do
+- sci_oxy3835_wphase_saturation
+- oxy3835_saturation
+- sci_oxy3835_saturation
+- sci_oxy3835_oxygen
+- o2_sat_rbr
+- osat
+- o2_aanderaa_sat
+- dissolvedoxygensaturated
+- ocean_oxygen_saturation
+- fractional_saturation_of_oxygen_in_sea_water_surface
+- fractional_saturation_of_oxygen_in_sea_water_bottom
+- dissolved_oxygen
+- oxygen_corrected
+- fractional_saturation_of_oxygen_in_sea_water_seaphox
+- oxygen_saturation_shifted
+- o2_sat
+- dissolved_oxygen_sat_hobo
+- fractional_saturation_of_oxygen_in_sea_water_ctd
+- dissolved_oxygen_saturation
+- oxy_percentsat
+- doxy
+- dissolved_oxygen_percent
+- oxygen_sat
+- exo2_rdo_saturation
 related_standards:
 - mass_concentration_of_oxygen_in_sea_water
 - mole_concentration_of_dissolved_molecular_oxygen_in_sea_water

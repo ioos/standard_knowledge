@@ -1,3 +1,4 @@
+standard_name: sea_surface_wave_significant_height
 long_name: Significant Wave Height
 ioos_category: Surface Waves
 extra_attrs:
@@ -5,12 +6,26 @@ extra_attrs:
   ncei_name: WAVE HEIGHT - SIGNIFICANT
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0385
 common_variable_names:
-- wave_height
-- height
-- swh
+- sea_surface_wave_significant_height
+- wave_significant_height
+- wh_4061
+- wvht
+- wave_height_1
+- shgt
+- vhm0
+- thgt
 - significant_wave_height
+- wave_ht_sig
+- significantwaveheight
+- wave_ht_max
+- wave_height
+- maximum_wave_height
+- hssea
 - hs
-- significantWaveHeight
+- wavehs
+- waveheight
+- average_wave_height
+- average_height_of_highest_tenth_of_waves
 sibling_standards:
 - sea_surface_wave_period_at_variance_spectral_density_maximum
 - sea_surface_wave_maximum_height

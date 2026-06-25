@@ -1,13 +1,80 @@
+standard_name: relative_humidity
 long_name: Relative Humidity
 ioos_category: Meteorology
+common_variable_names:
+- relative_humidity
+- rah
+- relative_humidity_2
+- relative_humidity_cm_time__mean_over_pt1h_mean
+- rhum
+- rh_mean
+- relativehumidity
+- relative_humidity_1
+- rh_stddev
+- rh
+- humidity
+- relh
+- scatter_rh_sub10
+- air_humidity_avg
+- relativehumidity2
+- rh_910
+- qair
+- rh2m
+- relativehumidity3
+- rel_humidity
+- rel_humidity_min
+- rel_humidity_max
+- relative_humidity_cm_time__mean_over_pt1h
+- hur
+- rh_std
+- rh_avg
+- rh_adjusted
+- relative_humidity_zerodegc_isotherm
+- relative_humidity_raw
+- relative_humidity_pressure_difference_layer
+- relative_humidity_min
+- relative_humidity_max
+- relative_humidity_isobaric
+- relative_humidity_hybrid
+- relative_humidity_7601bmet_a
+- relative_humidity_7601amet_a
+- relative_humidity_11111met_a
+- coare35_relative_humidity_10_1_3
+- coare35_relative_humidity_10_1_2
+- coare35_relative_humidity_10_1_1
+- assrh_1876
+- scatter_frh_rh_lo_sub1
+- scatter_frh_rh_hi_sub1
+- rhair
+- rh_filtered_mean
+- rh2
+- rh1
+- relative_humidity_9851met_a
+- relative_humidity_9521hlm_all_a
+- relative_humidity_9521bhlm_a
+- relative_humidity_9521ahlm_a
+- relative_humidity_938metb_a
+- relative_humidity_938meta_a
+- relative_humidity_9191met_a
+- relative_humidity_10311dhlm_a
+- relative_humidity_10311chlm_a
+- relative_humidity_10311ahlm_a
+- relative_humidity_10011met_a
+- metsens_rh_avg
+- coare35_relative_humidity_10_2_3
+- coare35_relative_humidity_10_2_2
+- coare35_relative_humidity_10_2_1
+- beamtrans
+- beamatten
+- backscatter
+- asvco2_rh_mean
 extra_attrs:
   coverage_content_type: physicalMeasurement
 qc:
   glos:
     name: GLOS Seagull
     summary: QARTOD tests that GLOS uses for Seagull data
-    description: |
-      QARTOD tests that GLOS uses for relative humidity data on Seagull.
+    description: QARTOD tests that GLOS uses for relative humidity data on Seagull.
     tests:
       qartod:
         # flat_line_test:
@@ -15,14 +82,12 @@ qc:
         #   suspect_threshold: 6
         #   tolerance: 0.001
         gross_range_test:
-          fail_span: [
-            0,
-            1
-          ]
-          suspect_span: [
-            0,
-            1
-          ]
+          fail_span:
+          - 0
+          - 1
+          suspect_span:
+          - 0
+          - 1
         rate_of_change_test:
           threshold: 0.2
         spike_test:

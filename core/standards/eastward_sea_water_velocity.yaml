@@ -1,3 +1,4 @@
+standard_name: eastward_sea_water_velocity
 long_name: Current U
 ioos_category: Currents
 extra_attrs:
@@ -7,8 +8,46 @@ extra_attrs:
 other_units:
 - cm/s
 common_variable_names:
-- current_u
 - u
+- eastwardvelocitycomponent
+- zonal_velocity
+- zonal_sea_water_velocity
+- u2_velocity
+- u1_velocity
+- eastward_sea_water_velocity
+- current_velocity_beam1_x_east
+- east
+- current_velocity_east
+- ewct
+- eastward_sea_water_velocity_profiler_depth_enabled
+- delta_xco2
+- water_u
+- zonal_absolute_sea_water_velocity
+- urea_in_sea_water
+- u_depth_mean
+- u_current
+- current_u
+- m_water_vx
+- u_dvar
+- u_dmean
+- velocity_east
+- ucur
+- rfvl_x
+- eastward_velocity
+- uo
+- uacc
+- average_velocity_eastward
+- water_u_bottom
+- uvel_adcp
+- depth_avg_curr_east
+- current_speed_east
+- wcur_x
+- ocean_velocity_u_eastward_true_north
+- nsct
+- lcewap
+- eastward_water_velocity
+- eastcurrent
+- curr
 sibling_standards:
 - sea_water_velocity_to_direction
 - sea_water_speed

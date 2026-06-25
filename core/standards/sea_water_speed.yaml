@@ -1,3 +1,4 @@
+standard_name: sea_water_speed
 long_name: Current Speed
 ioos_category: Currents
 extra_attrs:
@@ -5,8 +6,31 @@ extra_attrs:
   ncei_name: CURRENT METER - SPEED
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0334
 common_variable_names:
+- sea_water_speed
+- cs_300
+- vspd
+- hcsp
 - current_speed
+- water_speed
+- speed_of_water
+- bottom_water_speed
+- current_velocity
+- current
+- velocity_2d
+- drifterspeed
 - cspd
+- water_speed_fore_aft
+- absolute_sea_water_speed
+- currspd
+- cs
+- speed
+- meancurspeed
+- currentspeed
+- water_current_mean_speed
+- midas_current_speed
+- currentvy
+- currentvx
+- acmspeed
 sibling_standards:
 - sea_water_velocity_to_direction
 - eastward_sea_water_velocity

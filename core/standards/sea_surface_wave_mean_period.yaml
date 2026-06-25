@@ -1,4 +1,11 @@
+standard_name: sea_surface_wave_mean_period
 long_name: Mean Wave Period
 ioos_category: Surface Waves
 common_variable_names:
-- meanPeriod
+- sea_surface_wave_mean_period
+- wp_4060
+- mper
+- meanperiod
+- tzsea
+- wave_period
+- tz
