@@ -1,9 +1,24 @@
+standard_name: sea_water_turbidity
 long_name: Turbidity
+ioos_category: Unknown
 extra_attrs:
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/7B3X6L2J/
 common_variable_names:
+- sea_water_turbidity
 - turbidity
-- ntu
+- tur
+- turb
+- tur4
+- turbidity_raw
+- turbidity_nominal
+- sea_water_turbidity_eco
+- sea_water_turbidity_surface
+- sea_water_turbidity_bottom
+- turbidity_fluorometer
+- tsed
+- sci_flntu_turb_units
+- turbidity_ntu
+- turbidity_at_sea_floor
 other_units:
 - ntu
 - ftu

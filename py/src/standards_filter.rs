@@ -5,6 +5,32 @@ use pyo3::prelude::*;
 
 use crate::PyStandard;
 use standard_knowledge::standards_filter::StandardsFilter;
+use standard_knowledge::Standard;
+
+#[pyclass]
+pub struct PyStandardsFilterIter {
+    standards: Vec<Standard>,
+    index: usize,
+}
+
+#[pymethods]
+impl PyStandardsFilterIter {
+    fn __iter__(slf: PyRef<'_, Self>) -> PyRef<'_, Self> {
+        slf
+    }
+
+    fn __next__(mut slf: PyRefMut<'_, Self>) -> PyResult<Option<Py<PyStandard>>> {
+        let index = slf.index;
+        if index < slf.standards.len() {
+            let standard = slf.standards[index].clone();
+            slf.index += 1;
+            let py = slf.py();
+            Ok(Some(Py::new(py, PyStandard(standard))?))
+        } else {
+            Ok(None)
+        }
+    }
+}
 
 #[pyclass(name = "StandardsFilter")]
 #[derive(Clone)]
@@ -61,16 +87,15 @@ impl PyStandardsFilter {
         }
     }
 
-    /// Return the standards as a list
-    fn __iter__(&self, py: Python) -> PyResult<Vec<Py<PyStandard>>> {
-        self.inner
-            .standards
-            .iter()
-            .map(|standard| {
-                let py_standard = PyStandard(standard.clone());
-                Py::new(py, py_standard)
-            })
-            .collect()
+    /// Return an iterator over the standards
+    fn __iter__(&self, py: Python) -> PyResult<Py<PyStandardsFilterIter>> {
+        Py::new(
+            py,
+            PyStandardsFilterIter {
+                standards: self.inner.standards.clone(),
+                index: 0,
+            },
+        )
     }
 
     /// Return the number of standards in the filter

@@ -1,11 +1,52 @@
+standard_name: sea_surface_temperature
 long_name: Sea Surface Temperature
 ioos_category: Temperature
+common_variable_names:
+- sea_surface_temperature
+- sst
+- temperature
+- temp
+- delta_temp
+- sstmasked
+- t_25
+- crw_sst
+- tsg_t
+- seatemperature
+- cleaned_sst
+- wtmp
+- water_temperature
+- sstmask
+- sst_tsg_t_minus_mean_delta_t
+- sst_trend
+- sst_seasonal
+- sst_cycle
+- sst_analysis_night_only
+- gmi_sst_descending
+- gmi_sst_ascending
+- forecast_sst
+- amsr2_sst_descending
+- amsr2_sst_ascending
+- temp_surface
+- temp_sea
+- sstseasurfacetemperature
+- sstp_adjusted
+- sstp
+- sst_wcofs
+- sst_caroms
+- sst_analysis
+- mcsst_weekly
+- mcsst_anomaly
+- mcsst_8wkavg
+- mcsst
+- intake_t
+- analysed_sst
+- amsst_weekly
+- amsst_8wkavg
 qc:
   glos:
     name: GLOS Seagull
     summary: QARTOD tests that GLOS uses for Seagull data
-    description: |
-      QARTOD tests that GLOS uses for sea surface temperature data on Seagull.
+    description: QARTOD tests that GLOS uses for sea surface temperature data on Seagull.
     tests:
       qartod:
         # flat_line_test:
@@ -13,14 +54,12 @@ qc:
         #   suspect_threshold: 2
         #   tolerance: 0.1
         gross_range_test:
-          fail_span: [
-            268.15,
-            323.15
-          ]
-          suspect_span: [
-            273.15,
-            308.15
-          ]
+          fail_span:
+          - 268.15
+          - 323.15
+          suspect_span:
+          - 273.15
+          - 308.15
         rate_of_change_test:
           threshold: 1.5
         spike_test:

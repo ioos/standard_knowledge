@@ -1,5 +1,24 @@
+standard_name: time
 long_name: Time
 ioos_category: Time
 extra_attrs:
   axis: T
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0115
+common_variable_names:
+- time
+- precise_time
+- time_gps
+- dtime
+- date
+- date_tm
+- result_time
+- datetime
+- sample_date
+- isodate
+- forecast_time
+- time_profile
+- time_julian
+- sampledate
+- measurement_dt
+- measurement_date_time
+- collection_time

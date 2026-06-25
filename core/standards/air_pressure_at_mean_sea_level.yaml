@@ -1,12 +1,14 @@
+standard_name: air_pressure_at_mean_sea_level
 ioos_category: Meteorology
 long_name: Atmospheric Pressure at Sea Level
 common_variable_names:
-- pres # codespell:ignore
-- pressure
-- air_pressure
+- air_pressure_at_mean_sea_level
 - atmospheric_pressure
-- sea_level_pressure
+- sealevelairpressure
+- pressure_eqi
 - pressure_atmosphere
+- pressure
+- atmpres
 related_standards:
 - air_pressure
 other_units:
@@ -14,5 +16,4 @@ other_units:
 - bar
 - millibars
 - mbar
-comments: |
-  Raw pressure sensor values on buoys may need to be adjusted based on sensor tower height.
+comments: Raw pressure sensor values on buoys may need to be adjusted based on sensor tower height.

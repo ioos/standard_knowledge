@@ -41,7 +41,22 @@ jobs:
     - name: Build
       run: cargo build --verbose
     - name: Run tests
+      id: run-tests
       run: cargo test --verbose
+      continue-on-error: true
+    - name: Dump test fixtures on failure
+      if: steps.run-tests.outcome == 'failure'
+      run: TRYCMD=dump cargo test --verbose
+      continue-on-error: true
+    - name: Upload updated fixtures
+      if: steps.run-tests.outcome == 'failure'
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      with:
+        name: updated-test-fixtures
+        path: cli/tests/cmd/
+    - name: Fail if tests failed
+      if: steps.run-tests.outcome == 'failure'
+      run: exit 1
     - name: Test publishing to crates.io
       run: cargo publish --workspace --dry-run
 

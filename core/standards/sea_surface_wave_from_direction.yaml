@@ -1,3 +1,4 @@
+standard_name: sea_surface_wave_from_direction
 long_name: Mean Wave Direction
 ioos_category: Surface Waves
 extra_attrs:
@@ -5,10 +6,20 @@ extra_attrs:
   ncei_name: WAVE DIRECTION - Average
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSM0384
 common_variable_names:
-- wave_direction
-- direction
-- mwd
+- sea_surface_wave_from_direction
+- vmdr
 - mean_wave_direction
+- wave_from_direction
+- wave_dir_avg
+- peakdirection
+- meandirection
+- dominant_wave_direction
+- wdirsea
+- sea_surface_wave_from_direction_mean_wave_direction
+- mean_wave_direction_from
+- wavedirection
+- meanwavedirection
+- dir
 sibling_standards:
 - sea_surface_wave_significant_height
 - sea_surface_wave_period_at_variance_spectral_density_maximum

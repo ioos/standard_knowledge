@@ -1,3 +1,4 @@
+standard_name: sea_surface_wave_period_at_variance_spectral_density_maximum
 long_name: Dominant Wave Period
 ioos_category: Surface Waves
 extra_attrs:
@@ -5,9 +6,20 @@ extra_attrs:
   ncei_name: WAVE PERIOD - DOMINANT
   standard_name_url: vocab.nerc.ac.uk/collection/P07/current/CFV13N31
 common_variable_names:
-- wave_period
-- period
+- sea_surface_wave_period_at_variance_spectral_density_maximum
+- wave_dominant_period
+- pper
+- vtpk
+- tper
+- peakperiod
 - dominant_wave_period
+- wave_period
+- peak_period
+- tpsea
+- tp
+- peak_wave_period
+- wavetp
+- wave_peak_period
 - dwp
 - peakPeriod
 sibling_standards:

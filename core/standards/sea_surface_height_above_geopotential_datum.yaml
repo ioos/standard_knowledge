@@ -1,3 +1,4 @@
+standard_name: sea_surface_height_above_geopotential_datum
 ioos_category: Sea Level
 long_name: Sea surface height above geopotential datum
 sibling_standards:
@@ -6,3 +7,8 @@ sibling_standards:
 common_variable_names:
 - navd88
 - navd88_meters
+- navd_meters
+- water_level_od_malin
+- water_level_lat
+- mllw_meters
+- mhhw_meters

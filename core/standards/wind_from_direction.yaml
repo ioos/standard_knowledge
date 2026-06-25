@@ -1,3 +1,4 @@
+standard_name: wind_from_direction
 long_name: Wind From Direction
 ioos_category: Wind
 sibling_standards:
@@ -7,17 +8,59 @@ extra_attrs:
   coverage_content_type: physicalMeasurement
   ncei_name: WIND DIRECTION
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0036
-  comment: " Wind direction is the direction from which wind is blowing. It is a meteorological convention (degrees clockwise from North). (IOOS)"
+  comment: "Wind direction is the direction from which wind is blowing. It is a meteorological
+    convention (degrees clockwise from North). (IOOS)"
 common_variable_names:
+- wind_from_direction
 - wdir
-- dir
+- relwinddir
+- wind_from_direction_cm_time__minimum_over_pt5m
+- wind_from_direction_cm_time__mean_over_pt5m
+- wind_from_direction_cm_time__maximum_over_pt5m
+- winddirection
+- platformwinddirection
+- wind_from_mean
 - wind_direction
+- wind_dir_avg
+- wind_from_direction_sonic
+- wind_dir_true
+- wind_dir_rel
+- relative_wind_direction
+- wind_dir
+- winddir
+- wind_spd_max_dir
+- wd
+- windangle
+- wind_from_direction_windbird
+- wind_from_direction_cm_time__mean_over_pt1h
+- wind_direction_from_which_blowing_surface
+- corrected_wind_direction
+- std_dev_wind_direction
+- avg_wind_direction
+- wmo_avg_wind_from_direction
+- winddirfrom
+- winddirectionbow
+- winddirection_degtrue
+- winddir_d1_wvt
+- wind_from_direction_degrees
+- wind_direction_corr
+- wind_direction_airmar
+- wind_airmar_wind_direction_filtered_mean
+- wdr
+- true_wind_direction
+- relwinddirfrom
+- model_speed
+- metsens_wdir_from_avg
+- max_wind_dir_1hr
+- avg_wind_dir_10min
+- average_wind_direction
 qc:
   glos:
+
     name: GLOS Seagull
     summary: QARTOD tests that GLOS uses for Seagull data
     description: |
-      QARTOD tests that GLOS uses for wind direction data on Seagull.
+       QARTOD tests that GLOS uses for wind direction data on Seagull.
     tests:
       qartod:
         # flat_line_test:
@@ -25,14 +68,12 @@ qc:
         #   suspect_threshold: 2
         #   tolerance: 0.1
         gross_range_test:
-          fail_span: [
-            0,
-            360
-          ]
-          suspect_span: [
-            0,
-            360
-          ]
+          fail_span:
+          - 0
+          - 360
+          suspect_span:
+          - 0
+          - 360
         rate_of_change_test:
           threshold: 360
         spike_test:

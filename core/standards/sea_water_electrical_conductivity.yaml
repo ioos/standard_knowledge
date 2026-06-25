@@ -1,12 +1,61 @@
+standard_name: sea_water_electrical_conductivity
 long_name: Conductivity
-ioos_category: Physical Oceanography
+ioos_category: Salinity
 extra_attrs:
   coverage_content_type: physicalMeasurement
   ncei_name: WATER CONDUCTIVITY
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0394
 common_variable_names:
 - conductivity
+- sea_water_electrical_conductivity
 - cond
+- cndc
+- cond2
+- c_51
+- cond_orig
+- cond1
+- cond_sbe37
+- conductivity_raw
+- c_50
+- spc_48
+- specific_conductivity
+- conductivity_lag_shifted
+- sci_water_cond
+- instrument2
+- ctdcon_4218
+- specific_conductance
+- sbe16plus_conductivity
+- ctd_idronaut_conductivity
+- sea_water_electrical_conductivity_seaphox
+- sp_cond
+- m_veh_temp
+- conductivity_lag_correct
+- sea_water_elec_conductivity
+- ratio_of_deuterium_to_hydrogen
+- waterconductivity
+- specific_conductivity_us_cm
+- rct
+- rcsol
+- rcs
+- rcq
+- humidity_parameter_in_canopy_conductance_surface
+- conductivity_us_cm
+- conductivity_nlf
+- cn
+- ccond
+- canopy_conductance_surface
+- tsg_conductivity
+- sea_water_electrical_cond
+- ocean_conductivity
+- exo2_specific_conductivity
+- exo2_conductivity
+- conductivity_s_m
+- conductivity_at_sensor
+- conductivity_at_sea_floor
+- conductance
+- cond_1
+- cndcst01
+- acond
 sibling_standards:
 - sea_water_practical_salinity
 - sea_water_density

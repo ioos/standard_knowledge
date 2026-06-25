@@ -1,3 +1,4 @@
+standard_name: wind_speed_of_gust
 long_name: Wind Speed Gust
 ioos_category: Wind
 sibling_standards:
@@ -7,16 +8,41 @@ extra_attrs:
   coverage_content_type: physicalMeasurement
   ncei_name: WIND GUST
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0039
-  comment: "Wind gust speed is the maximum instantaneous wind speed (usually no more than but not limited to 10 seconds) within a sample averaging interval. (IOOS)"
+  comment: Wind gust speed is the maximum instantaneous wind speed (usually no more
+    than but not limited to 10 seconds) within a sample averaging interval. (IOOS)
 common_variable_names:
+- wind_speed_of_gust
+- relwindgust
+- wind_gust
+- gust_wnd_mean
+- gst
+- wind_spd_max
+- gspd
+- wind_speed_of_gust_sonic
+- gust_speed
+- wg_402
+- wgust
+- gust_speed_raw
+- windhi
+- wind_speed_of_gust_rmy
+- wind_speed_of_gust__mile_hour
+- wind_speed_of_gust__m_s
+- wind_speed_max
+- wind_speed_gust_surface
+- wind_spd_gust
+- wg
+- maxgust
+- ws_ms_max
+- wind_speed_of_gust_max
+- wind_max
+- wind_gust_avg
+- mets3secgst_max
 - gust
-- wgst
 qc:
   glos:
     name: GLOS Seagull
     summary: QARTOD tests that GLOS uses for Seagull data
-    description: |
-      QARTOD tests that GLOS uses for wind speed of gust data on Seagull.
+    description: QARTOD tests that GLOS uses for wind speed of gust data on Seagull.
     tests:
       qartod:
         # flat_line_test:
@@ -24,14 +50,12 @@ qc:
         #   suspect_threshold: 2
         #   tolerance: 0.1
         gross_range_test:
-          fail_span: [
-            0,
-            100
-          ]
-          suspect_span: [
-            0,
-            44.7
-          ]
+          fail_span:
+          - 0
+          - 100
+          suspect_span:
+          - 0
+          - 44.7
         rate_of_change_test:
           threshold: 17.9
         spike_test:

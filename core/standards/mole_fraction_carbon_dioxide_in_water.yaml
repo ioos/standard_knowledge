@@ -1,2 +1,5 @@
+standard_name: mole_fraction_carbon_dioxide_in_water
 long_name: Mole Fraction of Carbon Dioxide in Water
 ioos_category: CO2
+common_variable_names:
+- co2_w

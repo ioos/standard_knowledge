@@ -1,3 +1,4 @@
+standard_name: visibility_in_air
 long_name: Visibility in Air
 ioos_category: Meteorology
 extra_attrs:
@@ -5,4 +6,7 @@ extra_attrs:
   ncei_name: VISIBILITY
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0061
 common_variable_names:
+- visibility_in_air
+- vis
 - visibility
+- vis_avg

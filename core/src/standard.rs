@@ -90,8 +90,8 @@ impl Standard {
         }
         if !self.common_variable_names.is_empty() {
             output = format!(
-                "{output}\n  Common variables: {}",
-                self.common_variable_names.join(", ")
+                "{output}\n  Common variables:\n  - {}",
+                self.common_variable_names.join("\n  - ")
             )
         }
         if !self.related_standards.is_empty() {
@@ -108,8 +108,12 @@ impl Standard {
         }
         if !self.extra_attrs.is_empty() {
             output = format!(
-                "{output}\n  Extra attributes:\n {}",
+                "{output}\n  Extra attributes:\n{}",
                 self.display_xarray_attrs()
+                    .lines()
+                    .map(|l| format!("    {l}"))
+                    .collect::<Vec<_>>()
+                    .join("\n")
             );
         }
 
@@ -119,12 +123,12 @@ impl Standard {
 
         if !self.qartod.is_empty() {
             output = format!(
-                "{output}\n\nQARTOD Test Suites:\n- {}",
+                "{output}\n\n  QARTOD Test Suites:\n  - {}",
                 self.qartod
                     .iter()
                     .map(|suite| suite.info().to_string())
                     .collect::<Vec<_>>()
-                    .join("\n- ")
+                    .join("\n  - ")
             );
         }
 

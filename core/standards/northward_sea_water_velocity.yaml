@@ -1,3 +1,4 @@
+standard_name: northward_sea_water_velocity
 long_name: Current V
 ioos_category: Currents
 extra_attrs:
@@ -5,8 +6,44 @@ extra_attrs:
   ncei_name: CURRENT METER - NORTH-SOUTH COMPONENT
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFS0494
 common_variable_names:
-- current_v
 - v
+- northwardvelocitycomponent
+- meridional_velocity
+- meridional_sea_water_velocity
+- v2_velocity
+- v1_velocity
+- northward_sea_water_velocity
+- v_1206
+- current_velocity_beam2_y_north
+- north
+- current_velocity_north
+- vstd_4098
+- nsct
+- northward_sea_water_velocity_profiler_depth_enabled
+- northward_sea_water_velocity_2
+- water_v
+- meridional_absolute_sea_water_velocity
+- v_current
+- current_v
+- m_water_vy
+- v_321
+- velocity_north
+- vcur
+- rfvl_y
+- northward_velocity
+- vo
+- vacc
+- average_velocity_northward
+- water_v_bottom
+- vvel_adcp
+- depth_avg_curr_north
+- current_speed_north
+- wcur_y
+- ocean_velocity_v_northward_true_north
+- ocean_current_direction_component_true_north
+- northward_water_velocity
+- northcurrent
+- lcnsap01
 sibling_standards:
 - sea_water_velocity_to_direction
 - sea_water_speed

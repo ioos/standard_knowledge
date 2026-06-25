@@ -1,13 +1,26 @@
 ioos_category: Meteorology
+standard_name: dew_point_temperature
 long_name: Dew Point Temperature
+common_variable_names:
+- dew_point_temperature
+- dewt
+- dewp
+- dew_point
+- dewpoint
+- dewtemperature
+- dpt
+- dewpoint_temperature_pressure_difference_layer
+- metsens_dwpoint_avg
+- dp_c_avg
+- dp
+- air_dewpoint
 extra_attrs:
   coverage_content_type: physicalMeasurement
 qc:
   glos:
     name: GLOS Seagull
     summary: QARTOD tests that GLOS uses for Seagull data
-    description: |
-      QARTOD tests that GLOS uses for dew point temperature data on Seagull.
+    description: QARTOD tests that GLOS uses for dew point temperature data on Seagull.
     tests:
       qartod:
         # flat_line_test:
@@ -15,14 +28,12 @@ qc:
         #   suspect_threshold: 2
         #   tolerance: 0.1
         gross_range_test:
-          fail_span: [
-            227.55,
-            338.75
-          ]
-          suspect_span: [
-            244.25,
-            310.95
-          ]
+          fail_span:
+          - 227.55
+          - 338.75
+          suspect_span:
+          - 244.25
+          - 310.95
         rate_of_change_test:
           threshold: 3.33333333333333
         spike_test:

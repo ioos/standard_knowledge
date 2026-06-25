@@ -1,3 +1,4 @@
+standard_name: sea_water_density
 long_name: Sigma-T (Density)
 ioos_category: Physical Oceanography
 extra_attrs:
@@ -5,8 +6,25 @@ extra_attrs:
   ncei_name: DENSITY
   standard_name_url: https://vocab.nerc.ac.uk/collection/P07/current/CFSN0332
 common_variable_names:
-- sigt
+- density
+- sea_water_density
+- sea_water_density_2
+- sigmat
+- dens1
+- dens2
+- sigmat2
+- sigma
+- dens
 - sigma_t
+- sea_water_density_profiler_depth_enabled
+- density_lag_shifted
+- density2
+- rho
+- density_lag_correct
+- sigt
+- mwsig0
+- global_mwsig0
+- density_calc
 sibling_standards:
 - sea_water_practical_salinity
 - sea_water_electrical_conductivity

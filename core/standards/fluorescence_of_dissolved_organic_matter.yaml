@@ -1,3 +1,5 @@
+standard_name: fluorescence_of_dissolved_organic_matter
 long_name: Fluorescence of Dissolved Organic Matter
 common_variable_names:
 - fdom
+ioos_category: Unknown

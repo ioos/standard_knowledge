@@ -1,3 +1,4 @@
+standard_name: air_pressure
 long_name: Barometric Pressure
 ioos_category: Meteorology
 extra_attrs:
@@ -7,17 +8,48 @@ extra_attrs:
 sibling_standards:
 - air_temperature
 common_variable_names:
+- air_pressure
+- airpressure
+- baro_pres_mean
+- air_pressure_instrument
+- air_pressure_above_navd88
 - pres # codespell:ignore
+- bp_915
+- baro_pressure
 - pressure
+- bpr_915
 - barometric_pressure
-- atm_pressure
-- bpr
+- p_msl
+- pmsl
+- atmp
+- par_251
+- bp
+- bar
+- atms
+- pressure_tropopause
+- pressure_grid_scale_cloud_top
+- pressure_grid_scale_cloud_bottom
+- pressure_cloud_tops
+- pressure_cloud_base
+- pressure_air
+- press
+- inv_bar
+- caph
+- atmospheric_pressure
+- stationairpressure
+- pa2_pa
+- pa2
+- pa1_pa
+- pa1
+- float_pressure
+- baro_pres
+- atmospheric_pressure_mbar
+- airsystembarometerval
 qc:
   glos:
+    description: QARTOD tests that GLOS uses for air pressure data on Seagull.
     name: GLOS Seagull
     summary: QARTOD tests that GLOS uses for Seagull data
-    description: |
-      QARTOD tests that GLOS uses for air pressure data on Seagull.
     tests:
       qartod:
         # flat_line_test:
@@ -26,11 +58,11 @@ qc:
         #   tolerance: 10
         gross_range_test:
           fail_span:
-            - 50000
-            - 111000
+          - 50000
+          - 111000
           suspect_span:
-            - 95000
-            - 103000
+          - 95000
+          - 103000
         rate_of_change_test:
           threshold: 1500
         spike_test:

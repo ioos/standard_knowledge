@@ -1,10 +1,51 @@
+standard_name: mole_concentration_of_dissolved_molecular_oxygen_in_sea_water
 ioos_category: Dissolved O2
 long_name: Oxygen
 extra_attrs:
   nodc_name: OXYGEN
 common_variable_names:
 - oxygen
+- oxygen_concentration
+- doxy
+- dissolved_oxygen
+- oxy4_oxygen
+- oxy3835_wphase_oxygen
+- mole_concentration_of_dissolved_molecular_oxygen_in_sea_water
+- o2_conc_sbe37
+- sci_oxy4_oxygen
+- oxygen_concentration_uncorrected
+- oxy3835_oxygen
+- molar_doxy
+- oxygen2
+- sci_oxy3835_wphase_oxygen
+- water_body_dissolved_oxygen_concentration
+- dissolved_raw_oxygen
+- sci_oxy3835_oxygen
+- mole_concentration_of_dissolved_molecular_oxygen_in_sea_water_profiler_depth_enabled
+- o2_conc_rbr
+- o2_rbr_conc
+- o2_aanderaa_conc_uncor
+- oxygen_molar
+- ocean_dissolved_oxygen_concentration
+- oxygen10
+- mole_concentration_of_dissolved_molecular_oxygen_in_sea_water_seaphox
+- oxygen_concentration_shifted
+- mole_concentration_of_dissolved_molecular_oxygen_in_sea_water_ctd
+- oxygen40
+- o2_conc_uncor
+- o2_conc
+- o2_conc_aanderaa
+- dissolved_oxygen_sat
+- cdom
+- aanderaa4831_dissolved_oxygen
+- oxygen_concentration_corrected
+- oxygen41
+- oxy_conc_umkg
+- oxy_conc
+- oraw
+- o
 - o2
+- dissolved_oxygen_in_sea_water
 related_standards:
 - fractional_saturation_of_oxygen_in_sea_water
 - mass_concentration_of_oxygen_in_sea_water

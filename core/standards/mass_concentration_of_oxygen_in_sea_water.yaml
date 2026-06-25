@@ -1,7 +1,43 @@
+standard_name: mass_concentration_of_oxygen_in_sea_water
 long_name: Mass Concentration of Dissolved Oxygen
 ioos_category: Dissolved O2
 common_variable_names:
-- dissolvedOxygenMassConcentration
+- dissolved_oxygen
+- mass_concentration_of_oxygen_in_sea_water
+- oxygenraw
+- oxygenmassconcentration
+- oxy
+- do
+- dissolved_oxygen_difference
+- o_60
+- dissolvedoxygenmassconcentration
+- oxygen
+- oxygen_mgl
+- mass_concentration_of_oxygen_in_sea_water_surface
+- mass_concentration_of_oxygen_in_sea_water_bottom
+- sci_oxy3835_wphase_oxygen
+- sbe16plus_oxygen_conc_mll
+- oxygen_raw
+- ctd_idronaut_oxygen_conc_mgl
+- mass_concentration_of_oxygen_in_sea_water_seaphox
+- dissolved_oxygen_hobo
+- oxygen_concentration_shifted_mgl
+- dissolved_oxygen_adjusted_hobo
+- mass_concentration_of_oxygen_in_sea_water_ctd
+- sbe_do
+- oxygen_conc_mll
+- oxygen_conc_mgl
+- doxy
+- aanderaa4831_dissolved_oxygen
+- sci_oxy4_oxygen
+- osat
+- dox
+- dissoxygen
+- dissolved_oxygen_ppm
+- dissolved_oxygen_mgl
+- dissolved_oxygen_mg
+- dissolved_oxyen
+- corrected_dissolved_oxygen
 related_standards:
 - fractional_saturation_of_oxygen_in_sea_water
 - mole_concentration_of_dissolved_molecular_oxygen_in_sea_water

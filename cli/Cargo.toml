@@ -7,6 +7,7 @@ readme.workspace = true
 description.workspace = true
 edition.workspace = true
 rust-version.workspace = true
+default-run = "standard_knowledge"
 
 [[bin]]
 name = "standard_knowledge"
