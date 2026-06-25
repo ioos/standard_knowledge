@@ -1742,6 +1742,7 @@ version = "0.1.1"
 dependencies = [
  "console_error_panic_hook",
  "indicium",
+ "js-sys",
  "serde-wasm-bindgen",
  "standard_knowledge",
  "wasm-bindgen",
