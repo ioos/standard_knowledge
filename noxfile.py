@@ -7,6 +7,7 @@ bump versions for release."""
 
 import argparse
 import os
+import tomllib
 
 import nox
 import yaml
@@ -68,6 +69,19 @@ def release(session: nox.Session) -> None:
 
     session.log(f"Bumping the {version!r} version")
     session.run("cargo", "set-version", "--bump", version, external=True)
+
+    with open("Cargo.toml", "rb") as f:
+        new_version = tomllib.load(f)["workspace"]["package"]["version"]
+    session.log(f"Syncing standard_knowledge_data to version {new_version}")
+    session.run(
+        "npm",
+        "version",
+        new_version,
+        "--no-git-tag-version",
+        "--prefix",
+        "js-data-pkg",
+        external=True,
+    )
 
 
 @nox.session(python=python_versions)
