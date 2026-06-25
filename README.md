@@ -234,7 +234,14 @@ Best run with `./noxfile -s test_js`, but individual tests are listed in the [Ja
 
 ### Utils
 
-- `utils/update_standards.py` - Run with `uv run --script utils/update_standards.py` to update the standard names and alias files from CF Conventions that are imported into the Rust library.
+- `utils/update_standards.py` - Run with `uv run --script utils/update_standards.py` (`./noxfile.py -s update_standards`) to update the standard names and alias files from CF Conventions that are imported into the Rust library.
+- `utils/find_standards_app.py` - Run with `uv run --script utils/find_standards_app.py` (`./noxfile.py -s find_standards`) starts a NanoDjango app that can help search across ERDDAP servers to find which variables and IOOS categories are being used for specific `standard_names`.
+  - Interact via API at http://0.0.0.0:8000/api/docs
+  - Start with listing the known ERDDAP servers, then load the datasets from the server.
+  - Then load the variables from a random selection of loaded datasets (to spread the load across servers). The datasets are marked as loaded, so they won't be re-visited across multiple calls.
+  - The stats endpoint can be useful to keep track of progress.
+  - Then list standards, followed by seeing how many servers use a variable name for a given standard.
+  - The `standard/{standard_name}/as_knowlede` endpoint will take the loaded variables and compact them down into knowledge form, with the variable names sorted by how commonly they are used. It can additionally merge with the existing knowledge, and write that knowledge to disk.
 
 ### Nox
 
@@ -256,3 +263,4 @@ Sessions (use `-s`):
 - `js_test` - Run the full Javascript test suite.
 - `js_build` - Build the Javascript package.
 - `js_dev` - Run the Javascript development server.
+- `find_standards` - Run a NanoDjango app to help find which variable names and IOOS categories are being used for various `standard_names` across ERDDAP servers.

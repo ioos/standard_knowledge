@@ -29,3 +29,7 @@ wheelhouse/
 
 # Random CLI things
 cli/dump
+
+# find_standards_app
+utils/migrations
+utils/db.sqlite3
