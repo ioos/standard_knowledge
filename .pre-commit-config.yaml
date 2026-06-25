@@ -69,8 +69,8 @@ repos:
       - id: duplicate-common-variable-names
         name: duplicate-common-variable-names
         description: Check for duplicate common variable names in standards
-        entry: utils/error_on_duplicate_variables.py
-        language: python
+        entry: uv run --script utils/error_on_duplicate_variables.py
+        language: system
         pass_filenames: false
         files: ^core/standards/.*\.yaml$
 
