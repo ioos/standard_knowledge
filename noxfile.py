@@ -220,5 +220,20 @@ def js_dev(session: nox.Session) -> None:
     session.run("npm", "run", "dev", external=True)
 
 
+@nox.session(python=False, default=False)
+def find_standards(session: nox.Session) -> None:
+    """Run the find_standards_app.py web service.
+
+    Run: nox -s find_standards
+    """
+    session.run(
+        "uv",
+        "run",
+        "--script",
+        "utils/find_standards_app.py",
+        external=True,
+    )
+
+
 if __name__ == "__main__":
     nox.main()
