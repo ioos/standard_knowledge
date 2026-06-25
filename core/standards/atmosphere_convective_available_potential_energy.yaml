@@ -1,0 +1,4 @@
+common_variable_names:
+- cape
+ioos_category: Heat Flux
+standard_name: atmosphere_convective_available_potential_energy

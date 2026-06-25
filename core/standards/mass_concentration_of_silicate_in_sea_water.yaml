@@ -1,0 +1,22 @@
+common_variable_names:
+- instrument2
+- water_body_silicate_deepest_depth
+- qf_var_6
+- silicate_in_sea_water
+- xrf_si_sub1
+- xrf_si_super1
+- silicate
+- water_body_silicate_deepest
+- g2silicatef
+- g2silicate
+- xrf_si_sub1_lod
+- xrf_si_sub1_conc
+- xrf_si_sub1_blank
+- upperlimitofsilicatedepthrange_m
+- silicatef
+- silicate_silicon_umol_l
+- silicate_silicon_umol_kg
+- silicate_silicon
+- llsid
+ioos_category: Dissolved Nutrients
+standard_name: mass_concentration_of_silicate_in_sea_water

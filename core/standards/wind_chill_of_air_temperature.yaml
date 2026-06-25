@@ -1,0 +1,6 @@
+common_variable_names:
+- wind_chill
+- wind_chill_temperature
+- windchill
+ioos_category: Temperature
+standard_name: wind_chill_of_air_temperature

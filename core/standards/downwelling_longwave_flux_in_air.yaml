@@ -1,0 +1,5 @@
+common_variable_names:
+- downwelling_longwave_flux_in_air
+- lw_irrad
+ioos_category: Heat Flux
+standard_name: downwelling_longwave_flux_in_air

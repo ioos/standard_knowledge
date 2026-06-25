@@ -1,0 +1,8 @@
+common_variable_names:
+- shtfl
+- qs_138
+- qb
+- sensible_heat_net_flux_surface
+- shfx
+ioos_category: Heat Flux
+standard_name: surface_downward_sensible_heat_flux

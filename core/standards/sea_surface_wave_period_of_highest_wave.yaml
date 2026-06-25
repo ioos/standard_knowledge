@@ -1,0 +1,4 @@
+common_variable_names:
+- thmax
+ioos_category: Surface Waves
+standard_name: sea_surface_wave_period_of_highest_wave

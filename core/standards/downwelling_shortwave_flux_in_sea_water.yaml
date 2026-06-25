@@ -1,0 +1,5 @@
+common_variable_names:
+- swn_1495
+- rd_495
+ioos_category: Surface Waves
+standard_name: downwelling_shortwave_flux_in_sea_water

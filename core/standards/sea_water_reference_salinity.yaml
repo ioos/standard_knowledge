@@ -1,0 +1,4 @@
+common_variable_names:
+- salinity
+ioos_category: Salinity
+standard_name: sea_water_reference_salinity

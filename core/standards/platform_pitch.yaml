@@ -1,0 +1,5 @@
+common_variable_names:
+- pitch
+- ptchgp
+ioos_category: Other
+standard_name: platform_pitch

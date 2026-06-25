@@ -1,0 +1,9 @@
+common_variable_names:
+- scatter_700_sub10
+- scatter_700_sub1
+- scatter_550_sub10
+- scatter_550_sub1
+- scatter_450_sub10
+- scatter_450_sub1
+ioos_category: Optical Properties
+standard_name: volume_scattering_coefficient_of_radiative_flux_in_air_due_to_ambient_aerosol_particles

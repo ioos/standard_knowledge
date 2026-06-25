@@ -1,0 +1,8 @@
+common_variable_names:
+- sea_water_sigma_t
+- sigmat
+- sigma_t
+- sea_water_sigma_t_ctd
+- density
+ioos_category: Unknown
+standard_name: sea_water_sigma_t

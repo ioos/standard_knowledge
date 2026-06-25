@@ -3,6 +3,7 @@ args = ["filter", "--var", "temp"]
 stdout = """
 - air_temperature - Air Temperature - K
 - sea_surface_temperature - Sea Surface Temperature - K
+- sea_water_potential_temperature - K
 - sea_water_temperature - Water Temperature - K
 """
 stderr = ""

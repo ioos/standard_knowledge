@@ -1,0 +1,3 @@
+common_variable_names:
+- tnihce
+standard_name: signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water

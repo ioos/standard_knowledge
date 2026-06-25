@@ -1,0 +1,5 @@
+common_variable_names:
+- tcdc
+- cdcon
+ioos_category: Bottom Character
+standard_name: convective_cloud_area_fraction

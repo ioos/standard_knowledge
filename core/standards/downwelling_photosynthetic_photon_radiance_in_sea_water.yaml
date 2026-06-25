@@ -1,0 +1,4 @@
+common_variable_names:
+- par
+ioos_category: Optical Properties
+standard_name: downwelling_photosynthetic_photon_radiance_in_sea_water

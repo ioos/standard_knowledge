@@ -1,0 +1,8 @@
+common_variable_names:
+- amplitude_z
+- amplitude_y
+- amplitude_x
+- pcgdap
+- amplitude
+ioos_category: Location
+standard_name: proportion_of_acceptable_signal_returns_from_acoustic_instrument_in_sea_water

@@ -1,0 +1,4 @@
+common_variable_names:
+- dissolved_organic_nitrogen
+ioos_category: dissolved_nutrients
+standard_name: mole_concentration_of_organic_detritus_expressed_as_nitrogen_in_sea_water

@@ -1,0 +1,8 @@
+common_variable_names:
+- surface_temperature_cm_time__mean_over_pt1h
+- tmpsfc
+- skt
+- sst
+- temperature
+ioos_category: Temperature
+standard_name: surface_temperature

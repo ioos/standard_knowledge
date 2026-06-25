@@ -1,0 +1,7 @@
+common_variable_names:
+- sea_water_conservative_temperature
+- conservative_temperature
+- temperature
+- ct
+ioos_category: Temperature
+standard_name: sea_water_conservative_temperature

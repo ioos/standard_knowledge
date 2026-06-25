@@ -1,0 +1,5 @@
+common_variable_names:
+- air_gap_adj
+- air_gap
+ioos_category: Sea Level
+standard_name: vertical_navigation_clearance_above_waterway_surface

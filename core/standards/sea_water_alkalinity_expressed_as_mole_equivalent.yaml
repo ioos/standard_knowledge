@@ -1,0 +1,6 @@
+common_variable_names:
+- total_alkalinity
+- alkalinity
+- alkali
+ioos_category: Other
+standard_name: sea_water_alkalinity_expressed_as_mole_equivalent

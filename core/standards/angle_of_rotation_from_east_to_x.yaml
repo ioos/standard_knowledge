@@ -1,0 +1,4 @@
+common_variable_names:
+- angle
+ioos_category: Location
+standard_name: angle_of_rotation_from_east_to_x

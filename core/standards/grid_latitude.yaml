@@ -1,0 +1,8 @@
+common_variable_names:
+- waypoint_latitude
+- dr_latitude
+- grid_lat
+- sat_lat
+- sat_l2_lat
+ioos_category: Other
+standard_name: grid_latitude

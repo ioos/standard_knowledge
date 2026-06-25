@@ -1,0 +1,4 @@
+common_variable_names:
+- altimeter
+ioos_category: Unknown
+standard_name: altimeter_range

@@ -1,0 +1,4 @@
+common_variable_names:
+- frequency
+ioos_category: Other
+standard_name: sound_frequency

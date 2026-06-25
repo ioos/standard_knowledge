@@ -1,0 +1,6 @@
+common_variable_names:
+- photoactatmradiation
+- surface_downwelling_photosynthetic_radiative_flux_in_air
+- lgh4
+ioos_category: Heat Flux
+standard_name: surface_downwelling_photosynthetic_radiative_flux_in_air

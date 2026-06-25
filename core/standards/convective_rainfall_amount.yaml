@@ -1,0 +1,4 @@
+common_variable_names:
+- rf
+ioos_category: Meteorology
+standard_name: convective_rainfall_amount

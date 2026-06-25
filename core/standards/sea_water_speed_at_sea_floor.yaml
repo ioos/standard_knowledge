@@ -1,0 +1,4 @@
+common_variable_names:
+- speed_at_seafloor
+ioos_category: Currents
+standard_name: sea_water_speed_at_sea_floor

@@ -1,0 +1,4 @@
+common_variable_names:
+- evap
+ioos_category: Meteorology
+standard_name: water_evaporation_amount

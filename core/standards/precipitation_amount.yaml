@@ -1,0 +1,8 @@
+common_variable_names:
+- precipitationamount
+- rn
+- apcp
+- precipitation
+- precip
+ioos_category: Meteorology
+standard_name: precipitation_amount

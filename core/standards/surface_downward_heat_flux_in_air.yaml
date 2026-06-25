@@ -1,0 +1,7 @@
+common_variable_names:
+- gflux
+- hflx
+- qtot
+- ground_heat_flux_surface
+ioos_category: Heat Flux
+standard_name: surface_downward_heat_flux_in_air

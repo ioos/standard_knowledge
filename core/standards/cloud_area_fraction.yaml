@@ -1,0 +1,10 @@
+common_variable_names:
+- cldc
+- tcdc
+- total_cloud_cover_entire_atmosphere_single_layer
+- medium_cloud_cover_middle_cloud
+- low_cloud_cover_low_cloud
+- high_cloud_cover_high_cloud
+- clouds
+ioos_category: Meteorology
+standard_name: cloud_area_fraction

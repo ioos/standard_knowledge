@@ -1,0 +1,4 @@
+common_variable_names:
+- pottmp
+ioos_category: Temperature
+standard_name: air_potential_temperature

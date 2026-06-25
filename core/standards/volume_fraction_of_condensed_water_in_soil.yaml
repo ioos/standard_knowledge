@@ -1,0 +1,5 @@
+common_variable_names:
+- soil_moist
+- sm
+ioos_category: Soils
+standard_name: volume_fraction_of_condensed_water_in_soil

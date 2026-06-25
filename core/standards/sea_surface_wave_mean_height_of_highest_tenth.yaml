@@ -1,0 +1,5 @@
+common_variable_names:
+- sea_surface_wave_mean_height_of_highest_tenth
+- wave_height_h10
+ioos_category: Surface Waves
+standard_name: sea_surface_wave_mean_height_of_highest_tenth

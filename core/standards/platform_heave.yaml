@@ -1,0 +1,4 @@
+common_variable_names:
+- heave
+ioos_category: Other
+standard_name: platform_heave

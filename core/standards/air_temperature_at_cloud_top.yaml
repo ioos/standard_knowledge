@@ -1,0 +1,5 @@
+common_variable_names:
+- tc_ir
+- tc
+- tc_pcdist
+standard_name: air_temperature_at_cloud_top

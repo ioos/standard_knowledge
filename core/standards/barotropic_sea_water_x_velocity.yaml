@@ -1,0 +1,4 @@
+common_variable_names:
+- barotropic_sea_water_x_velocity
+ioos_category: Currents
+standard_name: barotropic_sea_water_x_velocity

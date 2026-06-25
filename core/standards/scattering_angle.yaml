@@ -1,0 +1,4 @@
+common_variable_names:
+- sci_echodroid_sa
+ioos_category: Other
+standard_name: scattering_angle

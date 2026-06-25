@@ -1,0 +1,11 @@
+common_variable_names:
+- pressure
+- p_1ac
+- press_ac
+- sea_pressure
+- sea_water_pressure_due_to_sea_water_currents
+- sea_water_pressure_due_to_sea_water_ctd
+- sea_water_pressure_due_to_sea_water
+- diverctd8967_pressure
+ioos_category: Pressure
+standard_name: sea_water_pressure_due_to_sea_water

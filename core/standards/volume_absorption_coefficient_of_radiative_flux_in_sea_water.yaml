@@ -1,0 +1,8 @@
+common_variable_names:
+- atot
+- aph
+- adg
+- absorption_coefficient_at
+- a
+ioos_category: Quality
+standard_name: volume_absorption_coefficient_of_radiative_flux_in_sea_water

@@ -1,0 +1,5 @@
+common_variable_names:
+- ic_no3_sub1
+- ic_no3_super1
+ioos_category: Dissolved Nutrients
+standard_name: mass_concentration_of_nitrate_dry_aerosol_particles_in_air

@@ -1,0 +1,4 @@
+common_variable_names:
+- sound_pressure_levels
+ioos_category: Pressure
+standard_name: sound_pressure_level_in_water

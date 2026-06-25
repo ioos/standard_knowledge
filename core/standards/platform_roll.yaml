@@ -1,0 +1,5 @@
+common_variable_names:
+- roll
+- rollgp
+ioos_category: Other
+standard_name: platform_roll

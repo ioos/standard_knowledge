@@ -1,0 +1,14 @@
+common_variable_names:
+- long_wave_radiation
+- lw_irrad_mean
+- surface_downwelling_longwave_flux_in_air
+- lw_irrad_stddev
+- linc
+- lw
+- surface_downwelling_longwave_flux_in_air_eppley
+- rlds
+- therm_rad
+- surface_dwnwelling_lngwv
+- longwave_radiation
+ioos_category: Heat Flux
+standard_name: surface_downwelling_longwave_flux_in_air

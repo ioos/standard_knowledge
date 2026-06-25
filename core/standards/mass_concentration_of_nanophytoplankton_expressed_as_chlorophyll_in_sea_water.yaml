@@ -1,0 +1,4 @@
+common_variable_names:
+- chla_3_20um
+- chla_2_20um
+standard_name: mass_concentration_of_nanophytoplankton_expressed_as_chlorophyll_in_sea_water

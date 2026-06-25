@@ -1,0 +1,11 @@
+common_variable_names:
+- measured_water_depth
+- m_water_depth
+- sea_floor_depth_below_sea_surface
+- water_depth
+- site_bathy_depth
+- bathymetric_depth
+- sdn_bot_depth
+- instrument_depth
+ioos_category: Other
+standard_name: sea_floor_depth_below_sea_surface

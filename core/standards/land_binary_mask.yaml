@@ -1,0 +1,8 @@
+common_variable_names:
+- mask
+- landmask
+- lsmask
+- land
+- cloud_land_mask
+ioos_category: Identifier
+standard_name: land_binary_mask

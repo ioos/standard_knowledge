@@ -1,0 +1,4 @@
+common_variable_names:
+- head
+ioos_category: Currents
+standard_name: direction_of_radial_vector_toward_instrument

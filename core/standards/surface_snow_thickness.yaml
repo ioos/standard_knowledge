@@ -1,0 +1,6 @@
+common_variable_names:
+- surface_snow_thickness
+- snod
+- cnwat
+ioos_category: Ice Distribution
+standard_name: surface_snow_thickness

@@ -1,0 +1,4 @@
+common_variable_names:
+- swnet
+- qs
+standard_name: surface_net_downward_shortwave_flux

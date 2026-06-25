@@ -1,0 +1,4 @@
+common_variable_names:
+- f
+ioos_category: Unknown
+standard_name: coriolis_parameter

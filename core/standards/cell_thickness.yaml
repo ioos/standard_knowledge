@@ -1,0 +1,4 @@
+common_variable_names:
+- e3t
+ioos_category: numerics
+standard_name: cell_thickness

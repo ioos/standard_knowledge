@@ -1,0 +1,6 @@
+common_variable_names:
+- thickness_of_snowfall_amount_cm_time__sum_over_pt1h
+- snow_depth
+- snow
+ioos_category: Ice Distribution
+standard_name: thickness_of_snowfall_amount

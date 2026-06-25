@@ -1,0 +1,7 @@
+common_variable_names:
+- x_wind
+- u_mean
+- wu_422
+- u
+ioos_category: Wind
+standard_name: x_wind

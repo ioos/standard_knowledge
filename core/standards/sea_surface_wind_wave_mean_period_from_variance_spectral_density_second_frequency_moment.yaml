@@ -1,0 +1,3 @@
+common_variable_names:
+- t02
+standard_name: sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment

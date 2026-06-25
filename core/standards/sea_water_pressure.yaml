@@ -1,0 +1,34 @@
+common_variable_names:
+- pressure
+- sea_water_pressure
+- pres # codespell:ignore
+- sci_water_pressure
+- p
+- sdp_850
+- m_pressure
+- sea_water_pressure_down
+- sea_water_pressure_up
+- pressure_interpolated
+- pressure_raw
+- psdev
+- bpr_1301
+- sea_water_pressure_ctd
+- pres_adjusted
+- m_water_pressure
+- absolute_pressure
+- ctd_idronaut_pressure
+- sea_water_pressure_seaphox
+- waterpressure_avg
+- press
+- waterpressure
+- water_pressure
+- tmes
+- tim
+- sea_water_pressure_relative
+- sea_water_pressure_absolute
+- prespr01
+- p_1ac
+- measured_water_pressure
+- ahgt
+ioos_category: Pressure
+standard_name: sea_water_pressure

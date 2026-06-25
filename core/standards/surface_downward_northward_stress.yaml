@@ -1,0 +1,13 @@
+common_variable_names:
+- vpstr
+- tauy
+- modstress
+- curl
+- tauy_mean
+- stress_v
+- y_tau
+- taun
+- vstr
+- ustr
+ioos_category: Wind
+standard_name: surface_downward_northward_stress

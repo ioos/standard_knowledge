@@ -1,0 +1,4 @@
+common_variable_names:
+- geopotential_anomaly
+ioos_category: Unknown
+standard_name: geopotential

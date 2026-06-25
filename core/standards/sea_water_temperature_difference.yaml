@@ -1,0 +1,4 @@
+common_variable_names:
+- temperature_difference
+ioos_category: Temperature
+standard_name: sea_water_temperature_difference

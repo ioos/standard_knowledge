@@ -1,0 +1,7 @@
+common_variable_names:
+- par
+- sci_bsipar_par
+- parraw
+- irradiance
+ioos_category: Other
+standard_name: downwelling_photosynthetic_photon_spherical_irradiance_in_sea_water

@@ -1,0 +1,20 @@
+common_variable_names:
+- sound_speed
+- sound_velocity
+- soundspeed
+- speed_of_sound_in_sea_water
+- average_sound_velocity
+- speed_of_sound
+- svel
+- sv_80
+- ancil1_snd_spd_used
+- ancil1_best_snd_spd
+- sbe16plus_soundvelocity
+- ctd_idronaut_soundvelocity
+- soundvelocity
+- average_soundspeed
+- calculated_sound_velocity
+- svelcv
+- soundv
+ioos_category: Currents
+standard_name: speed_of_sound_in_sea_water

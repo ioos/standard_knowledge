@@ -1,0 +1,16 @@
+common_variable_names:
+- heading
+- ad2cp_heading
+- magnetic_heading
+- m_heading
+- bearing
+- hdg
+- comp
+- pstd
+- head
+- ship_heading
+- vane
+- compass
+- headcm
+ioos_category: Unknown
+standard_name: platform_orientation

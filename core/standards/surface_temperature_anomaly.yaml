@@ -1,0 +1,8 @@
+common_variable_names:
+- anom
+- sst
+- sea_surface_temperature_anomaly
+- sst_anomaly
+- err_sst
+ioos_category: Temperature
+standard_name: surface_temperature_anomaly

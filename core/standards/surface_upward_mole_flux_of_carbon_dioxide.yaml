@@ -1,0 +1,4 @@
+common_variable_names:
+- surface_upward_mole_flux_of_carbon_dioxide
+ioos_category: CO2
+standard_name: surface_upward_mole_flux_of_carbon_dioxide

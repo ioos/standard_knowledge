@@ -1,0 +1,6 @@
+common_variable_names:
+- sea_surface_wind_wave_significant_height
+- whgt
+- hssea
+ioos_category: Surface Waves
+standard_name: sea_surface_wind_wave_significant_height

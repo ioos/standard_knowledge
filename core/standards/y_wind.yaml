@@ -1,0 +1,7 @@
+common_variable_names:
+- y_wind
+- v_mean
+- wv_423
+- v
+ioos_category: Wind
+standard_name: y_wind

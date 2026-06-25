@@ -1,0 +1,14 @@
+common_variable_names:
+- mwd
+- sea_surface_wave_to_direction
+- wave_direction
+- wave_dir
+- wd_4062
+- primary_wave_direction_surface
+- wvdir
+- peakdirection
+- direction_of_significant_waves
+- wavedir
+- global_mwd
+ioos_category: Surface Waves
+standard_name: sea_surface_wave_to_direction

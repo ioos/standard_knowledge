@@ -1,0 +1,4 @@
+common_variable_names:
+- cprat
+ioos_category: Meteorology
+standard_name: convective_precipitation_rate

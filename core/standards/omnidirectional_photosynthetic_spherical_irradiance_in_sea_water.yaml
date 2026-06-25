@@ -1,0 +1,4 @@
+common_variable_names:
+- par
+ioos_category: Other
+standard_name: omnidirectional_photosynthetic_spherical_irradiance_in_sea_water

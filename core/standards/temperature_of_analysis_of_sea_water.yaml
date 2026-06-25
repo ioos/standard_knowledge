@@ -1,0 +1,4 @@
+common_variable_names:
+- tmes
+ioos_category: Unknown
+standard_name: temperature_of_analysis_of_sea_water

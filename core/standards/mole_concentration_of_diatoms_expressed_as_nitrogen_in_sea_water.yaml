@@ -1,0 +1,4 @@
+common_variable_names:
+- diatoms
+ioos_category: biology
+standard_name: mole_concentration_of_diatoms_expressed_as_nitrogen_in_sea_water

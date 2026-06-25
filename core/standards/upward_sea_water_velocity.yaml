@@ -1,0 +1,23 @@
+common_variable_names:
+- vertical_velocity
+- upward_sea_water_velocity
+- w
+- vertical_sea_water_velocity
+- vertical_velocity_upcast
+- vertical_velocity_downcast
+- wstd
+- ustd
+- current_velocity_up
+- w_dvar
+- w_dmean
+- velocity_upward
+- lrza
+- w_velocity
+- vcsp
+- average_velocity_upward
+- zcur
+- wvel_adcp
+- wo
+- acmverticalspeed
+ioos_category: Currents
+standard_name: upward_sea_water_velocity

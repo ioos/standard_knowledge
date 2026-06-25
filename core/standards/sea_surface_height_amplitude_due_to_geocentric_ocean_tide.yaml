@@ -1,0 +1,6 @@
+common_variable_names:
+- sea_surface_height_amplitude_due_to_geocentric_ocean_tide_above_mllw
+- predictedwl
+- waterlevel
+ioos_category: Sea Level
+standard_name: sea_surface_height_amplitude_due_to_geocentric_ocean_tide

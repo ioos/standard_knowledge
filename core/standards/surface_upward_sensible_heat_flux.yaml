@@ -1,0 +1,5 @@
+common_variable_names:
+- shtfl
+- qsen
+ioos_category: Heat Flux
+standard_name: surface_upward_sensible_heat_flux

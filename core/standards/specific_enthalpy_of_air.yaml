@@ -1,0 +1,4 @@
+common_variable_names:
+- specific_enthalpy
+ioos_category: Other
+standard_name: specific_enthalpy_of_air

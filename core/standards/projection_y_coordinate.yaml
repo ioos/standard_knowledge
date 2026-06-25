@@ -1,0 +1,8 @@
+common_variable_names:
+- y
+- rows
+- ygrid
+- lines
+- gridy
+ioos_category: Location
+standard_name: projection_y_coordinate

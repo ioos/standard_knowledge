@@ -1,0 +1,6 @@
+common_variable_names:
+- sfcr
+- surface_roughness_1km
+- surface_roughness_surface
+ioos_category: Surface Waves
+standard_name: surface_roughness_length

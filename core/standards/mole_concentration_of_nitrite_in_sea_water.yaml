@@ -1,0 +1,19 @@
+common_variable_names:
+- mole_concentration_of_nitrite_in_sea_water
+- no2
+- sea_water_nitrite_concentration
+- no2_um_l
+- no2_184
+- nitrite_in_sea_water
+- nitrite
+- g2nitritef
+- g2nitrite
+- wc_no2
+- upperlimitofnitritedepthrange_m
+- no2_154
+- nitritef
+- nitrite_nitrogen_umol_l
+- nitrite_nitrogen_umol_kg
+- llnd
+ioos_category: Dissolved Nutrients
+standard_name: mole_concentration_of_nitrite_in_sea_water

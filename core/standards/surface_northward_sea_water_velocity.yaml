@@ -1,0 +1,8 @@
+common_variable_names:
+- nsct
+- water_v
+- sv
+- v
+- vn
+ioos_category: Currents
+standard_name: surface_northward_sea_water_velocity

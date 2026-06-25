@@ -1,0 +1,11 @@
+common_variable_names:
+- pco2_atm_wet_interp
+- pco2_atm_wet_actual
+- fco2_atm_wet_interp
+- fco2_atm_wet_actual
+- surface_partial_pressure_of_carbon_dioxide_in_air
+- pco2_air_sat
+- atm_pco2_wet
+- aco2
+ioos_category: CO2
+standard_name: surface_partial_pressure_of_carbon_dioxide_in_air

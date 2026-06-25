@@ -1,0 +1,4 @@
+common_variable_names:
+- secchi_depth_of_sea_water
+ioos_category: Location
+standard_name: secchi_depth_of_sea_water

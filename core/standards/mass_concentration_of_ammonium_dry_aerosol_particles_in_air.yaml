@@ -1,0 +1,5 @@
+common_variable_names:
+- ic_nh4_sub1
+- ic_nh4_super1
+ioos_category: Dissolved Nutrients
+standard_name: mass_concentration_of_ammonium_dry_aerosol_particles_in_air

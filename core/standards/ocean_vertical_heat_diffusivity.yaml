@@ -1,0 +1,4 @@
+common_variable_names:
+- vert_eddy_diff
+ioos_category: physical_oceanography
+standard_name: ocean_vertical_heat_diffusivity

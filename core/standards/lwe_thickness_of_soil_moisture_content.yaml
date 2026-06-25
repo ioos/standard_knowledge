@@ -1,0 +1,4 @@
+common_variable_names:
+- soilw
+ioos_category: Soils
+standard_name: lwe_thickness_of_soil_moisture_content

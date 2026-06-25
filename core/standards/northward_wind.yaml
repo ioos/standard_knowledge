@@ -1,0 +1,15 @@
+common_variable_names:
+- vwnd
+- northward_wind
+- wind_v
+- vwind
+- vgrd10m
+- v_wind
+- wind_direction
+- wspv
+- v_component_of_wind_maximum_wind
+- northward_wind_8451met
+- wspn
+- vwnd_corr
+ioos_category: Wind
+standard_name: northward_wind

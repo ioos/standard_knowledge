@@ -1,0 +1,14 @@
+common_variable_names:
+- sigma_theta
+- sea_water_sigma_theta
+- sigmatheta
+- sth_71
+- sigm
+- dens
+- theta
+- st_70
+- potential_density
+- density
+- ocean_sigma_theta
+ioos_category: Physical Oceanography
+standard_name: sea_water_sigma_theta

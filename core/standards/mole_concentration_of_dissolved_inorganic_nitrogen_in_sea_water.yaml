@@ -1,0 +1,6 @@
+common_variable_names:
+- water_body_dissolved_inorganic_nitrogen
+- water_body_dissolved_inorganic_nitrogen_deepest
+- water_body_dissolved_inorganic_nitrogen_din
+ioos_category: Statistics
+standard_name: mole_concentration_of_dissolved_inorganic_nitrogen_in_sea_water

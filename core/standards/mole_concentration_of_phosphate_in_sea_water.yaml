@@ -1,0 +1,16 @@
+common_variable_names:
+- mole_concentration_of_phosphate_in_sea_water
+- water_body_phosphate_deepest
+- po4_range
+- po4_min
+- po4_mean
+- po4_max
+- po4_ltmin
+- po4_ltmax
+- water_body_phosphate
+- var_4
+- sea_water_phosphate_concentration
+- po4
+- phosphate
+ioos_category: Dissolved Nutrients
+standard_name: mole_concentration_of_phosphate_in_sea_water

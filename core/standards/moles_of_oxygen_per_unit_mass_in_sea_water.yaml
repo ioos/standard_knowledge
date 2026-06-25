@@ -1,0 +1,13 @@
+common_variable_names:
+- dissolved_oxygen
+- oxygen
+- moles_of_oxygen_per_unit_mass_in_sea_water
+- doxy
+- dox
+- doxy_adjusted
+- ctd_oxygen
+- oxygen_umolkg
+- oxygen_concentration
+- o2
+ioos_category: Other
+standard_name: moles_of_oxygen_per_unit_mass_in_sea_water

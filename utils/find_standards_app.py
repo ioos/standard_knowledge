@@ -119,6 +119,55 @@ def list_standards(request):
     return {"standards": list(standards)}
 
 
+def standard_as_knowledge_dict(standard_name: str):
+    """Return the standard as a knowledge dictionary."""
+    variables = Variable.objects.filter(standard_name=standard_name)
+    most_common_ioos_category = (
+        variables.filter(ioos_category__isnull=False)
+        .values("ioos_category")
+        .annotate(count=models.Count("ioos_category"))
+        .order_by("-count")
+        .first()
+    )
+    variable_names_by_use_count = (
+        variables.annotate(lower_name=models.functions.Lower("variable_name"))
+        .values("lower_name")
+        .annotate(count=models.Count("lower_name"))
+        .order_by("-count")
+    )
+    variable_names = [v["lower_name"] for v in variable_names_by_use_count]
+    knowledge = {
+        "standard_name": standard_name,
+        "common_variable_names": variable_names,
+    }
+    if most_common_ioos_category:
+        knowledge["ioos_category"] = most_common_ioos_category["ioos_category"]
+    return knowledge
+
+
+@app.api.get("/standard/make_missing_knowledge")
+def make_missing_knowledge(request):
+    """Make knowledge yaml files for standards that don't have them yet for defined CF standards."""
+    standards = (
+        Variable.objects.filter(standard_name__isnull=False)
+        .values_list("standard_name", flat=True)
+        .distinct()
+        .order_by("standard_name")
+    )
+
+    with open(KNOWLEDGE_YAML_PATH / "_cf_standards.yaml") as f:
+        cf_standards = yaml.safe_load(f)["standard_names"]
+
+    for standard in standards:
+        path = KNOWLEDGE_YAML_PATH / f"{standard}.yaml"
+        if not path.exists() and standard in cf_standards:
+            knowledge = standard_as_knowledge_dict(standard)
+            with path.open("w") as f:
+                yaml.dump(knowledge, f)
+            print(f"Created knowledge file for {standard} at {path}")
+    return {"message": "Done creating missing knowledge files."}
+
+
 @app.api.get("/standard/{standard_name}")
 def variables_by_standard(request, standard_name: str):
     """Return the count of each variable name and ioos category for a given standard name."""
@@ -152,28 +201,7 @@ def standard_as_knowledge(
     - merge: if True, merge with existing knowledge yaml if it exists.
     - write: if True, write the knowledge yaml to disk.
     """
-    variables = Variable.objects.filter(standard_name=standard_name)
-    most_common_ioos_category = (
-        variables.filter(ioos_category__isnull=False)
-        .values("ioos_category")
-        .annotate(count=models.Count("ioos_category"))
-        .order_by("-count")
-        .first()
-    )
-    variable_names_by_use_count = (
-        variables.annotate(lower_name=models.functions.Lower("variable_name"))
-        .values("lower_name")
-        .annotate(count=models.Count("lower_name"))
-        .order_by("-count")
-    )
-    variable_names = [v["lower_name"] for v in variable_names_by_use_count]
-    knowledge = {
-        "standard_name": standard_name,
-        "ioos_category": most_common_ioos_category["ioos_category"]
-        if most_common_ioos_category
-        else None,
-        "common_variable_names": variable_names,
-    }
+    knowledge = standard_as_knowledge_dict(standard_name)
 
     path = KNOWLEDGE_YAML_PATH / f"{standard_name}.yaml"
 
@@ -219,6 +247,46 @@ def dataset_urls_for_a_variable_and_standard(
         "variable_name": var_name,
         "datasets": result,
     }
+
+
+@app.api.get("/ioos_categories")
+def list_ioos_categories(request):
+    """Return a list of all unique IOOS categories in the database."""
+    categories = (
+        Variable.objects.filter(ioos_category__isnull=False)
+        .values_list("ioos_category", flat=True)
+        .distinct()
+        .order_by("ioos_category")
+    )
+    return {"ioos_categories": list(categories)}
+
+
+@app.api.get("/ioos_category/{ioos_category}")
+def standards_by_ioos_category(request, ioos_category: str):
+    """Return the count of each standard name and variable name for a given IOOS category."""
+    variables = Variable.objects.filter(ioos_category=ioos_category)
+    result = {}
+    for var in variables:
+        key = (var.standard_name, var.variable_name)
+        if key not in result:
+            result[key] = 0
+        result[key] += 1
+
+    response = {
+        "ioos_category": ioos_category,
+        "standards": [
+            {
+                "standard_name": standard_name,
+                "variable_name": variable_name,
+                "count": count,
+            }
+            for (standard_name, variable_name), count in result.items()
+        ],
+    }
+    # sort results by count descending
+    response["standards"].sort(key=lambda x: x["count"], reverse=True)
+
+    return response
 
 
 @app.api.get("/stats")

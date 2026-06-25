@@ -1,0 +1,8 @@
+common_variable_names:
+- salinity
+- woa_sss
+- sea_surface_salinity
+- sal
+- sss
+ioos_category: Salinity
+standard_name: sea_surface_salinity

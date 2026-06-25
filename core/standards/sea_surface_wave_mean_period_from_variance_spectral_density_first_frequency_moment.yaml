@@ -1,0 +1,6 @@
+common_variable_names:
+- waveta
+- sea_surface_wave_mean_period_from_variance_spectral_density_first_frequency_moment
+- meanwaveperiod_tm01
+ioos_category: Surface Waves
+standard_name: sea_surface_wave_mean_period_from_variance_spectral_density_first_frequency_moment

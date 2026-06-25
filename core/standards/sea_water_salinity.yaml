@@ -1,0 +1,17 @@
+common_variable_names:
+- salinity
+- psal
+- salt
+- sea_water_salinity
+- sbe16plus_salinity
+- ctd_idronaut_salinity
+- zsal
+- sbe_salinity
+- surface_salinity
+- sss
+- salinity_psu
+- sal
+- psal_adjusted
+- exo2_salinity
+ioos_category: Salinity
+standard_name: sea_water_salinity

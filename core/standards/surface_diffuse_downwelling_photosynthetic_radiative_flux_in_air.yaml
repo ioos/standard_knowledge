@@ -1,0 +1,4 @@
+common_variable_names:
+- spar
+ioos_category: Optical Properties
+standard_name: surface_diffuse_downwelling_photosynthetic_radiative_flux_in_air

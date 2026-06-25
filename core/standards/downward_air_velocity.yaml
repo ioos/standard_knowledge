@@ -1,0 +1,3 @@
+common_variable_names:
+- wwnd
+standard_name: downward_air_velocity

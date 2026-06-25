@@ -1,0 +1,5 @@
+common_variable_names:
+- station_name
+- station_id
+ioos_category: Identifier
+standard_name: realization

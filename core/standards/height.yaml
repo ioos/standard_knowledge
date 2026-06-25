@@ -1,0 +1,14 @@
+common_variable_names:
+- elev
+- aboveground
+- z
+- rose
+- wnd_measurementheight
+- hrh_measurementheight
+- atmp_measurementheight
+- stn_elev
+- slr_feet
+- height_above_station_datum
+- elevation
+ioos_category: Bathymetry
+standard_name: height

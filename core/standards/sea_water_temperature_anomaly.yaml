@@ -1,0 +1,6 @@
+common_variable_names:
+- scti_10day
+- scti
+- oni
+ioos_category: Temperature
+standard_name: sea_water_temperature_anomaly

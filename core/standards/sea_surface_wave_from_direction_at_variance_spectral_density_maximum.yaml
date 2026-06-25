@@ -1,0 +1,9 @@
+common_variable_names:
+- sea_surface_wave_from_direction_at_variance_spectral_density_maximum
+- pdir
+- tdir
+- peak_wave_direction_from
+- wavedp
+- peakdirection
+ioos_category: Statistics
+standard_name: sea_surface_wave_from_direction_at_variance_spectral_density_maximum

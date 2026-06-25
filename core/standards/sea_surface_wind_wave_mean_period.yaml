@@ -1,0 +1,3 @@
+common_variable_names:
+- tzsea
+standard_name: sea_surface_wind_wave_mean_period

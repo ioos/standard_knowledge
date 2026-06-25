@@ -1,0 +1,4 @@
+common_variable_names:
+- nrcs
+ioos_category: Unknown
+standard_name: surface_backwards_scattering_coefficient_of_radar_wave

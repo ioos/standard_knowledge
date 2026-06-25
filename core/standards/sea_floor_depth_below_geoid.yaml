@@ -1,0 +1,6 @@
+common_variable_names:
+- bathy
+- h
+- bathymetry
+ioos_category: Bathymetry
+standard_name: sea_floor_depth_below_geoid

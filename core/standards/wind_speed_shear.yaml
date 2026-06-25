@@ -1,0 +1,4 @@
+common_variable_names:
+- vwsh
+ioos_category: Wind
+standard_name: wind_speed_shear

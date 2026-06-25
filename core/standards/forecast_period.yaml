@@ -1,0 +1,4 @@
+common_variable_names:
+- time_offset
+ioos_category: Time
+standard_name: forecast_period

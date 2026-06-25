@@ -1,0 +1,9 @@
+common_variable_names:
+- potential_density
+- sigma_theta
+- dens
+- sea_water_potential_density
+- density
+- prho
+ioos_category: Other
+standard_name: sea_water_potential_density

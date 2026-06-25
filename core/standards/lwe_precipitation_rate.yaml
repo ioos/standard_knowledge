@@ -1,0 +1,14 @@
+common_variable_names:
+- lwe_precipitation_rate_cm_time__sum_over_pt1h
+- precipitation_rate
+- lwe_precipitation_rate
+- precip
+- prate
+- cprat
+- prrt
+- precipitation_rate_surface
+- precip_rate
+- lwe_precipitation_rate_cm_time__sum_over_pt1h_nova
+- lwe_precipitation_rate_cm_time__sum_over_pt1h_eti
+ioos_category: Meteorology
+standard_name: lwe_precipitation_rate

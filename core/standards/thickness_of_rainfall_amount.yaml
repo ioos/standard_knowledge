@@ -1,0 +1,10 @@
+common_variable_names:
+- rain
+- precip_tot
+- precip_tb
+- thickness_of_rainfall_amount
+- totalrain
+- total_precip
+- rain_gauge
+ioos_category: Meteorology
+standard_name: thickness_of_rainfall_amount

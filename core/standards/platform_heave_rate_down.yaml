@@ -1,0 +1,5 @@
+common_variable_names:
+- m_depth_rate_avg_final
+- descent_rate
+ioos_category: Other
+standard_name: platform_heave_rate_down

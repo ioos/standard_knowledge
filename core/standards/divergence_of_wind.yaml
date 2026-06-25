@@ -1,0 +1,5 @@
+common_variable_names:
+- divw
+- divergence
+ioos_category: Wind
+standard_name: divergence_of_wind

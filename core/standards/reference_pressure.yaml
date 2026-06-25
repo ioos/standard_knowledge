@@ -1,0 +1,4 @@
+common_variable_names:
+- pressure
+ioos_category: Pressure
+standard_name: reference_pressure

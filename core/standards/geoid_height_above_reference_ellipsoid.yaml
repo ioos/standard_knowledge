@@ -1,0 +1,4 @@
+common_variable_names:
+- elevation
+ioos_category: Location
+standard_name: geoid_height_above_reference_ellipsoid

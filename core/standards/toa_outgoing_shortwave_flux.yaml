@@ -1,0 +1,4 @@
+common_variable_names:
+- toa_outgoing_shortwave_flux_reflected
+ioos_category: Heat Flux
+standard_name: toa_outgoing_shortwave_flux

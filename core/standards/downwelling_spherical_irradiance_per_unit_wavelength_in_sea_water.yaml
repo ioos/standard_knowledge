@@ -1,0 +1,8 @@
+common_variable_names:
+- ed669_5
+- ed555_4
+- ed532_7
+- ed490_6
+- ed411_4
+ioos_category: Optical Properties
+standard_name: downwelling_spherical_irradiance_per_unit_wavelength_in_sea_water

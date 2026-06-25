@@ -1,0 +1,6 @@
+common_variable_names:
+- par
+- su
+- carbon
+ioos_category: Other
+standard_name: surface_carbon_dioxide_partial_pressure_difference_between_air_and_sea_water

@@ -1,0 +1,11 @@
+common_variable_names:
+- relative_wind_direction
+- true_wind_direction
+- wind_to_direction
+- direction
+- wd_410
+- gdir
+- wind_direction
+- mean_wind_direction
+ioos_category: Wind
+standard_name: wind_to_direction

@@ -1,0 +1,4 @@
+common_variable_names:
+- mole_concentration_of_hydrogen_sulfide_in_sea_water
+ioos_category: Unknown
+standard_name: mole_concentration_of_hydrogen_sulfide_in_sea_water

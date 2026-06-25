@@ -1,0 +1,3 @@
+common_variable_names:
+- tpswell
+standard_name: sea_surface_secondary_swell_wave_period_at_variance_spectral_density_maximum

@@ -2,6 +2,7 @@ bin.name = "standard_knowledge"
 args = ["filter", "-f", "xarray", "--search", "geopotential_datum"]
 stdout = """
 {
+  "ioos_category": "Location",
   "standard_name": "altitude",
   "units": "m",
 },
@@ -30,6 +31,7 @@ stdout = """
   "units": "m",
 },
 {
+  "ioos_category": "Other",
   "standard_name": "cloud_base_altitude",
   "units": "m",
 },
@@ -74,18 +76,22 @@ stdout = """
   "units": "m",
 },
 {
+  "ioos_category": "Location",
   "standard_name": "geoid_height_above_reference_ellipsoid",
   "units": "m",
 },
 {
+  "ioos_category": "Unknown",
   "standard_name": "geopotential",
   "units": "m2 s-2",
 },
 {
+  "ioos_category": "Sea Level",
   "standard_name": "geopotential_height",
   "units": "m",
 },
 {
+  "ioos_category": "Temperature",
   "standard_name": "geopotential_height_anomaly",
   "units": "m",
 },
@@ -110,6 +116,7 @@ stdout = """
   "units": "m",
 },
 {
+  "ioos_category": "Location",
   "standard_name": "height_above_reference_ellipsoid",
   "units": "m",
 },
@@ -124,10 +131,6 @@ stdout = """
 {
   "standard_name": "magnitude_of_sea_ice_displacement",
   "units": "m",
-},
-{
-  "standard_name": "mass_flux_of_carbon_from_biomass_into_geological_storage",
-  "units": "kg m-2 s-1",
 },
 {
   "standard_name": "northward_northward_derivative_of_geopotential",
@@ -178,16 +181,13 @@ stdout = """
   "units": "1",
 },
 {
+  "ioos_category": "Bathymetry",
   "standard_name": "sea_floor_depth_below_geoid",
   "units": "m",
 },
 {
   "standard_name": "sea_floor_depth_below_geopotential_datum",
   "units": "m",
-},
-{
-  "standard_name": "sea_floor_sediment_age_before_1950",
-  "units": "s",
 },
 {
   "standard_name": "sea_ice_x_displacement",
@@ -198,6 +198,7 @@ stdout = """
   "units": "m",
 },
 {
+  "ioos_category": "sea_level",
   "standard_name": "sea_surface_height_above_geoid",
   "units": "m",
 },
@@ -208,6 +209,7 @@ stdout = """
   "units": "m",
 },
 {
+  "ioos_category": "Sea Level",
   "standard_name": "sea_surface_height_above_reference_ellipsoid",
   "units": "m",
 },
@@ -232,6 +234,7 @@ stdout = """
   "units": "m2",
 },
 {
+  "ioos_category": "Sea Level",
   "standard_name": "surface_altitude",
   "units": "m",
 },

@@ -1,0 +1,20 @@
+common_variable_names:
+- hgt
+- geop_ht_isobaric
+- shum
+- geopotential_height_zerodegc_isotherm
+- geopotential_height_surface
+- geopotential_height_planetary_boundary
+- geopotential_height_maximum_wind
+- geopotential_height_lowest_level_water_layer
+- geopotential_height_lowest_level_of_the_wet_bulb_zero
+- geopotential_height_isobaric
+- geopotential_height_hybrid
+- geopotential_height_highest_tropospheric_freezing
+- geopotential_height_highest_level_water_layer
+- geopotential_height_cloud_tops
+- geopotential_height_cloud_ceiling
+- geopotential_height_cloud_base
+- geopotential_height_adiabatic_condensation_lifted
+ioos_category: Sea Level
+standard_name: geopotential_height

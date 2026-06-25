@@ -1,0 +1,16 @@
+common_variable_names:
+- sea_surface_swell_wave_period
+- dpd
+- sper
+- primary_wave_mean_period_surface
+- waveperiod
+- period_between_significant_waves
+- mean_wave_period
+- average_period_all_waves
+- apd
+- significant_wave_period
+- dominant_wave_period
+- average_wave_period
+- average_period_of_h10_waves
+ioos_category: Surface Waves
+standard_name: sea_surface_swell_wave_period

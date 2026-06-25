@@ -1,0 +1,4 @@
+common_variable_names:
+- tide
+ioos_category: Sea Level
+standard_name: surface_altitude

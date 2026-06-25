@@ -1,0 +1,7 @@
+common_variable_names:
+- pressure
+- uncompensated_seafloor_pressure
+- sea_water_pressure_at_sea_floor_tide
+- sea_water_pressure_at_sea_floor
+ioos_category: Pressure
+standard_name: sea_water_pressure_at_sea_floor

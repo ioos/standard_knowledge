@@ -1,0 +1,4 @@
+common_variable_names:
+- cloudmask
+ioos_category: Meteorology
+standard_name: cloud_binary_mask

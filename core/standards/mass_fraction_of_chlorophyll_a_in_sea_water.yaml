@@ -1,0 +1,10 @@
+common_variable_names:
+- mass_fraction_of_chlorophyll_a_in_sea_water
+- chlorophyll_concentration
+- chlorophyll_a
+- fluorescenceweteco
+- sci_flbb_chlor_units
+- flbb_chlor_units
+- c3sfl_chlorophyll
+ioos_category: Ocean Color
+standard_name: mass_fraction_of_chlorophyll_a_in_sea_water

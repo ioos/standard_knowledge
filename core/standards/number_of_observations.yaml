@@ -1,0 +1,8 @@
+common_variable_names:
+- nobs
+- n_obs
+- value_count
+- o
+- n_total
+ioos_category: Statistics
+standard_name: number_of_observations

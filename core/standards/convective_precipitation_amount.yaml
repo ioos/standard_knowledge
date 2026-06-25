@@ -1,0 +1,4 @@
+common_variable_names:
+- acpcp
+ioos_category: Meteorology
+standard_name: convective_precipitation_amount

@@ -1,0 +1,9 @@
+common_variable_names:
+- scatter_angstrom_550_700_sub1
+- scatter_angstrom_450_700_sub1
+- scatter_angstrom_450_550_sub1
+- absorb_angstrom_530_660_sub1
+- absorb_angstrom_467_660_sub1
+- absorb_angstrom_467_530_sub1
+ioos_category: Optical Properties
+standard_name: angstrom_exponent_of_ambient_aerosol_in_air
