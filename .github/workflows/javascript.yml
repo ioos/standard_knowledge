@@ -3,10 +3,9 @@ name: JavaScript
 on:
   push:
     branches: [ main ]
-    tags:
-      - '*'
   pull_request:
-    branches: [ main ]
+  release:
+    types: [published]
   workflow_dispatch:
 
 env:
@@ -142,8 +141,6 @@ jobs:
   # that holds the npm token (mirrors the PyPI pipeline in python.yml).
   build_npm:
     name: Build npm package
-    needs: test
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -171,13 +168,114 @@ jobs:
           name: npm-package
           path: js/pkg
 
+  # Compares the .wasm binary size on this PR branch vs the base branch and
+  # posts a sticky comment. Reuses the artifact from build_npm (the exact binary
+  # that would be published) for the HEAD measurement; builds the base branch
+  # from source for the baseline. Fails if the size grows by more than 5%.
+  wasm_size:
+    name: WASM size check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    needs: build_npm
+    permissions:
+      contents: read
+      pull-requests: write  # post and update the sticky size-report comment
+    steps:
+      - name: Download built npm package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: npm-package
+          path: head-pkg
+
+      - name: Record head size
+        id: head
+        run: echo "bytes=$(stat -c%s head-pkg/standard_knowledge_js_bg.wasm)" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@e97e2d8cc328f1b50210efc529dca0028893a2d9 # v1
+        with:
+          toolchain: stable
+          targets: wasm32-unknown-unknown
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Checkout base branch
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          ref: ${{ github.base_ref }}
+          path: base
+          persist-credentials: false
+
+      - name: Build base WASM
+        working-directory: base/js
+        run: wasm-pack build --target web
+
+      - name: Record base size
+        id: base
+        run: echo "bytes=$(stat -c%s base/js/pkg/standard_knowledge_js_bg.wasm)" >> "$GITHUB_OUTPUT"
+
+      - name: Post size comment and enforce threshold
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_REF: ${{ github.base_ref }}
+          BASE_BYTES: ${{ steps.base.outputs.bytes }}
+          HEAD_BYTES: ${{ steps.head.outputs.bytes }}
+        run: |
+          DELTA=$(( HEAD_BYTES - BASE_BYTES ))
+          BASE_KB=$(awk "BEGIN { printf \"%.1f\", $BASE_BYTES / 1024 }")
+          HEAD_KB=$(awk "BEGIN { printf \"%.1f\", $HEAD_BYTES / 1024 }")
+          DELTA_KB=$(awk "BEGIN { printf \"%+.1f\", $DELTA / 1024 }")
+          PCT=$(awk "BEGIN { printf \"%+.1f\", ($DELTA / $BASE_BYTES) * 100 }")
+          THRESHOLD_PCT=5
+          EXCEEDS=$(awk "BEGIN { print ($DELTA > 0 && ($DELTA / $BASE_BYTES) * 100 > $THRESHOLD_PCT) ? 1 : 0 }")
+
+          if [ "$EXCEEDS" = "1" ]; then
+            VERDICT="❌ Size increased ${PCT}% — exceeds the ${THRESHOLD_PCT}% threshold."
+          elif [ "$DELTA" -lt 0 ]; then
+            VERDICT="✅ Size decreased ${PCT}%."
+          elif [ "$DELTA" = "0" ]; then
+            VERDICT="✅ No size change."
+          else
+            VERDICT="⚠️ Size increased ${PCT}% (within ${THRESHOLD_PCT}% threshold)."
+          fi
+
+          {
+            echo "<!-- wasm-size-report -->"
+            echo "## Javascript size report"
+            echo ""
+            echo "| | Size |"
+            echo "|---|---|"
+            echo "| Base (\`${BASE_REF}\`) | ${BASE_KB} KB |"
+            echo "| PR | ${HEAD_KB} KB |"
+            echo "| Delta | ${DELTA_KB} KB (${PCT}%) |"
+            echo ""
+            echo "${VERDICT}"
+          } > /tmp/comment.md
+
+          COMMENT_ID=$(gh api \
+            "repos/$GITHUB_REPOSITORY/issues/${PR_NUMBER}/comments" \
+            --jq '[.[] | select(.body | contains("<!-- wasm-size-report -->"))] | first | .id // empty')
+
+          if [ -n "$COMMENT_ID" ]; then
+            jq -n --rawfile body /tmp/comment.md '{body: $body}' | \
+              gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/${COMMENT_ID}" --input -
+          else
+            jq -n --rawfile body /tmp/comment.md '{body: $body}' | \
+              gh api "repos/$GITHUB_REPOSITORY/issues/${PR_NUMBER}/comments" --input -
+          fi
+
+          if [ "$EXCEEDS" = "1" ]; then
+            echo "::error::WASM size increased ${PCT}% — exceeds the ${THRESHOLD_PCT}% threshold."
+            exit 1
+          fi
+
   upload_npm:
     name: Publish to npm
     needs: [test, build_npm]
     runs-on: ubuntu-latest
-    # Publish to npm only on a `v*` tag push, matching the gate used by the
-    # PyPI (python.yml) and crates.io (rust.yml) pipelines.
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'release' && github.event.action == 'published'
     permissions:
       contents: read
       id-token: write  # npm provenance
