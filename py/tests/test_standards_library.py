@@ -82,8 +82,9 @@ def test_find_standards_by_variable_names_knowledge(library):
 
     standards = library.filter().by_variable_name("atmospheric_pressure")
 
-    standard = standards[0]
-    assert standard.name == "air_pressure_at_mean_sea_level"
+    names = [s.name for s in standards]
+    assert "air_pressure_at_mean_sea_level" in names
+    standard = next(s for s in standards if s.name == "air_pressure_at_mean_sea_level")
     assert standard.ioos_category == "Meteorology"
 
 

@@ -4,7 +4,7 @@ stderr = ""
 stdout = """
 air_temperature - Weird Air Temperature - K
   IOOS Category: Meteorology
-  Common variables: temp, temperature, air_temp, airtemp
+  Common variables: air_temperature, dryt, air, airtemperature, temp_air_mean, atmp, air_temp, tair, airtemp, airt, tmin, tmax, tmp_2maboveground, temp_air, ta, temp, buoy_air_temperature, at, float_temp
   Sibling standards: air_pressure
   Extra attributes:
  {

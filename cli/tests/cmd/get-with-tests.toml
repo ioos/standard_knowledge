@@ -3,7 +3,7 @@ args = ["get", "sea_surface_height_above_geopotential_datum"]
 stdout = """
 sea_surface_height_above_geopotential_datum - Sea surface height above geopotential datum - m
   IOOS Category: Sea Level
-  Common variables: navd88, navd88_meters
+  Common variables: navd88, navd88_meters, navd_meters, water_level_od_malin, water_level_lat, mllw_meters, mhhw_meters
   Sibling standards: tidal_sea_surface_height_above_mean_lower_low_water, tidal_sea_surface_height_above_mean_higher_high_water
 
 QARTOD Test Suites:
