@@ -12,14 +12,14 @@ updates:
     schedule:
       interval: "weekly"
     cooldown:
-      default-days: 7
+      default-days: 21
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
     cooldown:
-      default-days: 7
+      default-days: 21
 
   - package-ecosystem: "npm"
     directory: "/js"
@@ -33,18 +33,18 @@ updates:
           - "@vite/*"
           - "@vitest/*"
     cooldown:
-      default-days: 7
+      default-days: 21
 
   - package-ecosystem: "pre-commit"
     directory: "/"
     schedule:
       interval: "weekly"
     cooldown:
-      default-days: 7
+      default-days: 21
 
   - package-ecosystem: "uv"
     directory: "/py"
     schedule:
       interval: "weekly"
     cooldown:
-      default-days: 7
+      default-days: 21
