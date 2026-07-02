@@ -27,7 +27,7 @@ serde-wasm-bindgen = "0.6.5"
 indicium = "0.6.5"
 
 [dev-dependencies]
-wasm-bindgen-test = "0.3.58"
+wasm-bindgen-test = "=0.3.73"
 
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = ["-Oz", "--enable-bulk-memory", "--enable-nontrapping-float-to-int"]
