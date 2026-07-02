@@ -36,10 +36,14 @@ jobs:
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
+      - name: Read Node version from mise.toml
+        id: mise
+        run: echo "node-version=$(awk -F'"' '/^node[[:space:]]*=/ {print $2}' mise.toml)" >> "$GITHUB_OUTPUT"
+
       - name: Setup Node
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "26.3.1"
+          node-version: ${{ steps.mise.outputs.node-version }}
 
       - name: Install dependencies
         working-directory: js
@@ -280,6 +284,17 @@ jobs:
       contents: read
       id-token: write  # npm provenance
     steps:
+      - name: Checkout mise.toml
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          sparse-checkout: mise.toml
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - name: Read Node version from mise.toml
+        id: mise
+        run: echo "node-version=$(awk -F'"' '/^node[[:space:]]*=/ {print $2}' mise.toml)" >> "$GITHUB_OUTPUT"
+
       - name: Download npm package artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
@@ -289,7 +304,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "26.3.1"
+          node-version: ${{ steps.mise.outputs.node-version }}
           registry-url: "https://registry.npmjs.org"
           package-manager-cache: false  # never use caching in release builds
 
