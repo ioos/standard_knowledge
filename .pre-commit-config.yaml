@@ -25,7 +25,7 @@ repos:
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: '3b3f7c3f57fe9925356faf5fe6230835138be230'  # frozen: v0.15.17
+    rev: '745be0411e3c150e246d527e531e5a221b8c3462'  # frozen: v0.15.19
     hooks:
       - id: ruff-format
       - id: ruff-check
@@ -86,7 +86,7 @@ repos:
     - id: mdformat
 
   - repo: https://github.com/biomejs/pre-commit
-    rev: "16e7f97478690d1e4fab107fcab1c56f0080d28b"  # frozen: v2.5.0
+    rev: "4b413f3670a174f31451d158949f7a5938352eff"  # frozen: v2.5.1
     hooks:
     -   id: biome-check
         additional_dependencies: ["@biomejs/biome@2.5.0"]
@@ -100,6 +100,12 @@ repos:
       - id: sp-repo-review
         name: repo-review (py)
         entry: repo-review py
+
+  - repo: https://github.com/renovatebot/pre-commit-hooks
+    rev: 8e756eb1aa6a741a2c80b37e0795c7c29104fa6d  # frozen: 43.239.0
+    hooks:
+      - id: renovate-config-validator
+        args: [--strict]
 
 auto_update:
   cooldown_days: 7
