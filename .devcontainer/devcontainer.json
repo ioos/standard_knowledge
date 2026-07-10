@@ -2,9 +2,10 @@
 	"name": "standard_knowledge",
 	"build": { "dockerfile": "Dockerfile", "context": ".." },
 	"remoteUser": "vscode",
-	"features": {
-		"ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
-	},
+	// Claude Code CLI is installed directly in the Dockerfile (npm install -g)
+	// rather than via the official devcontainer feature: that feature's install
+	// script broke when npm was reached through a single-file symlink required
+	// by our mise-managed node setup.
 	// Named volumes are created root-owned, so hand them to vscode before setup.
 	"onCreateCommand": "sudo chown vscode:vscode target js/node_modules py/.venv && bash scripts/setup-dev.sh",
 	// Near-instant no-op unless mise.toml changed since the image was built.
