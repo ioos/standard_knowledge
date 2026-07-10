@@ -151,11 +151,37 @@ jobs:
           name: cibw-sdist
           path: dist/*.tar.gz
 
+  check_dist:
+    name: Validate distribution artifacts
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: cibw-*
+          path: dist
+          merge-multiple: true
+
+      - name: Check metadata and wheel contents
+        run: |
+          pipx run twine check --strict dist/*
+          # W009/W010: auditwheel-repaired wheels vendor shared libs in standard_knowledge.libs/
+          pipx run check-wheel-contents --ignore W009,W010 dist/*.whl
+
+      - name: Smoke-test install
+        run: |
+          # let pip pick the wheel matching the runner's Python, only from dist/
+          python -m pip install --no-index --find-links dist standard_knowledge
+          python -c "import standard_knowledge"
+
   upload_pypi:
     name: Publish to PyPI
-    needs: [test, build_wheels, build_sdist]
+    needs: [test, build_wheels, build_sdist, check_dist]
     runs-on: ubuntu-latest
-    # environment: pypi
+    environment: pypi
     permissions:
       id-token: write  # OIDC trusted-publishing token for PyPI
     # if: github.event_name == 'release' && github.event.action == 'published'
@@ -170,29 +196,3 @@ jobs:
           merge-multiple: true
 
       - uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0
-        # To test uploads to TestPyPI, uncomment the following:
-        # with:
-        #   repository-url: https://test.pypi.org/legacy/
-
-  upload_testpypi:
-    name: Publish to TestPyPI
-    needs: [test, build_wheels, build_sdist]
-    runs-on: ubuntu-latest
-    # environment: pypi
-    permissions:
-      id-token: write  # OIDC trusted-publishing token for TestPyPI
-    # if: github.event_name == 'release' && github.event.action == 'published'
-    # or, alternatively, upload to PyPI on every tag starting with 'v' (remove on: release above to use this)
-    # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    steps:
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          # unpacks all CIBW artifacts into dist/
-          pattern: cibw-*
-          path: dist
-          merge-multiple: true
-
-      - uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0
-        with:
-          repository-url: https://test.pypi.org/legacy/
-          skip-existing: true
