@@ -40,18 +40,18 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
-      - name: "Set up Python"
-        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
-        with:
-          python-version-file: "py/pyproject.toml"
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+      - name: Install mise and tools
+        uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4.2.0
         with:
-          enable-cache: true
+          install: true
+          install_args: rust uv
+          cache: true
 
       - name: Run tests
-        run: uv run pytest
+        run: uv run --python=$PYTHON_VERSION pytest
+        env:
+          PYTHON_VERSION: ${{ matrix.python-version }}
 
       - name: Minimize uv cache
         run: uv cache prune --ci
@@ -97,30 +97,16 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Configure Rust nightly
-        run: rustup default nightly
-
-      # Pin Rust to nightly-2025-01-20 for pyodide builds due to Emscripten 3.1.58 compatibility.
-      # Rust 1.87+ generates WASM code that requires --enable-bulk-memory-opt which older
-      # wasm-opt versions don't support. See: https://github.com/PyO3/maturin/issues/2549
-      - name: Pin Rust version for pyodide (Emscripten 3.1.58 compatibility)
-        if: matrix.os == 'pyodide'
-        run: |
-          rustup install 1.93.0
-          rustup default 1.93.0
-
-      - name: Add wasm32-unknown-emscripten target if pyodide
-        if: matrix.os == 'pyodide'
-        run: rustup target add wasm32-unknown-emscripten
+      - name: Install mise and tools
+        uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4.2.0
+        with:
+          install: true
+          install_args: rust uv
+          cache: true
 
       - name: Add i686-pc-windows-msvc target for windows
         if: matrix.os == 'windows-intel'
         run: rustup target add i686-pc-windows-msvc
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
-        with:
-          enable-cache: true
 
       - name: Build wheels
         uses: pypa/cibuildwheel@294735312765b09d24a2fbec22660ce817587d55 # v4.1.0

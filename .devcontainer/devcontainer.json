@@ -26,7 +26,8 @@
 		"source=sk-py-venv,target=${containerWorkspaceFolder}/py/.venv,type=volume",
 		// Carry Claude Code settings/memory into the container (local Docker only;
 		// Codespaces has no host HOME — log in fresh there).
-		"source=${localEnv:HOME}/.claude,target=/home/vscode/.claude,type=bind",
+		// "source=${localEnv:HOME}/.claude,target=/home/vscode/.claude,type=bind",
+		"source=claude-code-config,target=/home/vscode/.claude,type=volume",
 		"source=${localEnv:HOME}/.claude.json,target=/home/vscode/.claude.json,type=bind"
 	],
 	"customizations": {
@@ -39,7 +40,8 @@
 				"ms-python.python",
 				"biomejs.biome",
 				"ms-playwright.playwright",
-				"github.vscode-github-actions"
+				"github.vscode-github-actions",
+				"Anthropic.claude-code"
 			],
 			"settings": {
 				"debug.javascript.defaultRuntimeExecutable": {
