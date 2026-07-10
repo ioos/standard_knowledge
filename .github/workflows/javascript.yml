@@ -187,6 +187,14 @@ jobs:
           install_args: rust "github:wasm-bindgen/wasm-pack"
           cache: true
 
+      # The base branch is checked out into its own nested git repo below;
+      # mise's config lookup stops at that .git boundary, so the outer
+      # mise.toml (and its wasm-pack pin) is invisible from base/js. Write
+      # the versions we already installed to mise's global config instead,
+      # which applies regardless of cwd/git boundaries.
+      - name: Activate mise tools globally
+        run: mise use -g rust "github:wasm-bindgen/wasm-pack"
+
       - name: Checkout base branch
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
