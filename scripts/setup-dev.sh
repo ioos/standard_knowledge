@@ -16,7 +16,7 @@ rustup toolchain install 1.93.0 --profile minimal --target wasm32-unknown-emscri
 
 cargo fetch
 
-(cd py && uv sync)
+(cd py && uv sync --no-install-project)
 
 (cd js && npm ci && npx playwright install --with-deps chromium)
 
