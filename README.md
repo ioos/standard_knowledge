@@ -205,6 +205,16 @@ Knowledge keys:
 
 Cargo as manages the Rust components of the project, while Maturin and uv help keep things inline when working from the Python side of things.
 
+### Dev environment
+
+Toolchain versions (Rust, Python, uv, Node, wasm-pack, prek) are pinned in [mise.toml](./mise.toml); `mise install` sets them all up. `scripts/setup-dev.sh` bootstraps everything else (dependencies, Playwright's Chromium, pre-commit hooks) and is safe to re-run.
+
+There's also a [devcontainer](./.devcontainer/) for VS Code, GitHub Codespaces, and coding agents, with toolchains baked into the image at build time. Notes:
+
+- The container bind-mounts `~/.claude` and `~/.claude.json` from the host for Claude Code; make sure both exist before first open (otherwise Docker creates them as root-owned directories). On macOS, credentials live in the Keychain, so run `claude` once inside the container to log in. These mounts are skipped in Codespaces.
+- Pyodide wheel builds (`py_wheel_wasm`) are best done on amd64 (Codespaces or CI); emscripten support in arm64 containers is spotty.
+- If you have a local untracked `.vscode/settings.json` with a machine-specific node path, it will override the container's setting — prefer VS Code user settings for that.
+
 ### Releasing
 
 Use `./noxfile.py -s release -- <patch|minor|major>` to bump the version.

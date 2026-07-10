@@ -1,0 +1,50 @@
+{
+	"name": "standard_knowledge",
+	"build": { "dockerfile": "Dockerfile", "context": ".." },
+	"remoteUser": "vscode",
+	"features": {
+		"ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+	},
+	// Named volumes are created root-owned, so hand them to vscode before setup.
+	"onCreateCommand": "sudo chown vscode:vscode target js/node_modules py/.venv && bash scripts/setup-dev.sh",
+	// Near-instant no-op unless mise.toml changed since the image was built.
+	"postStartCommand": "mise install --quiet",
+	"hostRequirements": { "cpus": 4, "memory": "8gb", "storage": "32gb" },
+	"containerEnv": {
+		// Distro chromedriver matches distro chromium; wasm-pack honors this and
+		// skips its own (potentially mismatched) download.
+		"CHROMEDRIVER": "/usr/bin/chromedriver",
+		"FORCE_COLOR": "3",
+		"CARGO_TERM_COLOR": "always"
+	},
+	"mounts": [
+		// Build outputs and platform-specific binaries live in volumes: fast I/O,
+		// and Linux artifacts never clobber macOS ones on the host (or vice versa).
+		"source=sk-target,target=${containerWorkspaceFolder}/target,type=volume",
+		"source=sk-node-modules,target=${containerWorkspaceFolder}/js/node_modules,type=volume",
+		"source=sk-py-venv,target=${containerWorkspaceFolder}/py/.venv,type=volume",
+		// Carry Claude Code settings/memory into the container (local Docker only;
+		// Codespaces has no host HOME — log in fresh there).
+		"source=${localEnv:HOME}/.claude,target=/home/vscode/.claude,type=bind",
+		"source=${localEnv:HOME}/.claude.json,target=/home/vscode/.claude.json,type=bind"
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"rust-lang.rust-analyzer",
+				"vadimcn.vscode-lldb",
+				"tamasfe.even-better-toml",
+				"charliermarsh.ruff",
+				"ms-python.python",
+				"biomejs.biome",
+				"ms-playwright.playwright",
+				"github.vscode-github-actions"
+			],
+			"settings": {
+				"debug.javascript.defaultRuntimeExecutable": {
+					"pwa-node": "/home/vscode/.local/share/mise/shims/node"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,7 @@
+# Keep the devcontainer build context (repo root, needed for the mise.toml COPY) small.
+target/
+js/node_modules/
+py/.venv/
+.venv-pyodide/
+wheelhouse/
+.nox/

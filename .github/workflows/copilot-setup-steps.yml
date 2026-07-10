@@ -33,11 +33,11 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: astral-sh/setup-uv
-        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+      - name: Install mise
+        uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4.2.0
+        with:
+          install: false # the script runs `mise install` itself
+          cache: true
 
-      - name: Install pre-commit
-        run: uv tool install prek
-
-      - name: Install pre-commit hooks
-        run: prek install-hooks
+      - name: Bootstrap dev environment
+        run: bash scripts/setup-dev.sh
