@@ -89,7 +89,7 @@ repos:
     rev: "4b413f3670a174f31451d158949f7a5938352eff"  # frozen: v2.5.1
     hooks:
     -   id: biome-check
-        additional_dependencies: ["@biomejs/biome@2.5.0"]
+        additional_dependencies: ["@biomejs/biome@2.5.1"]
 
   - repo: https://github.com/scientific-python/cookie
     rev: "8f0581cc50b14023b14a9c77e9b358738ba637e7" # frozen: 2026.06.18
