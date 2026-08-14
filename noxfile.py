@@ -159,6 +159,29 @@ def rust_test(session: nox.Session) -> None:
 
 
 @nox.session(python=False, default=False)
+def rust_test_no_embedded(session: nox.Session) -> None:
+    """Run core Rust tests without the embedded-data feature.
+
+    Verifies the JS-build path: YAML-string and JSON-string ingestion work
+    without the compressed blobs compiled in.
+    """
+    venv = os.environ.pop("VIRTUAL_ENV", None)
+    if venv:
+        session.warn(
+            f"Ignoring VIRTUAL_ENV={venv!r} so cargo/PyO3 builds against the "
+            "host Python interpreter."
+        )
+    session.run(
+        "cargo",
+        "test",
+        "-p",
+        "standard_knowledge",
+        "--no-default-features",
+        external=True,
+    )
+
+
+@nox.session(python=False, default=False)
 def rust_update_tests(session: nox.Session) -> None:
     """Update the Rust test fixtures."""
     session.run(

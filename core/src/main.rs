@@ -2,6 +2,7 @@ use standard_knowledge::standards_library::StandardsLibrary;
 
 fn main() {
     let mut library = StandardsLibrary::default();
+    #[cfg(feature = "embedded-data")]
     library.load_cf_standards();
     println!(
         "By name: {:?}",
