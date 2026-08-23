@@ -15,7 +15,7 @@
 		"test:pack": "node tests/pack-smoke.mjs"
 	},
 	"devDependencies": {
-		"@playwright/test": "1.61.1",
+		"@playwright/test": "1.62.1",
 		"@vitest/browser": "4.1.9",
 		"@vitest/browser-playwright": "4.1.9",
 		"playwright": "1.61.1",
