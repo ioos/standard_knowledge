@@ -4,7 +4,7 @@ python = "3.13"
 # 1.93.0 satisfies the workspace MSRV (1.85) and matches RUSTUP_TOOLCHAIN in
 # [tool.cibuildwheel.pyodide] (py/pyproject.toml), so one toolchain covers
 # native, wasm32-unknown-unknown, and pyodide builds.
-rust = { version = "1.93.0", components = "rustfmt,clippy", targets = "wasm32-unknown-unknown,wasm32-unknown-emscripten" }
+rust = { version = "1.98.0", components = "rustfmt,clippy", targets = "wasm32-unknown-unknown,wasm32-unknown-emscripten" }
 uv = "0.11.28"
 "github:wasm-bindgen/wasm-pack" = "0.15.0"
 prek = "0.4.8"
