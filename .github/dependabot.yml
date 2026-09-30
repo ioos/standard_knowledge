@@ -32,6 +32,10 @@ updates:
           - "vitest*"
           - "@vite/*"
           - "@vitest/*"
+      playwright:
+        patterns:
+          - "playwright*"
+          - "@playwright/*"
     cooldown:
       default-days: 21
 
