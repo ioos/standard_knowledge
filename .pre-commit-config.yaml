@@ -18,7 +18,7 @@ repos:
         additional_dependencies: ["validate-pyproject-schema-store[all]"]
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 5030dca3047414c338091455ac41803200ec1f0f  # frozen: 0.37.3
+    rev: 99f2dd369364da7ed3ac536504132b3db2e7a3b1  # frozen: 0.38.1
     hooks:
       - id: check-dependabot
       - id: check-github-workflows
