@@ -107,5 +107,6 @@ repos:
       - id: renovate-config-validator
         args: [--strict]
 
-auto_update:
+update:
   cooldown_days: 7
+  freeze: true
