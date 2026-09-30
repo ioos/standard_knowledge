@@ -62,7 +62,7 @@ skip = [
 
 [tool.cibuildwheel.pyodide]
 pyodide-version = "314.0.0"
-environment = {"RUSTUP_TOOLCHAIN" = "1.93.0"}
+environment = {"RUSTUP_TOOLCHAIN" = "1.96.0"}
 
 [tool.repo-review]
 ignore = [
