@@ -92,7 +92,7 @@ repos:
         additional_dependencies: ["@biomejs/biome@2.5.3"]
 
   - repo: https://github.com/scientific-python/cookie
-    rev: "8f0581cc50b14023b14a9c77e9b358738ba637e7" # frozen: 2026.06.18
+    rev: "1589a99867d6cac494ac7545fe6a83108580a3ee" # frozen: 2026.08.14
     hooks:
       - id: sp-repo-review
         name: repo-review (root)
