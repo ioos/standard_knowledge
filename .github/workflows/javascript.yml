@@ -157,10 +157,12 @@ jobs:
           name: npm-package
           path: js/pkg
 
-  # Compares the .wasm binary size on this PR branch vs the base branch and
-  # posts a sticky comment. Reuses the artifact from build_npm (the exact binary
-  # that would be published) for the HEAD measurement; builds the base branch
-  # from source for the baseline. Fails if the size grows by more than 5%.
+  # Compares the .wasm binary size on this PR branch vs the base branch.
+  # Reuses the artifact from build_npm (the exact binary that would be
+  # published) for the HEAD measurement; builds the base branch from source for
+  # the baseline. Fails if the size grows by more than 5%. This job only has a
+  # read-only token (fork PRs can never get a write token), so it uploads the
+  # numbers as an artifact and wasm-size-comment.yml posts the sticky PR comment.
   wasm_size:
     name: WASM size check
     runs-on: ubuntu-latest
@@ -168,7 +170,6 @@ jobs:
     needs: build_npm
     permissions:
       contents: read
-      pull-requests: write  # post and update the sticky size-report comment
     steps:
       - name: Download built npm package
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -210,34 +211,29 @@ jobs:
         id: base
         run: echo "bytes=$(stat -c%s base/js/pkg/standard_knowledge_js_bg.wasm)" >> "$GITHUB_OUTPUT"
 
-      - name: Post size comment and enforce threshold
+      # The report is data only: wasm-size-comment.yml re-validates every field
+      # before using it, since PR code could influence this artifact.
+      - name: Write size report
         env:
-          GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           BASE_REF: ${{ github.base_ref }}
           BASE_BYTES: ${{ steps.base.outputs.bytes }}
           HEAD_BYTES: ${{ steps.head.outputs.bytes }}
         run: |
+          mkdir size-report
+          jq -n \
+            --argjson pr_number "$PR_NUMBER" \
+            --argjson base_bytes "$BASE_BYTES" \
+            --argjson head_bytes "$HEAD_BYTES" \
+            '{pr_number: $pr_number, base_bytes: $base_bytes, head_bytes: $head_bytes}' \
+            > size-report/report.json
+
           DELTA=$(( HEAD_BYTES - BASE_BYTES ))
           BASE_KB=$(awk "BEGIN { printf \"%.1f\", $BASE_BYTES / 1024 }")
           HEAD_KB=$(awk "BEGIN { printf \"%.1f\", $HEAD_BYTES / 1024 }")
           DELTA_KB=$(awk "BEGIN { printf \"%+.1f\", $DELTA / 1024 }")
           PCT=$(awk "BEGIN { printf \"%+.1f\", ($DELTA / $BASE_BYTES) * 100 }")
-          THRESHOLD_PCT=5
-          EXCEEDS=$(awk "BEGIN { print ($DELTA > 0 && ($DELTA / $BASE_BYTES) * 100 > $THRESHOLD_PCT) ? 1 : 0 }")
-
-          if [ "$EXCEEDS" = "1" ]; then
-            VERDICT="❌ Size increased ${PCT}% — exceeds the ${THRESHOLD_PCT}% threshold."
-          elif [ "$DELTA" -lt 0 ]; then
-            VERDICT="✅ Size decreased ${PCT}%."
-          elif [ "$DELTA" = "0" ]; then
-            VERDICT="✅ No size change."
-          else
-            VERDICT="⚠️ Size increased ${PCT}% (within ${THRESHOLD_PCT}% threshold)."
-          fi
-
           {
-            echo "<!-- wasm-size-report -->"
             echo "## Javascript size report"
             echo ""
             echo "| | Size |"
@@ -245,21 +241,25 @@ jobs:
             echo "| Base (\`${BASE_REF}\`) | ${BASE_KB} KB |"
             echo "| PR | ${HEAD_KB} KB |"
             echo "| Delta | ${DELTA_KB} KB (${PCT}%) |"
-            echo ""
-            echo "${VERDICT}"
-          } > /tmp/comment.md
+          } >> "$GITHUB_STEP_SUMMARY"
 
-          COMMENT_ID=$(gh api \
-            "repos/$GITHUB_REPOSITORY/issues/${PR_NUMBER}/comments" \
-            --jq '[.[] | select(.body | contains("<!-- wasm-size-report -->"))] | first | .id // empty')
+      # Runs before enforcement so over-threshold PRs still get a comment.
+      - name: Upload size report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: wasm-size-report
+          path: size-report
+          retention-days: 1
 
-          if [ -n "$COMMENT_ID" ]; then
-            jq -n --rawfile body /tmp/comment.md '{body: $body}' | \
-              gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/${COMMENT_ID}" --input -
-          else
-            jq -n --rawfile body /tmp/comment.md '{body: $body}' | \
-              gh api "repos/$GITHUB_REPOSITORY/issues/${PR_NUMBER}/comments" --input -
-          fi
+      - name: Enforce size threshold
+        env:
+          BASE_BYTES: ${{ steps.base.outputs.bytes }}
+          HEAD_BYTES: ${{ steps.head.outputs.bytes }}
+        run: |
+          DELTA=$(( HEAD_BYTES - BASE_BYTES ))
+          PCT=$(awk "BEGIN { printf \"%+.1f\", ($DELTA / $BASE_BYTES) * 100 }")
+          THRESHOLD_PCT=5
+          EXCEEDS=$(awk "BEGIN { print ($DELTA > 0 && ($DELTA / $BASE_BYTES) * 100 > $THRESHOLD_PCT) ? 1 : 0 }")
 
           if [ "$EXCEEDS" = "1" ]; then
             echo "::error::WASM size increased ${PCT}% — exceeds the ${THRESHOLD_PCT}% threshold."
