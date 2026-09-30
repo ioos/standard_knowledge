@@ -61,8 +61,13 @@ skip = [
 ]
 
 [tool.cibuildwheel.pyodide]
-pyodide-version = "314.0.0"
 environment = {"RUSTUP_TOOLCHAIN" = "1.96.0"}
+
+[[tool.cibuildwheel.overrides]]
+# Pin the xbuildenv per Python version; a global pyodide-version would be
+# applied to cp315 too and is rejected as incompatible.
+select = "cp314-pyodide_wasm32"
+pyodide-version = "314.0.6"
 
 [tool.repo-review]
 ignore = [
