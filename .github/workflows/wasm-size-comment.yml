@@ -1,0 +1,118 @@
+name: WASM size comment
+
+# Posts the WASM size report on PRs. The JavaScript workflow measures sizes with
+# a read-only token (always the case for fork PRs) and uploads a small artifact;
+# this workflow runs from the default branch with a write token and comments.
+# It never checks out or runs PR code, and treats the artifact as untrusted data.
+on:
+  workflow_run:  # zizmor: ignore[dangerous-triggers] no PR code is checked out or run; the artifact is validated as untrusted data
+    workflows: [JavaScript]
+    types: [completed]
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_sha }}
+  cancel-in-progress: true
+
+jobs:
+  comment:
+    name: Post WASM size comment
+    runs-on: ubuntu-latest
+    # Also runs when the JavaScript workflow failed, so over-threshold PRs
+    # still get their comment.
+    if: github.event.workflow_run.event == 'pull_request'
+    permissions:
+      actions: read  # download the report artifact from the triggering run
+      pull-requests: write  # post and update the sticky size-report comment
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      RUN_ID: ${{ github.event.workflow_run.id }}
+      HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+    steps:
+      # No artifact means the build was cancelled or failed before measuring.
+      - name: Download size report
+        id: download
+        run: |
+          if gh run download "$RUN_ID" -n wasm-size-report -D "$RUNNER_TEMP/report"; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::No wasm-size-report artifact for run ${RUN_ID}; nothing to comment."
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Post size comment
+        if: steps.download.outputs.found == 'true'
+        run: |
+          # The artifact is produced by PR code, so validate every field
+          # before using it anywhere.
+          PR_NUMBER=$(jq -r '.pr_number' "$RUNNER_TEMP/report/report.json")
+          BASE_BYTES=$(jq -r '.base_bytes' "$RUNNER_TEMP/report/report.json")
+          HEAD_BYTES=$(jq -r '.head_bytes' "$RUNNER_TEMP/report/report.json")
+          for value in "$PR_NUMBER" "$BASE_BYTES" "$HEAD_BYTES"; do
+            if ! [[ "$value" =~ ^[0-9]+$ ]]; then
+              echo "::error::Invalid size report: expected unsigned integers."
+              exit 1
+            fi
+          done
+          if [ "$BASE_BYTES" -le 0 ]; then
+            echo "::error::Invalid size report: base_bytes must be greater than 0."
+            exit 1
+          fi
+
+          # Make sure the PR number belongs to this run so a forged artifact
+          # cannot comment on an unrelated PR. A mismatch also happens when the
+          # PR was pushed to again; the newer run will post its own comment.
+          # The base branch name comes from the API, not the artifact.
+          PR_JSON=$(gh api "repos/$GH_REPO/pulls/$PR_NUMBER")
+          PR_HEAD_SHA=$(jq -r '.head.sha' <<< "$PR_JSON")
+          if [ "$PR_HEAD_SHA" != "$HEAD_SHA" ]; then
+            echo "::warning::PR #${PR_NUMBER} head does not match this run's commit; skipping comment."
+            exit 0
+          fi
+          BASE_REF=$(jq -r '.base.ref' <<< "$PR_JSON")
+
+          DELTA=$(( HEAD_BYTES - BASE_BYTES ))
+          BASE_KB=$(awk "BEGIN { printf \"%.1f\", $BASE_BYTES / 1024 }")
+          HEAD_KB=$(awk "BEGIN { printf \"%.1f\", $HEAD_BYTES / 1024 }")
+          DELTA_KB=$(awk "BEGIN { printf \"%+.1f\", $DELTA / 1024 }")
+          PCT=$(awk "BEGIN { printf \"%+.1f\", ($DELTA / $BASE_BYTES) * 100 }")
+          # Keep in sync with THRESHOLD_PCT in javascript.yml, where it is enforced.
+          THRESHOLD_PCT=5
+          EXCEEDS=$(awk "BEGIN { print ($DELTA > 0 && ($DELTA / $BASE_BYTES) * 100 > $THRESHOLD_PCT) ? 1 : 0 }")
+
+          if [ "$EXCEEDS" = "1" ]; then
+            VERDICT="❌ Size increased ${PCT}% — exceeds the ${THRESHOLD_PCT}% threshold."
+          elif [ "$DELTA" -lt 0 ]; then
+            VERDICT="✅ Size decreased ${PCT}%."
+          elif [ "$DELTA" = "0" ]; then
+            VERDICT="✅ No size change."
+          else
+            VERDICT="⚠️ Size increased ${PCT}% (within ${THRESHOLD_PCT}% threshold)."
+          fi
+
+          {
+            echo "<!-- wasm-size-report -->"
+            echo "## Javascript size report"
+            echo ""
+            echo "| | Size |"
+            echo "|---|---|"
+            echo "| Base (\`${BASE_REF}\`) | ${BASE_KB} KB |"
+            echo "| PR | ${HEAD_KB} KB |"
+            echo "| Delta | ${DELTA_KB} KB (${PCT}%) |"
+            echo ""
+            echo "${VERDICT}"
+          } > "$RUNNER_TEMP/comment.md"
+
+          COMMENT_ID=$(gh api \
+            "repos/$GH_REPO/issues/${PR_NUMBER}/comments" \
+            --jq '[.[] | select(.body | contains("<!-- wasm-size-report -->"))] | first | .id // empty')
+
+          if [ -n "$COMMENT_ID" ]; then
+            jq -n --rawfile body "$RUNNER_TEMP/comment.md" '{body: $body}' | \
+              gh api -X PATCH "repos/$GH_REPO/issues/comments/${COMMENT_ID}" --input -
+          else
+            jq -n --rawfile body "$RUNNER_TEMP/comment.md" '{body: $body}' | \
+              gh api "repos/$GH_REPO/issues/${PR_NUMBER}/comments" --input -
+          fi
