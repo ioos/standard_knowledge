@@ -9,7 +9,7 @@ repository = "https://github.com/ioos/standard_knowledge/"
 readme = "README.md"
 description = "Programmatically augmenting CF Standards with operational knowledge."
 edition = "2021"
-rust-version = "1.85"
+rust-version = "1.96"
 
 [profile.release]
 opt-level = "z"
