@@ -28,7 +28,7 @@ jobs:
           persist-credentials: false
 
       - name: Install mise and tools
-        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
         with:
           install: true
           install_args: rust node "github:wasm-bindgen/wasm-pack"
@@ -71,7 +71,7 @@ jobs:
           persist-credentials: false
 
       - name: Install mise and tools
-        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
         with:
           install: true
           install_args: rust "github:wasm-bindgen/wasm-pack"
@@ -141,7 +141,7 @@ jobs:
           persist-credentials: false
 
       - name: Install mise and tools
-        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
         with:
           install: true
           install_args: rust "github:wasm-bindgen/wasm-pack"
@@ -182,7 +182,7 @@ jobs:
         run: echo "bytes=$(stat -c%s head-pkg/standard_knowledge_js_bg.wasm)" >> "$GITHUB_OUTPUT"
 
       - name: Install mise and tools
-        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
         with:
           install: true
           install_args: rust "github:wasm-bindgen/wasm-pack"
