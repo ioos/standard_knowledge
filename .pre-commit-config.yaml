@@ -102,7 +102,7 @@ repos:
         entry: repo-review py
 
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 45ebaf1cf90ba3ffd8777d42d2b0c309e9f0d360  # frozen: 44.115.2
+    rev: 9e5880dfa754785d1badecfe8b5d54dca7af8e94  # frozen: 44.115.4
     hooks:
       - id: renovate-config-validator
         args: [--strict]
