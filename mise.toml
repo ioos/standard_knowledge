@@ -1,6 +1,6 @@
 [tools]
 node = "26.10.0"
-python = "3.14.7"
+python = "3.14.8"
 # 1.96.0 satisfies the workspace MSRV (1.85) and matches RUSTUP_TOOLCHAIN in
 # [tool.cibuildwheel.pyodide] (py/pyproject.toml), so one toolchain covers
 # native, wasm32-unknown-unknown, and pyodide builds.
