@@ -1,3 +1,4 @@
+pub mod fx;
 pub mod standard;
 pub mod standards_filter;
 pub mod standards_library;
@@ -18,5 +19,6 @@ fn _standard_knowledge_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyStandardsFilter>()?;
     m.add_class::<PyStandardsFilterIter>()?;
     m.add_class::<PyTestSuite>()?;
+    m.add_function(wrap_pyfunction!(fx::eval_fx, m)?)?;
     Ok(())
 }
