@@ -6,16 +6,15 @@ use std::collections::HashMap;
 pub mod config;
 pub mod static_qc;
 pub mod types;
-pub mod water_level;
 
 pub use static_qc::StaticQcTestSuite;
 pub use types::TestSuite;
 
+/// Test suites implemented in Rust, by standard name.
+///
+/// There are none at the moment: every suite, including the water level
+/// suites that used to live here, is defined in the knowledge YAML and
+/// loaded by `StandardsLibrary::load_knowledge`.
 pub fn test_suites() -> HashMap<String, Vec<Box<dyn TestSuite>>> {
-    let mut suites: HashMap<String, Vec<Box<dyn TestSuite>>> = HashMap::new();
-
-    // Add water level test suites
-    suites.extend(water_level::water_level_test_suites());
-
-    suites
+    HashMap::new()
 }

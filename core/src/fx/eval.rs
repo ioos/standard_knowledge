@@ -43,6 +43,10 @@ const EPSILON: f64 = 1e-12;
 
 const STATS: [&str; 4] = ["mean", "min", "max", "std"];
 
+/// The functions ioos_qc's fx_parser defines
+pub(super) const FUNCTIONS: [&str; 8] =
+    ["sin", "cos", "tan", "exp", "abs", "trunc", "round", "sgn"];
+
 pub(super) fn evaluate(tokens: &[Token], stats: &HashMap<String, f64>) -> Result<f64, FxError> {
     let mut stack = tokens.to_vec();
     pop_value(&mut stack, stats).map(|v| v.value)
@@ -99,10 +103,15 @@ fn named(
             .map(|v| Value::float(*v))
             .ok_or_else(|| FxError::MissingStat(name.to_string()));
     }
-    if !matches!(
-        name,
-        "sin" | "cos" | "tan" | "exp" | "abs" | "trunc" | "round" | "sgn"
-    ) {
+    let is_function = FUNCTIONS.contains(&name);
+    // Other variables are an extension to ioos_qc, used by YAML test suites.
+    // They can only be used bare, and can't shadow a function.
+    if arg_count == 0 && !is_function {
+        if let Some(value) = stats.get(name) {
+            return Ok(Value::float(*value));
+        }
+    }
+    if !is_function {
         return Err(FxError::InvalidIdentifier(name.to_string()));
     }
 
@@ -337,12 +346,7 @@ fn round_float(x: f64, digits: i64) -> Result<f64, FxError> {
         return Ok(0.0 * x);
     }
 
-    // The exact decimal expansion of |x| as digits and a decimal exponent.
-    // 800 significant digits covers every finite double exactly.
-    let scientific = format!("{:.800e}", x.abs());
-    let (mantissa, exponent) = scientific.split_once('e').expect("scientific format");
-    let exponent: i64 = exponent.parse().expect("integer exponent");
-    let all_digits: Vec<u8> = mantissa.bytes().filter(u8::is_ascii_digit).collect();
+    let (all_digits, exponent) = exact_decimal(x);
 
     // Position of the first digit to drop. Digit i has place value
     // 10^(exponent - i), and we keep places down to 10^-digits.
@@ -382,6 +386,60 @@ fn round_float(x: f64, digits: i64) -> Result<f64, FxError> {
     Ok(rounded)
 }
 
+/// The exact decimal expansion of a finite, non-zero `|x|`: its ASCII
+/// digits and the decimal exponent of the first one.
+///
+/// `|x|` is `m * 2^e`. For `e < 0` that is `m * 5^-e / 10^-e`, so the digits
+/// are those of the integer `m * 5^-e` (or `m * 2^e` for `e >= 0`), computed
+/// here in base 10^9 limbs.
+fn exact_decimal(x: f64) -> (Vec<u8>, i64) {
+    const BASE: u64 = 1_000_000_000;
+    let bits = x.abs().to_bits();
+    let biased = ((bits >> 52) & 0x7ff) as i64;
+    let fraction = bits & ((1 << 52) - 1);
+    let (mantissa, exp2) = if biased == 0 {
+        (fraction, -1074)
+    } else {
+        (fraction | (1 << 52), biased - 1075)
+    };
+
+    // Little-endian limbs, each below BASE
+    let mut limbs = vec![
+        mantissa % BASE,
+        mantissa / BASE % BASE,
+        mantissa / BASE / BASE,
+    ];
+    let (factor, count) = if exp2 >= 0 { (2, exp2) } else { (5, -exp2) };
+    for _ in 0..count {
+        let mut carry = 0;
+        for limb in limbs.iter_mut() {
+            let product = *limb * factor + carry;
+            *limb = product % BASE;
+            carry = product / BASE;
+        }
+        if carry > 0 {
+            limbs.push(carry);
+        }
+    }
+
+    let mut digits = Vec::with_capacity(limbs.len() * 9);
+    for limb in limbs.iter().rev() {
+        let mut chunk = [b'0'; 9];
+        let mut rest = *limb;
+        for d in chunk.iter_mut().rev() {
+            *d = b'0' + (rest % 10) as u8;
+            rest /= 10;
+        }
+        digits.extend_from_slice(&chunk);
+    }
+    let leading_zeros = digits.iter().take_while(|d| **d == b'0').count();
+    digits.drain(..leading_zeros);
+
+    let shift = if exp2 < 0 { -exp2 } else { 0 };
+    let exponent = digits.len() as i64 - 1 - shift;
+    (digits, exponent)
+}
+
 /// Add one to a decimal digit string, growing it on carry out
 fn increment(digits: &mut Vec<u8>) {
     for d in digits.iter_mut().rev() {
@@ -393,4 +451,34 @@ fn increment(digits: &mut Vec<u8>) {
         }
     }
     digits.insert(0, b'1');
+}
+
+#[cfg(test)]
+mod tests {
+    use super::exact_decimal;
+
+    #[test]
+    fn exact_decimal_matches_exact_formatting() {
+        for x in [
+            1.0,
+            0.1,
+            2.675,
+            1e308,
+            f64::MAX,
+            5e-324,
+            2.2250738585072014e-308,
+            123456.789,
+        ] {
+            let (digits, exponent) = exact_decimal(x);
+            let expected = format!("{:.800e}", x);
+            let (mantissa, expected_exponent) = expected.split_once('e').unwrap();
+            let expected_digits: Vec<u8> = mantissa.bytes().filter(u8::is_ascii_digit).collect();
+            assert_eq!(exponent, expected_exponent.parse::<i64>().unwrap(), "{x}");
+            assert_eq!(&expected_digits[..digits.len()], &digits[..], "{x}");
+            assert!(
+                expected_digits[digits.len()..].iter().all(|d| *d == b'0'),
+                "{x}"
+            );
+        }
+    }
 }

@@ -98,24 +98,22 @@ pub enum QartodTestTypes {
 }
 
 impl QartodTestTypes {
-    pub fn tests_in_config(config: &ConfigStream) -> Vec<QartodTestTypes> {
-        let mut test_types = Vec::new();
-        if config.qartod.gross_range_test.is_some() {
-            test_types.push(QartodTestTypes::GrossRange);
-        }
-        if config.qartod.location_test.is_some() {
-            test_types.push(QartodTestTypes::Location);
-        }
-        if config.qartod.rate_of_change_test.is_some() {
-            test_types.push(QartodTestTypes::RateOfChange);
-        }
-        if config.qartod.spike_test.is_some() {
-            test_types.push(QartodTestTypes::Spike);
-        }
-        if config.qartod.flat_line_test.is_some() {
-            test_types.push(QartodTestTypes::FlatLine);
-        }
-        test_types
+    /// The tests a config runs, in QARTOD manual order
+    pub fn tests_in_config<N, I>(config: &ConfigStream<N, I>) -> Vec<QartodTestTypes> {
+        let q = &config.qartod;
+        [
+            (q.location_test.is_some(), QartodTestTypes::Location),
+            (q.gross_range_test.is_some(), QartodTestTypes::GrossRange),
+            (q.spike_test.is_some(), QartodTestTypes::Spike),
+            (
+                q.rate_of_change_test.is_some(),
+                QartodTestTypes::RateOfChange,
+            ),
+            (q.flat_line_test.is_some(), QartodTestTypes::FlatLine),
+        ]
+        .into_iter()
+        .filter_map(|(present, test_type)| present.then_some(test_type))
+        .collect()
     }
 }
 

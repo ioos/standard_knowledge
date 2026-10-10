@@ -802,6 +802,8 @@ checksum = "cc4e190f5d26ca7051642629da2c52fc03bde85a03197c99408dcd291734c855"
 dependencies = [
  "equivalent",
  "hashbrown",
+ "serde",
+ "serde_core",
 ]
 
 [[package]]
@@ -1688,6 +1690,7 @@ version = "0.1.1"
 dependencies = [
  "dyn-clone",
  "flate2",
+ "indexmap",
  "indicium",
  "serde",
  "serde_yaml_ng",
@@ -1724,6 +1727,7 @@ dependencies = [
  "dyn-clone",
  "indicium",
  "pyo3",
+ "serde_yaml_ng",
  "standard_knowledge",
 ]
 

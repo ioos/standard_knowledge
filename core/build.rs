@@ -5,6 +5,7 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 
 use flate2::{write::GzEncoder, Compression};
+use indexmap::IndexMap;
 // use serde::{Deserialize, Serialize};
 
 include!("./src/qartod/config.rs");
