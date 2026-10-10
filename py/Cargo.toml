@@ -17,4 +17,5 @@ crate-type = ["cdylib"]
 pyo3 = "0.29.0"
 standard_knowledge = { path = "../core", version = "0.1.1" }
 dyn-clone = "1.0.20"
+serde_yaml_ng = "0.10"
 indicium = "0.6.5"

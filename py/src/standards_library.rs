@@ -1,6 +1,10 @@
 use std::collections::{BTreeMap, HashMap};
 
-use pyo3::{exceptions::PyKeyError, prelude::*, types::PyDict};
+use pyo3::{
+    exceptions::{PyKeyError, PyValueError},
+    prelude::*,
+    types::{PyBool, PyDict},
+};
 
 use crate::standard::PyStandard;
 use standard_knowledge::qartod::static_qc::StaticQc;
@@ -156,40 +160,13 @@ impl<'a, 'py> FromPyObject<'a, 'py> for KnowledgeValues {
 
             for (key, value) in dict.iter() {
                 let key_str: String = key.extract()?;
-
-                // Extract StaticQc fields from the Python dict
-                let value_dict = value.cast::<PyDict>()?;
-
-                let name: String = value_dict
-                    .get_item("name")?
-                    .ok_or_else(|| PyKeyError::new_err("StaticQc missing 'name' field"))?
-                    .extract()?;
-
-                let summary: String = value_dict
-                    .get_item("summary")?
-                    .ok_or_else(|| PyKeyError::new_err("StaticQc missing 'summary' field"))?
-                    .extract()?;
-
-                let description: String = value_dict
-                    .get_item("description")?
-                    .ok_or_else(|| PyKeyError::new_err("StaticQc missing 'description' field"))?
-                    .extract()?;
-
-                // For tests, we need to handle ConfigStream
-                let tests_value = value_dict
-                    .get_item("tests")?
-                    .ok_or_else(|| PyKeyError::new_err("StaticQc missing 'tests' field"))?;
-
-                // Convert Python tests dict to ConfigStream
-                let tests = convert_tests_to_config_stream(&tests_value)?;
-
-                let static_qc = StaticQc {
-                    name,
-                    summary,
-                    description,
-                    tests,
-                };
-
+                let static_qc: StaticQc = serde_yaml_ng::from_value(to_yaml_value(&value)?)
+                    .map_err(|e| PyKeyError::new_err(format!("Invalid QC for {key_str}: {e}")))?;
+                // Catch mistakes when the knowledge is applied rather than
+                // when the suite is first used
+                static_qc
+                    .check()
+                    .map_err(|e| PyValueError::new_err(format!("Invalid QC for {key_str}: {e}")))?;
                 qc_map.insert(key_str, static_qc);
             }
 
@@ -254,97 +231,42 @@ fn get_dict_field(
     }
 }
 
-fn convert_tests_to_config_stream(
-    tests_value: &Bound<'_, PyAny>,
-) -> PyResult<standard_knowledge::qartod::config::ConfigStream> {
-    use standard_knowledge::qartod::config::*;
+/// Convert plain Python data (dicts, lists, strings, numbers, bools and
+/// None) to a YAML value
+fn to_yaml_value(value: &Bound<'_, PyAny>) -> PyResult<serde_yaml_ng::Value> {
+    use serde_yaml_ng::{Mapping, Value};
 
-    // Extract the "qartod" field from tests
-    let tests_dict = tests_value.cast::<PyDict>()?;
-    let qartod_value = tests_dict
-        .get_item("qartod")?
-        .ok_or_else(|| PyKeyError::new_err("tests missing 'qartod' field"))?;
-    let qartod_dict = qartod_value.cast::<PyDict>()?;
-
-    let mut config_qartod = ConfigStreamQartod::default();
-
-    // Convert flat_line_test
-    if let Some(flat_line_item) = qartod_dict.get_item("flat_line_test")? {
-        let flat_line_dict = flat_line_item.cast::<PyDict>()?;
-        let tolerance: f64 = flat_line_dict
-            .get_item("tolerance")?
-            .ok_or_else(|| PyKeyError::new_err("flat_line_test missing 'tolerance'"))?
-            .extract()?;
-        let suspect_threshold: isize = flat_line_dict
-            .get_item("suspect_threshold")?
-            .ok_or_else(|| PyKeyError::new_err("flat_line_test missing 'suspect_threshold'"))?
-            .extract()?;
-        let fail_threshold: isize = flat_line_dict
-            .get_item("fail_threshold")?
-            .ok_or_else(|| PyKeyError::new_err("flat_line_test missing 'fail_threshold'"))?
-            .extract()?;
-
-        config_qartod.flat_line_test = Some(FlatLine {
-            tolerance,
-            suspect_threshold,
-            fail_threshold,
-        });
+    if value.is_none() {
+        return Ok(Value::Null);
     }
-
-    // Convert gross_range_test
-    if let Some(gross_range_item) = qartod_dict.get_item("gross_range_test")? {
-        let gross_range_dict = gross_range_item.cast::<PyDict>()?;
-        let fail_span: Vec<f64> = gross_range_dict
-            .get_item("fail_span")?
-            .ok_or_else(|| PyKeyError::new_err("gross_range_test missing 'fail_span'"))?
-            .extract()?;
-        let suspect_span: Vec<f64> = gross_range_dict
-            .get_item("suspect_span")?
-            .ok_or_else(|| PyKeyError::new_err("gross_range_test missing 'suspect_span'"))?
-            .extract()?;
-
-        if fail_span.len() != 2 || suspect_span.len() != 2 {
-            return Err(PyKeyError::new_err(
-                "fail_span and suspect_span must be arrays of length 2",
-            ));
+    if let Ok(b) = value.cast::<PyBool>() {
+        return Ok(Value::Bool(b.is_true()));
+    }
+    if let Ok(i) = value.extract::<i64>() {
+        return Ok(Value::from(i));
+    }
+    if let Ok(f) = value.extract::<f64>() {
+        return Ok(Value::from(f));
+    }
+    if let Ok(s) = value.extract::<String>() {
+        return Ok(Value::String(s));
+    }
+    if let Ok(dict) = value.cast::<PyDict>() {
+        let mut mapping = Mapping::new();
+        for (key, item) in dict.iter() {
+            mapping.insert(to_yaml_value(&key)?, to_yaml_value(&item)?);
         }
-
-        config_qartod.gross_range_test = Some(GrossRangeTest {
-            fail_span: (fail_span[0], fail_span[1]),
-            suspect_span: (suspect_span[0], suspect_span[1]),
-        });
+        return Ok(Value::Mapping(mapping));
     }
-
-    // Convert spike_test
-    if let Some(spike_item) = qartod_dict.get_item("spike_test")? {
-        let spike_dict = spike_item.cast::<PyDict>()?;
-        let suspect_threshold: f64 = spike_dict
-            .get_item("suspect_threshold")?
-            .ok_or_else(|| PyKeyError::new_err("spike_test missing 'suspect_threshold'"))?
-            .extract()?;
-        let fail_threshold: f64 = spike_dict
-            .get_item("fail_threshold")?
-            .ok_or_else(|| PyKeyError::new_err("spike_test missing 'fail_threshold'"))?
-            .extract()?;
-
-        config_qartod.spike_test = Some(Spike {
-            suspect_threshold,
-            fail_threshold,
-        });
+    if let Ok(items) = value.extract::<Vec<Bound<'_, PyAny>>>() {
+        return items
+            .iter()
+            .map(to_yaml_value)
+            .collect::<PyResult<Vec<_>>>()
+            .map(Value::Sequence);
     }
-
-    // Convert rate_of_change_test
-    if let Some(rate_of_change_item) = qartod_dict.get_item("rate_of_change_test")? {
-        let rate_of_change_dict = rate_of_change_item.cast::<PyDict>()?;
-        let threshold: f64 = rate_of_change_dict
-            .get_item("threshold")?
-            .ok_or_else(|| PyKeyError::new_err("rate_of_change_test missing 'threshold'"))?
-            .extract()?;
-
-        config_qartod.rate_of_change_test = Some(RateOfChange { threshold });
-    }
-
-    Ok(ConfigStream {
-        qartod: config_qartod,
-    })
+    Err(PyValueError::new_err(format!(
+        "Can't convert {} to QC configuration",
+        value.get_type().name()?
+    )))
 }

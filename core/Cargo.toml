@@ -12,6 +12,7 @@ rust-version.workspace = true
 serde_yaml_ng = "0.10"
 serde = { version = "1.0.228", features = ["derive"] }
 flate2 = "1.1"
+indexmap = { version = "2", features = ["serde"] }
 
 [[bin]]
 name = "standard_knowledge_main"
@@ -23,3 +24,4 @@ serde = { version = "1.0.228", features = ["derive"] }
 serde_yaml_ng = "0.10"
 flate2 = "1.1"
 indicium = "0.6.5"
+indexmap = { version = "2", features = ["serde"] }
