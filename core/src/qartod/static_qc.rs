@@ -988,6 +988,87 @@ tests:
     }
 
     #[test]
+    fn qartod_manual_temperature() {
+        use crate::qartod::config::AttenuatedSignal;
+
+        let library = library();
+        let manual = suite(&library, "sea_water_temperature", "qartod_manual");
+        let info = manual.info();
+        assert_eq!(
+            info.test_types,
+            vec![
+                QartodTestTypes::GrossRange,
+                QartodTestTypes::RateOfChange,
+                QartodTestTypes::FlatLine,
+                QartodTestTypes::AttenuatedSignal,
+            ]
+        );
+        assert!(info.arguments["k"].default.is_some());
+        assert!(info.arguments["sd"].default.is_none());
+
+        let config = manual
+            .scaffold(&args(&[
+                ("sensor_min", -5.0),
+                ("sensor_max", 35.0),
+                ("mean", 12.0),
+                ("std", 4.0),
+                ("sd", 0.6),
+                ("sample_interval", 600.0),
+                ("min_var_warn", 0.02),
+                ("min_var_fail", 0.01),
+            ]))
+            .unwrap()
+            .qartod;
+        assert_eq!(
+            config.gross_range_test,
+            Some(GrossRangeTest {
+                suspect_span: (0.0, 24.0),
+                fail_span: (-5.0, 35.0),
+            })
+        );
+        assert_eq!(
+            config.rate_of_change_test,
+            Some(RateOfChange {
+                threshold: 3.0 * 0.6 / 600.0,
+            })
+        );
+        assert_eq!(
+            config.flat_line_test,
+            Some(FlatLine {
+                tolerance: 0.05,
+                suspect_threshold: 1800,
+                fail_threshold: 3000,
+            })
+        );
+        assert_eq!(
+            config.attenuated_signal_test,
+            Some(AttenuatedSignal {
+                suspect_threshold: 0.02,
+                fail_threshold: 0.01,
+                test_period: Some(43200),
+                min_obs: None,
+                min_period: None,
+                check_type: Some("std".to_string()),
+            })
+        );
+    }
+
+    #[test]
+    fn attenuated_signal_integers_must_be_whole() {
+        let yaml = |period: &str| {
+            format!(
+                "qartod:\n  attenuated_signal_test:\n    suspect_threshold: 1\n    fail_threshold: 2\n    test_period: {period}\n"
+            )
+        };
+        let whole: ConfigStream = serde_yaml_ng::from_str(&yaml("3600.0")).unwrap();
+        assert_eq!(
+            whole.qartod.attenuated_signal_test.unwrap().test_period,
+            Some(3600)
+        );
+        assert!(serde_yaml_ng::from_str::<ConfigStream>(&yaml("1.5")).is_err());
+    }
+
+    #[test]
     fn every_config_test_is_in_the_table() {
         use crate::qartod::config::ConfigStreamQartod;
 
@@ -997,6 +1078,7 @@ tests:
             rate_of_change_test: Some(Default::default()),
             spike_test: Some(Default::default()),
             flat_line_test: Some(Default::default()),
+            attenuated_signal_test: Some(Default::default()),
         };
         let value = serde_yaml_ng::to_value(every_test).unwrap();
         let config_names: BTreeSet<&str> = value

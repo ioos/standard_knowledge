@@ -3,4 +3,5 @@ args = ["qc", "list", "sea_surface_height_above_geopotential_datum"]
 stdout = """
 QARTOD Test Suites for sea_surface_height_above_geopotential_datum:
 - Gulf of Maine (gulf_of_maine): Water level tests for stations in the Gulf of Maine developed by Hannah Baranes
+- QARTOD Water Level manual (qartod_manual): QARTOD water level tests with thresholds derived from statistics of your own data
 """
