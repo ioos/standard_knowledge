@@ -159,7 +159,7 @@ taken from Python:
 | `+`, `-` or `*` overflowing | Infinity, no error |
 | `x ^ y` overflowing from finite operands | Error (overflow) |
 | `0 ^ y` with `y < 0` | Error (division by zero) |
-| `x ^ y` with `x < 0` and `y` not a whole number | Error (complex result, see below) |
+| `x ^ y` with `x < 0` and `y` not a whole number | Error (complex result, see below), or overflow if `\|x\| ^ y` overflows |
 | `x ^ 0` | 1, even for `NaN` |
 | `exp(x)` overflowing from finite `x` | Error (overflow) |
 | `sin`, `cos` or `tan` of ±infinity | Error (domain) |
@@ -191,7 +191,8 @@ ones.
   evaluation carries on with it. `abs()` can even turn it back into a real
   number: `abs((-8)^(1/3))` is 2.0. A threshold can't be complex, so this
   module stops with a `NonReal` error as soon as a complex value would
-  appear.
+  appear. Python raises `OverflowError` when the complex power's magnitude
+  overflows, and so does this module.
 - **Large integers.** Python integers have unlimited precision. Here they
   are held in a float, so integer results are exact only up to 2⁵³, and an
   integer too large for a float is an `Overflow` error. Python only gets

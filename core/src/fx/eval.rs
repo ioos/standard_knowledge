@@ -277,6 +277,11 @@ fn float_pow(iv: f64, iw: f64) -> Result<f64, FxError> {
     let mut negate = false;
     if base < 0.0 {
         if iw != iw.floor() {
+            // Python goes on to a complex power, which overflows when its
+            // magnitude does
+            if (-base).powf(iw).is_infinite() {
+                return Err(FxError::Overflow("complex exponentiation".to_string()));
+            }
             return Err(FxError::NonReal(
                 "a negative number raised to a fractional power is complex".to_string(),
             ));
