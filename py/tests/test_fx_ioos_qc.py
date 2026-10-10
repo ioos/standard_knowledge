@@ -23,11 +23,38 @@ STAT_NAMES = ["min", "max", "mean", "std"]
 FIXED_STATS = {"min": 1.0, "max": 9.0, "mean": 5.0, "std": 2.0}
 
 
+def _bounded(power):
+    """`power`, raising early for integer results far past the float range
+
+    Python computes `int ** int` exactly, which can take minutes for
+    generated inputs like `trunc(9)^trunc(9)^trunc(9)`. Such a result can't
+    become a float, so the comparison would see an OverflowError anyway.
+    """
+
+    def wrapper(a, b):
+        if (
+            isinstance(a, int)
+            and isinstance(b, int)
+            and b > 0
+            and abs(a) > 1
+            and b * math.log2(abs(a)) > 1100
+        ):
+            raise OverflowError("integer result too large for a float")
+        return power(a, b)
+
+    return wrapper
+
+
 def reference(fx, stats):
-    with warnings.catch_warnings():
-        # pyparsing may warn about the pre-PEP 8 names ioos_qc uses
-        warnings.simplefilter("ignore", DeprecationWarning)
-        return fx_parser.eval_fx(fx, stats)
+    saved_pow = fx_parser.opn["^"]
+    fx_parser.opn["^"] = _bounded(saved_pow)
+    try:
+        with warnings.catch_warnings():
+            # pyparsing may warn about the pre-PEP 8 names ioos_qc uses
+            warnings.simplefilter("ignore", DeprecationWarning)
+            return fx_parser.eval_fx(fx, stats)
+    finally:
+        fx_parser.opn["^"] = saved_pow
 
 
 def error_kind(error):
@@ -225,6 +252,7 @@ CASES = [
     "2^1024",
     "trunc(2)^trunc(10)",
     "trunc(10)^trunc(400)",
+    "trunc(9)^trunc(9)^trunc(9)",
     "(-8)^(1/3)",
     "abs((-8)^(1/3))",
     "1e308 * 10",
