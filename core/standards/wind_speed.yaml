@@ -36,3 +36,91 @@ qc:
         spike_test:
           fail_threshold: 8.9408
           suspect_threshold: 6.7056
+  qartod_manual:
+    name: QARTOD Winds manual
+    summary: QARTOD winds tests with thresholds derived from statistics of your own data
+    description: |
+      Tests from the IOOS QARTOD Manual for Real-Time Quality Control of In-Situ Surface Wind Data, Version 1.1 (2017), with thresholds derived from
+      statistics of a historical record at the site, as the manual
+      recommends instead of choosing them arbitrarily.
+
+      - Gross range: fail at the sensor limits (SENSOR_MIN, SENSOR_MAX).
+        Suspect outside `mean ± k × std` of the record.
+      - Rate of change: `n_dev × SD` over TIM_DEV (8 hours) between
+        consecutive observations, converted to m s-1 per second for ioos_qc.
+      - Flat line: values within EPS for REP_CNT observations.
+      - Spike: suspect at a high percentile (the manual suggests the 97th
+        or 98th) of the spike metric `|x[n-1] - (x[n-2] + x[n]) / 2|` over
+        the record.
+
+      Defaults are the manual's examples or common choices. Check them
+      against local conditions.
+    arguments:
+      sensor_min:
+        type: float
+        description: Lowest value the sensor can measure, in m s-1 (SENSOR_MIN)
+        required: true
+      sensor_max:
+        type: float
+        description: Highest value the sensor can measure, in m s-1 (SENSOR_MAX)
+        required: true
+      mean:
+        type: float
+        description: Mean of a historical record at the site, in m s-1
+        required: true
+      std:
+        type: float
+        description: Standard deviation of the historical record, in m s-1
+        required: true
+      k:
+        type: float
+        description: Standard deviations from the mean for the suspect span
+        default: 3
+      sd:
+        type: float
+        description: Standard deviation of the first differences over the previous 8 hours (SD over TIM_DEV), in m s-1
+        required: true
+      n_dev:
+        type: float
+        description: Number of standard deviations allowed between observations (N_DEV)
+        default: 3
+      sample_interval:
+        type: int
+        description: Seconds between observations
+        required: true
+      eps:
+        type: float
+        description: Largest change, in m s-1, still counted as a repeat (EPS)
+        default: 0.5
+      rep_cnt_suspect:
+        type: int
+        description: Repeated observations before a flat line is suspect (REP_CNT_SUSPECT)
+        default: 3
+      rep_cnt_fail:
+        type: int
+        description: Repeated observations before a flat line fails (REP_CNT_FAIL)
+        default: 5
+      spike_suspect:
+        type: float
+        description: 97th or 98th percentile of the spike metric over the record, in m s-1
+        required: true
+      spike_fail:
+        type: float
+        description: Spike size that fails, in m s-1
+        required: true
+    let:
+      hour: 3600
+    tests:
+      qartod:
+        gross_range_test:
+          fail_span: [{expr: "sensor_min"}, {expr: "sensor_max"}]
+          suspect_span: [{expr: "mean - k * std"}, {expr: "mean + k * std"}]
+        spike_test:
+          suspect_threshold: {expr: "spike_suspect"}
+          fail_threshold: {expr: "spike_fail"}
+        rate_of_change_test:
+          threshold: {expr: "n_dev * sd / sample_interval"}
+        flat_line_test:
+          tolerance: {expr: "eps"}
+          suspect_threshold: {expr: "rep_cnt_suspect * sample_interval"}
+          fail_threshold: {expr: "rep_cnt_fail * sample_interval"}

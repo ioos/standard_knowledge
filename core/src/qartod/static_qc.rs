@@ -302,6 +302,69 @@ mod tests {
         );
     }
 
+    #[test]
+    fn qartod_manual_temperature() {
+        use crate::qartod::config::{AttenuatedSignal, FlatLine, GrossRangeTest, RateOfChange};
+
+        let library = library();
+        let manual = suite(&library, "sea_water_temperature", "qartod_manual");
+        let info = manual.info();
+        assert_eq!(
+            info.test_types,
+            vec![
+                QartodTestTypes::GrossRange,
+                QartodTestTypes::RateOfChange,
+                QartodTestTypes::FlatLine,
+                QartodTestTypes::AttenuatedSignal,
+            ]
+        );
+        assert!(!info.arguments["k"].required);
+
+        let args = HashMap::from([
+            ("sensor_min".to_string(), ArgumentValue::Float(-5.0)),
+            ("sensor_max".to_string(), ArgumentValue::Float(35.0)),
+            ("mean".to_string(), ArgumentValue::Float(12.0)),
+            ("std".to_string(), ArgumentValue::Float(4.0)),
+            ("sd".to_string(), ArgumentValue::Float(0.6)),
+            ("sample_interval".to_string(), ArgumentValue::Int(600)),
+            ("min_var_warn".to_string(), ArgumentValue::Float(0.02)),
+            ("min_var_fail".to_string(), ArgumentValue::Float(0.01)),
+        ]);
+        let config = manual.scaffold(args).unwrap().qartod;
+        assert_eq!(
+            config.gross_range_test,
+            Some(GrossRangeTest {
+                suspect_span: (0.0, 24.0),
+                fail_span: (-5.0, 35.0),
+            })
+        );
+        assert_eq!(
+            config.rate_of_change_test,
+            Some(RateOfChange {
+                threshold: 3.0 * 0.6 / 600.0,
+            })
+        );
+        assert_eq!(
+            config.flat_line_test,
+            Some(FlatLine {
+                tolerance: 0.05,
+                suspect_threshold: 1800,
+                fail_threshold: 3000,
+            })
+        );
+        assert_eq!(
+            config.attenuated_signal_test,
+            Some(AttenuatedSignal {
+                suspect_threshold: 0.02,
+                fail_threshold: 0.01,
+                test_period: Some(43200),
+                min_obs: None,
+                min_period: None,
+                check_type: Some("std".to_string()),
+            })
+        );
+    }
+
     fn template(yaml: &str) -> StaticQc {
         serde_yaml_ng::from_str(yaml).unwrap()
     }
