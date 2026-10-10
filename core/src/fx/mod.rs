@@ -1,6 +1,6 @@
 #![doc = include_str!("GRAMMAR.md")]
 
-use std::collections::HashMap;
+use std::collections::{BTreeSet, HashMap};
 use std::fmt::Display;
 
 mod eval;
@@ -88,11 +88,38 @@ impl Expression {
         &self.tokens
     }
 
-    /// Evaluate with `min`, `max`, `mean` and `std` taken from `stats`.
-    /// Other keys in `stats` are ignored.
-    pub fn evaluate(&self, stats: &HashMap<String, f64>) -> Result<f64, FxError> {
-        eval::evaluate(&self.tokens, stats)
+    /// Evaluate with `min`, `max`, `mean` and `std` taken from `variables`.
+    /// Any other key in `variables` is available by name (see the
+    /// "Variables" section of the grammar).
+    pub fn evaluate(&self, variables: &HashMap<String, f64>) -> Result<f64, FxError> {
+        eval::evaluate(&self.tokens, variables)
     }
+
+    /// The variables the expression reads: bare words that aren't function
+    /// names, and the statistics, even when called like `mean(9)`
+    pub fn variables(&self) -> BTreeSet<String> {
+        self.tokens
+            .iter()
+            .filter_map(|token| match token {
+                Token::Ident(name) if !eval::FUNCTIONS.contains(&name.as_str()) => {
+                    Some(name.clone())
+                }
+                Token::Call(name, _) if eval::STATS.contains(&name.as_str()) => Some(name.clone()),
+                _ => None,
+            })
+            .collect()
+    }
+}
+
+/// Whether `name` can be supplied as a variable: a word that isn't a
+/// function name or the `PI` or `E` constant in any letter case
+pub fn is_valid_variable_name(name: &str) -> bool {
+    let mut chars = name.chars();
+    chars.next().is_some_and(|c| c.is_ascii_alphabetic())
+        && chars.all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '$')
+        && !name.eq_ignore_ascii_case("pi")
+        && !name.eq_ignore_ascii_case("e")
+        && !eval::FUNCTIONS.contains(&name)
 }
 
 /// Parse an expression without evaluating it
@@ -108,6 +135,20 @@ pub fn eval_fx(source: &str, variables: &HashMap<String, f64>) -> Result<f64, Fx
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn vars(source: &str) -> Vec<String> {
+        parse(source).unwrap().variables().into_iter().collect()
+    }
+
+    #[test]
+    fn variables_read_by_expressions() {
+        assert_eq!(vars("mean - k * std"), ["k", "mean", "std"]);
+        assert_eq!(vars("k * k + 2"), ["k"]);
+        assert_eq!(vars("2 * PI * E"), Vec::<String>::new());
+        assert_eq!(vars("sin(x) + abs(y)"), ["x", "y"]);
+        assert_eq!(vars("mean(9) + foo"), ["foo", "mean"]);
+        assert_eq!(vars("sin(PI)"), Vec::<String>::new());
+    }
 
     fn stats() -> HashMap<String, f64> {
         HashMap::from([
@@ -274,6 +315,27 @@ mod tests {
         assert!(matches!(err("(-8)^(1/3)"), FxError::NonReal(_)));
         // Float multiplication overflows to infinity without an error
         assert_eq!(ok("1e308 * 10"), f64::INFINITY);
+    }
+
+    #[test]
+    fn variables() {
+        let vars = HashMap::from([("mllw".to_string(), 0.5), ("ft".to_string(), 0.3048)]);
+        assert_eq!(eval_fx("mllw - 4.5 * ft", &vars), Ok(0.5 - 4.5 * 0.3048));
+        // Variables can only be used bare
+        assert_eq!(
+            eval_fx("mllw(1)", &vars),
+            Err(FxError::InvalidIdentifier("mllw".to_string()))
+        );
+        // and can't shadow a function
+        let shadow = HashMap::from([("sin".to_string(), 1.0)]);
+        assert!(matches!(eval_fx("sin", &shadow), Err(FxError::Type(_))));
+
+        assert!(is_valid_variable_name("mllw"));
+        assert!(is_valid_variable_name("six_min"));
+        assert!(is_valid_variable_name("mean"));
+        for name in ["", "1x", "_x", "pi", "PI", "e", "sin", "round", "a-b"] {
+            assert!(!is_valid_variable_name(name), "{name}");
+        }
     }
 
     #[test]

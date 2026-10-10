@@ -1,0 +1,19 @@
+qc:
+  sampled:
+    name: Sampled
+    summary: Flat line thresholds from the sample interval
+    description: Flags values that stay within a tolerance for 3 (suspect) or 5 (fail) samples.
+    arguments:
+      sample_interval:
+        type: int
+        description: Seconds between samples
+      tolerance:
+        type: float
+        description: Smallest change that counts as a change
+        default: 0.1
+    tests:
+      qartod:
+        flat_line_test:
+          tolerance: {expr: "tolerance"}
+          suspect_threshold: {expr: "3 * sample_interval"}
+          fail_threshold: {expr: "5 * sample_interval"}

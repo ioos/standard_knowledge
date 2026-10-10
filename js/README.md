@@ -11,7 +11,6 @@ let library = new StandardsLibrary()
 
 library.loadCfStandards()
 library.loadKnowledge()
-library.loadTestSuites()
 
 let standard = library.get("air_pressure_at_mean_sea_level")
 

@@ -40,11 +40,9 @@ Other variables like `mllw` can be defined by users, and set values. These are e
       mllw:
         type: float
         description: Mean lower low water elevation in NAVD 88 meters
-        required: true
       mhhw:
         type: float
         description: Mean higher high water elevation in NAVD 88 meters
-        required: true
     let:
       ft: 0.3048
     tests:
@@ -146,6 +144,18 @@ bare constants.
 
 Calling a bare function name without parentheses (`sin`) is an error, and so
 is calling a function with the wrong number of arguments.
+
+### Variables
+
+This module adds one thing to ioos_qc's language. Besides the four
+statistics, the caller can supply other named values, such as the arguments
+and constants of a YAML test suite (`mllw - 4.5 * ft`). A variable:
+
+- is used as a bare word. Calling it, as in `mllw(1)`, is an invalid identifier.
+- must be a word that isn't a function name, or `PI` or `E` in any letter
+  case (`fx::is_valid_variable_name`).
+
+ioos_qc only knows the four statistics, so it can't evaluate expressions that use other variables.
 
 ## Numbers and types
 

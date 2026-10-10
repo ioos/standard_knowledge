@@ -1,0 +1,16 @@
+bin.name = "standard_knowledge"
+args = ["-k", "./tests/qc_knowledge", "qc", "get", "wind_speed", "sampled"]
+stdout = """
+Sampled (sampled)
+
+Flat line thresholds from the sample interval
+
+Test types:
+- Flat Line
+
+Arguments:
+- sample_interval (int, required): Seconds between samples
+- tolerance (float, default 0.1): Smallest change that counts as a change
+
+Flags values that stay within a tolerance for 3 (suspect) or 5 (fail) samples.
+"""

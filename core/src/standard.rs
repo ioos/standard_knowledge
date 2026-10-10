@@ -1,11 +1,10 @@
-use core::fmt;
 use std::collections::BTreeMap;
 
 use indicium::simple::Indexable;
 
-use crate::qartod::TestSuite;
+use crate::qartod::QcTestSuite;
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Debug, PartialEq)]
 pub struct Standard {
     pub name: String,
 
@@ -37,7 +36,7 @@ pub struct Standard {
     pub comments: Option<String>,
 
     /// QARTOD test suites
-    pub qartod: Vec<Box<dyn TestSuite>>,
+    pub qartod: Vec<QcTestSuite>,
 }
 
 impl Standard {
@@ -183,45 +182,6 @@ impl Standard {
             return format!("{} - {} - {}", self.name, long_name, self.unit);
         }
         format!("{} - {}", self.name, self.unit)
-    }
-}
-
-impl fmt::Debug for Standard {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Standard")
-            .field("name", &self.name)
-            .field("long_name", &self.long_name)
-            .field("unit", &self.unit)
-            .field("description", &self.description)
-            .field("aliases", &self.aliases)
-            .field("ioos_category", &self.ioos_category)
-            .field("common_variable_names", &self.common_variable_names)
-            .field("related_standards", &self.related_standards)
-            .field("sibling_standards", &self.sibling_standards)
-            .field("extra_attrs", &self.extra_attrs)
-            .field("other_units", &self.other_units)
-            .field("comments", &self.comments)
-            .field("qartod", &format!("[{} test suites]", self.qartod.len()))
-            .finish()
-    }
-}
-
-impl PartialEq for Standard {
-    fn eq(&self, other: &Self) -> bool {
-        self.name == other.name
-            && self.long_name == other.long_name
-            && self.unit == other.unit
-            && self.description == other.description
-            && self.aliases == other.aliases
-            && self.ioos_category == other.ioos_category
-            && self.common_variable_names == other.common_variable_names
-            && self.related_standards == other.related_standards
-            && self.sibling_standards == other.sibling_standards
-            && self.extra_attrs == other.extra_attrs
-            && self.other_units == other.other_units
-            && self.comments == other.comments
-            // Note: We compare only the length of qartod test suites since trait objects cannot be compared
-            && self.qartod.len() == other.qartod.len()
     }
 }
 

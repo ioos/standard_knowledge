@@ -76,7 +76,12 @@ fn parse_knowledge(filename: &str, contents: String) -> Result<Vec<Knowledge>, S
     let partial_knowledge: Result<YamlKnowledge, serde_yaml_ng::Error> =
         serde_yaml_ng::from_str(&contents);
 
-    if let Ok(partial_knowledge) = partial_knowledge {
+    // Report the error for a single knowledge unless the file is a list
+    let is_list = serde_yaml_ng::from_str::<serde_yaml_ng::Value>(&contents)
+        .is_ok_and(|value| value.is_sequence());
+    if !is_list {
+        let partial_knowledge =
+            partial_knowledge.map_err(|e| format!("Failed to deserialize YAML from {e}"))?;
         let knowledge = Knowledge {
             name: partial_knowledge
                 .name

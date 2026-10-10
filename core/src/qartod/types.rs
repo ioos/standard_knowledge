@@ -1,9 +1,7 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::fmt::Display;
 
-use dyn_clone::DynClone;
-
-use super::config::ConfigStream;
+use super::static_qc::SuiteArgument;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct TestSuiteInfo {
@@ -11,7 +9,7 @@ pub struct TestSuiteInfo {
     pub slug: String,
     pub summary: String,
     pub description: String,
-    pub arguments: HashMap<String, TestArgument>,
+    pub arguments: BTreeMap<String, SuiteArgument>,
     pub test_types: Vec<QartodTestTypes>,
 }
 
@@ -34,13 +32,13 @@ impl TestSuiteInfo {
 
         if !self.arguments.is_empty() {
             output.push_str("\n\nArguments:");
-            let mut sorted_args: Vec<_> = self.arguments.iter().collect();
-            sorted_args.sort_by_key(|(name, _)| *name);
-            for (name, arg) in sorted_args {
-                output.push_str(&format!("\n- {}: {}", name, arg.description));
-                if arg.required {
-                    output.push_str(" (required)");
+            for (name, arg) in &self.arguments {
+                output.push_str(&format!("\n- {name} ({}", arg.argument_type));
+                match arg.default {
+                    Some(default) => output.push_str(&format!(", default {default}")),
+                    None => output.push_str(", required"),
                 }
+                output.push_str(&format!("): {}", arg.description));
             }
         }
 
@@ -50,41 +48,7 @@ impl TestSuiteInfo {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
-pub struct TestArgument {
-    pub argument_type: ArgumentType,
-    pub description: String,
-    pub required: bool,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum ArgumentType {
-    String,
-    Bool,
-    Int,
-    Float,
-}
-
-impl ArgumentType {
-    pub fn value_type(&self, value: &str) -> ArgumentValue {
-        match self {
-            ArgumentType::String => ArgumentValue::String(value.to_string()),
-            ArgumentType::Bool => ArgumentValue::Bool(value.parse().unwrap_or_default()),
-            ArgumentType::Int => ArgumentValue::Int(value.parse().unwrap_or_default()),
-            ArgumentType::Float => ArgumentValue::Float(value.parse().unwrap_or_default()),
-        }
-    }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum ArgumentValue {
-    String(String),
-    Bool(bool),
-    Int(i64),
-    Float(f64),
-}
-
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum QartodTestTypes {
     Location,
     GrossRange,
@@ -97,27 +61,14 @@ pub enum QartodTestTypes {
     NearestNeighbor,
 }
 
-impl QartodTestTypes {
-    pub fn tests_in_config(config: &ConfigStream) -> Vec<QartodTestTypes> {
-        let mut test_types = Vec::new();
-        if config.qartod.gross_range_test.is_some() {
-            test_types.push(QartodTestTypes::GrossRange);
-        }
-        if config.qartod.location_test.is_some() {
-            test_types.push(QartodTestTypes::Location);
-        }
-        if config.qartod.rate_of_change_test.is_some() {
-            test_types.push(QartodTestTypes::RateOfChange);
-        }
-        if config.qartod.spike_test.is_some() {
-            test_types.push(QartodTestTypes::Spike);
-        }
-        if config.qartod.flat_line_test.is_some() {
-            test_types.push(QartodTestTypes::FlatLine);
-        }
-        test_types
-    }
-}
+/// The tests a suite can configure, by ioos_qc name, in QARTOD manual order
+pub static QARTOD_TESTS: [(&str, QartodTestTypes); 5] = [
+    ("location_test", QartodTestTypes::Location),
+    ("gross_range_test", QartodTestTypes::GrossRange),
+    ("spike_test", QartodTestTypes::Spike),
+    ("rate_of_change_test", QartodTestTypes::RateOfChange),
+    ("flat_line_test", QartodTestTypes::FlatLine),
+];
 
 impl Display for QartodTestTypes {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -134,13 +85,3 @@ impl Display for QartodTestTypes {
         }
     }
 }
-
-pub trait TestSuite: std::fmt::Debug + Send + Sync + DynClone {
-    fn info(&self) -> TestSuiteInfo;
-
-    /// This should return a Config that represents an `ioos_qc.Config`
-    /// https://ioos.github.io/ioos_qc/usage.html#config
-    fn scaffold(&self, arguments: HashMap<String, ArgumentValue>) -> Result<ConfigStream, String>;
-}
-
-dyn_clone::clone_trait_object!(TestSuite);

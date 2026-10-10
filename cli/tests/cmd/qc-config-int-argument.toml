@@ -1,0 +1,11 @@
+bin.name = "standard_knowledge"
+args = ["-k", "./tests/qc_knowledge", "qc", "config", "wind_speed", "sampled", "sample_interval=600.0"]
+stdout = """
+Generated configuration for Sampled:
+qartod:
+  flat_line_test:
+    tolerance: 0.1
+    suspect_threshold: 1800
+    fail_threshold: 3000
+
+"""

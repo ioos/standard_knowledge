@@ -15,7 +15,6 @@ beforeAll(async () => {
 	library = new StandardsLibrary();
 	library.loadCfStandards();
 	library.loadKnowledge();
-	library.loadTestSuites();
 });
 
 describe("get", () => {
