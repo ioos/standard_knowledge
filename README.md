@@ -240,6 +240,8 @@ qc:
 
 Arguments have a `type` (`float` or `int`), a `description`, and optionally `required: true` or a `default`. The flat line thresholds must evaluate to whole numbers of seconds.
 
+Suites can use `gross_range_test`, `location_test`, `spike_test`, `rate_of_change_test`, `flat_line_test` and `attenuated_signal_test`. The `qartod_manual` suites follow the QARTOD manuals, with thresholds derived from statistics of a historical record (such as `mean`, `std` and the standard deviation over the manual's TIM_DEV) that the caller supplies as arguments.
+
 ## Contributing Code
 
 Cargo as manages the Rust components of the project, while Maturin and uv help keep things inline when working from the Python side of things.

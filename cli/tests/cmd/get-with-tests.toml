@@ -16,6 +16,7 @@ sea_surface_height_above_geopotential_datum - Sea surface height above geopotent
   QARTOD Test Suites:
   - Gulf of Maine (gulf_of_maine): Water level tests for stations in the Gulf of Maine developed by Hannah Baranes
   - Long Island Sound (long_island_sound): Water level tests for stations in Long Island Sound
+  - QARTOD Water Level manual (qartod_manual): QARTOD water level tests with thresholds derived from statistics of your own data
 
 "Height_above_X" means the vertical distance above the named surface X. "Sea surface height" is a time-varying quantity. The "geopotential datum" is any estimated surface of constant geopotential used as a datum i.e. a reference level; for the geoid as a datum, specific standard names are available. To specify which geoid or geopotential datum is being used as a reference level, a grid_mapping variable should be attached to the data variable as described in Chapter 5.6 of the CF Convention.
 """

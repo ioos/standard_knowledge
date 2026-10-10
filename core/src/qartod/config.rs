@@ -33,6 +33,22 @@ pub struct FlatLine<N = f64, I = isize> {
     pub fail_threshold: I,
 }
 
+/// Low variability over `test_period` seconds, measured with
+/// `check_type` (`std`, the default, or `range`)
+#[derive(Default, Clone, PartialEq, Debug, Serialize, Deserialize)]
+pub struct AttenuatedSignal<N = f64, I = isize> {
+    pub suspect_threshold: N,
+    pub fail_threshold: N,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub test_period: Option<I>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub min_obs: Option<I>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub min_period: Option<I>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub check_type: Option<String>,
+}
+
 #[derive(Default, Clone, PartialEq, Debug, Serialize, Deserialize)]
 pub struct ConfigStreamQartod<N = f64, I = isize> {
     pub gross_range_test: Option<GrossRangeTest<N>>,
@@ -40,6 +56,8 @@ pub struct ConfigStreamQartod<N = f64, I = isize> {
     pub rate_of_change_test: Option<RateOfChange<N>>,
     pub spike_test: Option<Spike<N>>,
     pub flat_line_test: Option<FlatLine<N, I>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attenuated_signal_test: Option<AttenuatedSignal<N, I>>,
 }
 
 #[derive(Default, Clone, PartialEq, Debug, Serialize, Deserialize)]
@@ -94,6 +112,17 @@ impl<N, I> ConfigStream<N, I> {
             }),
             None => None,
         };
+        let attenuated_signal_test = match &q.attenuated_signal_test {
+            Some(t) => Some(AttenuatedSignal {
+                suspect_threshold: num(&t.suspect_threshold)?,
+                fail_threshold: num(&t.fail_threshold)?,
+                test_period: t.test_period.as_ref().map(&mut *int).transpose()?,
+                min_obs: t.min_obs.as_ref().map(&mut *int).transpose()?,
+                min_period: t.min_period.as_ref().map(&mut *int).transpose()?,
+                check_type: t.check_type.clone(),
+            }),
+            None => None,
+        };
         Ok(ConfigStream {
             qartod: ConfigStreamQartod {
                 gross_range_test,
@@ -101,6 +130,7 @@ impl<N, I> ConfigStream<N, I> {
                 rate_of_change_test,
                 spike_test,
                 flat_line_test,
+                attenuated_signal_test,
             },
         })
     }
