@@ -10,12 +10,10 @@ qartod:
     fail_span:
     - 50000.0
     - 111000.0
-  location_test: null
   rate_of_change_test:
     threshold: 1500.0
   spike_test:
     suspect_threshold: 100.0
     fail_threshold: 200.0
-  flat_line_test: null
 
 """

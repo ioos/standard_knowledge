@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
-use std::collections::{BTreeMap, HashMap};
+use std::cell::RefCell;
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 
 use indexmap::IndexMap;
 
@@ -48,30 +49,129 @@ impl QcTestSuite {
 
     /// This should return a Config that represents an `ioos_qc.Config`
     /// https://ioos.github.io/ioos_qc/usage.html#config
+    ///
+    /// With `tests`, only those tests (by field name, like
+    /// `gross_range_test`) are generated, and only the arguments they need
+    /// are required.
     pub fn scaffold(
         &self,
         arguments: HashMap<String, ArgumentValue>,
+        tests: Option<&[String]>,
     ) -> Result<ConfigStream, String> {
-        self.qc.scaffold(&arguments)
+        self.qc.scaffold(&arguments, tests)
     }
 }
 
+/// Names of the tests in a stream, in a fixed order
+fn present_tests<N, I>(stream: &ConfigStream<N, I>) -> Vec<&'static str> {
+    let q = &stream.qartod;
+    [
+        ("gross_range_test", q.gross_range_test.is_some()),
+        ("location_test", q.location_test.is_some()),
+        ("rate_of_change_test", q.rate_of_change_test.is_some()),
+        ("spike_test", q.spike_test.is_some()),
+        ("flat_line_test", q.flat_line_test.is_some()),
+        ("attenuated_signal_test", q.attenuated_signal_test.is_some()),
+    ]
+    .into_iter()
+    .filter_map(|(name, present)| present.then_some(name))
+    .collect()
+}
+
+/// A copy of `stream` with only the tests named in `keep`
+fn keep_tests(stream: &ConfigStream<Num, Num>, keep: &[&str]) -> ConfigStream<Num, Num> {
+    let mut stream = stream.clone();
+    let q = &mut stream.qartod;
+    if !keep.contains(&"gross_range_test") {
+        q.gross_range_test = None;
+    }
+    if !keep.contains(&"location_test") {
+        q.location_test = None;
+    }
+    if !keep.contains(&"rate_of_change_test") {
+        q.rate_of_change_test = None;
+    }
+    if !keep.contains(&"spike_test") {
+        q.spike_test = None;
+    }
+    if !keep.contains(&"flat_line_test") {
+        q.flat_line_test = None;
+    }
+    if !keep.contains(&"attenuated_signal_test") {
+        q.attenuated_signal_test = None;
+    }
+    stream
+}
+
+/// The variables read by the expressions in `stream`
+fn stream_variables(stream: &ConfigStream<Num, Num>) -> Result<BTreeSet<String>, String> {
+    let found = RefCell::new(BTreeSet::new());
+    let collect = |value: &Num| -> Result<(), String> {
+        if let Num::Expr(source) = value {
+            let expression = fx::parse(source).map_err(|e| format!("{source:?}: {e}"))?;
+            found.borrow_mut().extend(expression.variables());
+        }
+        Ok(())
+    };
+    stream.try_map(&mut |v| collect(v), &mut |v| collect(v))?;
+    Ok(found.into_inner())
+}
+
 impl StaticQc {
-    /// Build the ioos_qc config, evaluating any expressions with `arguments`
+    /// Build the ioos_qc config, evaluating any expressions with `arguments`.
+    ///
+    /// Only the tests named in `tests` are built (all of them when it is
+    /// `None` or empty), and only the arguments and constants they need are
+    /// resolved.
     pub fn scaffold(
         &self,
         arguments: &HashMap<String, ArgumentValue>,
+        tests: Option<&[String]>,
     ) -> Result<ConfigStream, String> {
-        let scope = self.scope(arguments)?;
-        self.tests
-            .try_map(&mut |value| number(value, &scope), &mut |value| {
+        let available = present_tests(&self.tests);
+        let selected: Vec<&str> = match tests {
+            Some(tests) if !tests.is_empty() => {
+                if let Some(unknown) = tests.iter().find(|t| !available.contains(&t.as_str())) {
+                    return Err(format!(
+                        "{} has no test named {unknown}. Its tests are: {}",
+                        self.name,
+                        available.join(", ")
+                    ));
+                }
+                available
+                    .iter()
+                    .copied()
+                    .filter(|t| tests.iter().any(|s| s == t))
+                    .collect()
+            }
+            _ => available,
+        };
+
+        // Which tests need each argument, and every name they need
+        let mut needed = BTreeSet::new();
+        let mut argument_tests: BTreeMap<String, Vec<&str>> = BTreeMap::new();
+        for test in &selected {
+            let names = self.names_needed(&keep_tests(&self.tests, &[test]))?;
+            for name in &names {
+                if self.arguments.contains_key(name) && !self.constants.contains_key(name) {
+                    argument_tests.entry(name.clone()).or_default().push(test);
+                }
+            }
+            needed.extend(names);
+        }
+
+        let scope = self.scope(arguments, &needed, &argument_tests)?;
+        keep_tests(&self.tests, &selected).try_map(
+            &mut |value| number(value, &scope),
+            &mut |value| {
                 let value = number(value, &scope)?;
                 if value.fract() == 0.0 && value.abs() <= isize::MAX as f64 {
                     Ok(value as isize)
                 } else {
                     Err(format!("Expected a whole number, found {value}"))
                 }
-            })
+            },
+        )
     }
 
     /// Scaffold with every argument set to its default, or 1 when it has
@@ -89,21 +189,45 @@ impl StaticQc {
                 (name.clone(), value)
             })
             .collect();
-        self.scaffold(&arguments)
+        self.scaffold(&arguments, None)
     }
 
-    /// The variables expressions can use: arguments, then `let` constants
+    /// Every argument and constant that the expressions in `stream` read,
+    /// directly or through the constants they use
+    fn names_needed(&self, stream: &ConfigStream<Num, Num>) -> Result<BTreeSet<String>, String> {
+        let mut needed = BTreeSet::new();
+        let mut pending: Vec<String> = stream_variables(stream)?.into_iter().collect();
+        while let Some(name) = pending.pop() {
+            if !needed.insert(name.clone()) {
+                continue;
+            }
+            if let Some(Num::Expr(source)) = self.constants.get(&name) {
+                let expression = fx::parse(source).map_err(|e| format!("{source:?}: {e}"))?;
+                pending.extend(expression.variables());
+            }
+        }
+        Ok(needed)
+    }
+
+    /// The variables expressions can use: arguments, then `let` constants,
+    /// limited to those in `needed`. `argument_tests` says which tests need
+    /// each argument, for the error when required ones are missing.
     fn scope(
         &self,
         arguments: &HashMap<String, ArgumentValue>,
+        needed: &BTreeSet<String>,
+        argument_tests: &BTreeMap<String, Vec<&str>>,
     ) -> Result<HashMap<String, f64>, String> {
-        if arguments.is_empty() && self.arguments.values().any(|a| a.required) {
-            return Err(format!("No arguments provided for {} tests", self.name));
+        for name in self.arguments.keys().chain(self.constants.keys()) {
+            check_name(name)?;
         }
 
         let mut scope = HashMap::new();
+        let mut missing = Vec::new();
         for (name, argument) in &self.arguments {
-            check_name(name)?;
+            if !needed.contains(name) {
+                continue;
+            }
             let value = match arguments.get(name) {
                 Some(ArgumentValue::Float(value)) => *value,
                 Some(ArgumentValue::Int(value)) => *value as f64,
@@ -113,16 +237,31 @@ impl StaticQc {
                 None => match argument.default {
                     Some(default) => default,
                     None if argument.required => {
-                        return Err(format!("Missing required argument: {name}"))
+                        let tests = argument_tests.get(name).map(|t| t.join(", "));
+                        missing.push(match tests {
+                            Some(tests) => format!("  {name} ({tests})"),
+                            None => format!("  {name}"),
+                        });
+                        continue;
                     }
                     None => continue,
                 },
             };
             scope.insert(name.clone(), value);
         }
+        if !missing.is_empty() {
+            return Err(format!(
+                "Missing required argument{} for {}:\n{}",
+                if missing.len() == 1 { "" } else { "s" },
+                self.name,
+                missing.join("\n")
+            ));
+        }
 
         for (name, value) in &self.constants {
-            check_name(name)?;
+            if !needed.contains(name) {
+                continue;
+            }
             let value = number(value, &scope)?;
             scope.insert(name.clone(), value);
         }
@@ -194,7 +333,7 @@ mod tests {
                         (name.clone(), value)
                     })
                     .collect();
-                suite.scaffold(arguments).unwrap_or_else(|e| {
+                suite.scaffold(arguments, None).unwrap_or_else(|e| {
                     panic!("{} {} failed to scaffold: {e}", standard.name, info.slug)
                 });
             }
@@ -235,10 +374,132 @@ mod tests {
             "sea_surface_height_above_geopotential_datum",
             "gulf_of_maine",
         );
-        assert_eq!(
-            gulf.scaffold(HashMap::new()).unwrap_err(),
-            "No arguments provided for Gulf of Maine tests"
+        let error = gulf.scaffold(HashMap::new(), None).unwrap_err();
+        assert!(
+            error.starts_with("Missing required arguments for Gulf of Maine:"),
+            "{error}"
         );
+        assert!(error.contains("  mhhw ("), "{error}");
+        assert!(error.contains("  mllw ("), "{error}");
+    }
+
+    fn names(tests: &[&str]) -> Vec<String> {
+        tests.iter().map(|t| t.to_string()).collect()
+    }
+
+    fn reviewer_arguments() -> HashMap<String, ArgumentValue> {
+        HashMap::from([
+            ("mean".to_string(), ArgumentValue::Float(5.0)),
+            ("std".to_string(), ArgumentValue::Float(3.0)),
+            ("sensor_min".to_string(), ArgumentValue::Float(1.0)),
+            ("sensor_max".to_string(), ArgumentValue::Float(15.0)),
+        ])
+    }
+
+    #[test]
+    fn scaffold_only_selected_tests() {
+        let library = library();
+        let manual = suite(&library, "sea_surface_temperature", "qartod_manual");
+        let config = manual
+            .scaffold(reviewer_arguments(), Some(&names(&["gross_range_test"])))
+            .unwrap()
+            .qartod;
+        assert!(config.gross_range_test.is_some());
+        assert!(config.rate_of_change_test.is_none());
+        assert!(config.flat_line_test.is_none());
+        assert!(config.attenuated_signal_test.is_none());
+    }
+
+    #[test]
+    fn scaffold_without_filter_lists_every_missing_argument() {
+        let library = library();
+        let manual = suite(&library, "sea_surface_temperature", "qartod_manual");
+        let error = manual.scaffold(reviewer_arguments(), None).unwrap_err();
+        assert_eq!(
+            error,
+            "Missing required arguments for QARTOD Temperature and Salinity manual:\n  \
+             min_var_fail (attenuated_signal_test)\n  \
+             min_var_warn (attenuated_signal_test)\n  \
+             sample_interval (rate_of_change_test, flat_line_test)\n  \
+             sd (rate_of_change_test)"
+        );
+    }
+
+    #[test]
+    fn scaffold_missing_arguments_only_for_selected_tests() {
+        let library = library();
+        let manual = suite(&library, "sea_surface_temperature", "qartod_manual");
+        let error = manual
+            .scaffold(
+                reviewer_arguments(),
+                Some(&names(&["flat_line_test", "gross_range_test"])),
+            )
+            .unwrap_err();
+        assert_eq!(
+            error,
+            "Missing required argument for QARTOD Temperature and Salinity manual:\n  \
+             sample_interval (flat_line_test)"
+        );
+    }
+
+    #[test]
+    fn scaffold_unknown_or_absent_test_is_an_error() {
+        let library = library();
+        let manual = suite(&library, "sea_surface_temperature", "qartod_manual");
+        let error = manual
+            .scaffold(reviewer_arguments(), Some(&names(&["bogus_test"])))
+            .unwrap_err();
+        assert!(error.contains("bogus_test"), "{error}");
+        assert!(error.contains("gross_range_test"), "{error}");
+
+        // A real test that this suite doesn't have
+        let error = manual
+            .scaffold(reviewer_arguments(), Some(&names(&["spike_test"])))
+            .unwrap_err();
+        assert!(error.contains("spike_test"), "{error}");
+        assert!(error.contains("flat_line_test"), "{error}");
+    }
+
+    #[test]
+    fn scaffold_follows_constants_to_arguments() {
+        let library = library();
+        let manual = suite(&library, "sea_surface_temperature", "qartod_manual");
+        // test_period uses the `hour` constant and the tst_tim default
+        let args = HashMap::from([
+            ("min_var_warn".to_string(), ArgumentValue::Float(0.02)),
+            ("min_var_fail".to_string(), ArgumentValue::Float(0.01)),
+        ]);
+        let config = manual
+            .scaffold(args, Some(&names(&["attenuated_signal_test"])))
+            .unwrap()
+            .qartod;
+        assert_eq!(
+            config.attenuated_signal_test.unwrap().test_period,
+            Some(43200)
+        );
+
+        let qc = template(
+            r#"
+name: Example
+summary: s
+description: d
+arguments:
+  a: {type: float, description: a, required: true}
+  b: {type: float, description: b, required: true}
+let:
+  first: {expr: "a * 2"}
+  second: {expr: "first + 1"}
+tests:
+  qartod:
+    rate_of_change_test: {threshold: {expr: "second"}}
+    spike_test: {suspect_threshold: {expr: "b"}, fail_threshold: 2}
+"#,
+        );
+        let error = qc
+            .scaffold(&HashMap::new(), Some(&names(&["rate_of_change_test"])))
+            .unwrap_err();
+        assert!(error.contains("  a (rate_of_change_test)"), "{error}");
+        assert!(!error.contains("  b "), "{error}");
     }
 
     #[test]
@@ -250,10 +511,12 @@ mod tests {
             "gulf_of_maine",
         );
         let args = HashMap::from([("mhhw".to_string(), ArgumentValue::Float(1.0))]);
-        assert_eq!(
-            gulf.scaffold(args).unwrap_err(),
-            "Missing required argument: mllw"
+        let error = gulf.scaffold(args, None).unwrap_err();
+        assert!(
+            error.starts_with("Missing required argument for Gulf of Maine:\n  mllw ("),
+            "{error}"
         );
+        assert!(!error.contains("mhhw"), "{error}");
     }
 
     #[test]
@@ -270,7 +533,7 @@ mod tests {
             ("mllw".to_string(), ArgumentValue::Float(0.0)),
             ("mhhw".to_string(), ArgumentValue::Float(1.0)),
         ]);
-        let config = gulf.scaffold(args).unwrap();
+        let config = gulf.scaffold(args, None).unwrap();
 
         assert_eq!(
             config.qartod.gross_range_test,
@@ -330,7 +593,7 @@ mod tests {
             ("min_var_warn".to_string(), ArgumentValue::Float(0.02)),
             ("min_var_fail".to_string(), ArgumentValue::Float(0.01)),
         ]);
-        let config = manual.scaffold(args).unwrap().qartod;
+        let config = manual.scaffold(args, None).unwrap().qartod;
         assert_eq!(
             config.gross_range_test,
             Some(GrossRangeTest {
@@ -388,13 +651,13 @@ tests:
       fail_threshold: {expr: "2 * span"}
 "#,
         );
-        let config = qc.scaffold(&HashMap::new()).unwrap();
+        let config = qc.scaffold(&HashMap::new(), None).unwrap();
         let spike = config.qartod.spike_test.unwrap();
         assert_eq!(spike.suspect_threshold, 1.5);
         assert_eq!(spike.fail_threshold, 3.0);
 
         let args = HashMap::from([("k".to_string(), ArgumentValue::Int(2))]);
-        let spike = qc.scaffold(&args).unwrap().qartod.spike_test.unwrap();
+        let spike = qc.scaffold(&args, None).unwrap().qartod.spike_test.unwrap();
         assert_eq!(spike.suspect_threshold, 1.0);
     }
 

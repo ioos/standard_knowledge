@@ -35,11 +35,14 @@ impl PyTestSuite {
         Ok(dict.into())
     }
 
-    /// Generate a configuration for the test suite
+    /// Generate a configuration for the test suite, optionally only for the
+    /// named tests (like `["gross_range_test"]`)
+    #[pyo3(signature = (arguments, tests=None))]
     fn scaffold(
         &self,
         py: Python<'_>,
         arguments: HashMap<String, Py<PyAny>>,
+        tests: Option<Vec<String>>,
     ) -> PyResult<Py<PyAny>> {
         // Convert Python arguments to ArgumentValue
         let mut rust_args = HashMap::new();
@@ -55,7 +58,7 @@ impl PyTestSuite {
             // Add more types as needed
         }
 
-        match self.test_suite.scaffold(rust_args) {
+        match self.test_suite.scaffold(rust_args, tests.as_deref()) {
             Ok(config) => {
                 // Convert ConfigStream to Python dict
                 let result = PyDict::new(py);
