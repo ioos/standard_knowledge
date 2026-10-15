@@ -219,6 +219,27 @@ def test_qartod_manual_suite(library):
     }
 
 
+def test_qartod_manual_suite_selected_tests(library):
+    library.load_knowledge()
+    standard = library.get("sea_surface_temperature")
+    suite = next(s for s in standard.qc if s.info()["slug"] == "qartod_manual")
+    arguments = {"mean": 5.0, "std": 3.0, "sensor_min": 1.0, "sensor_max": 15.0}
+
+    config = suite.scaffold(arguments, tests=["gross_range_test"])["qartod"]
+    assert list(config) == ["gross_range_test"]
+    assert config["gross_range_test"]["fail_span"] == [1.0, 15.0]
+
+    with pytest.raises(RuntimeError, match="bogus_test"):
+        suite.scaffold(arguments, tests=["bogus_test"])
+
+    with pytest.raises(RuntimeError) as error:
+        suite.scaffold(arguments)
+    message = str(error.value)
+    assert "Missing required argument(s)" in message
+    assert "sample_interval (rate_of_change_test, flat_line_test)" in message
+    assert "min_var_fail (attenuated_signal_test)" in message
+
+
 def test_qartod_manual_suite_runs_in_ioos_qc(library):
     """Every generated test is accepted by ioos_qc"""
     np = pytest.importorskip("numpy")
