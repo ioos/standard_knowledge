@@ -1,4 +1,7 @@
 use serde_wasm_bindgen::to_value;
+use standard_knowledge::qartod::static_qc::SuiteArgumentType;
+use standard_knowledge::qartod::types::ArgumentValue;
+use standard_knowledge::qartod::QcTestSuite;
 use standard_knowledge::{Standard, StandardsLibrary};
 use std::collections::HashMap;
 
@@ -144,37 +147,91 @@ impl StandardJS {
     pub fn qartod(&self) -> Vec<QartodJS> {
         self.inner
             .qartod
-            .clone()
             .iter()
-            .map(|q| QartodJS {
-                name: q.info().name,
-                slug: q.info().slug,
-                description: q.info().description,
+            .map(|suite| QartodJS {
+                inner: suite.clone(),
             })
             .collect()
     }
 }
 
+/// Convert to a plain JS value, with maps as objects
+fn to_plain<T: serde::Serialize>(value: &T) -> Result<JsValue, JsError> {
+    value
+        .serialize(&serde_wasm_bindgen::Serializer::json_compatible())
+        .map_err(|e| JsError::new(&e.to_string()))
+}
+
+/// A QARTOD test suite, which can scaffold an ioos_qc config
 #[wasm_bindgen]
 pub struct QartodJS {
-    name: String,
-    slug: String,
-    description: String,
+    inner: QcTestSuite,
 }
 
 #[wasm_bindgen]
 impl QartodJS {
     #[wasm_bindgen(getter)]
     pub fn name(&self) -> String {
-        self.name.clone()
+        self.inner.qc.name.clone()
     }
     #[wasm_bindgen(getter)]
     pub fn slug(&self) -> String {
-        self.slug.clone()
+        self.inner.slug.clone()
     }
     #[wasm_bindgen(getter)]
     pub fn description(&self) -> String {
-        self.description.clone()
+        self.inner.qc.description.clone()
+    }
+
+    /// The arguments `scaffold` takes, by name:
+    /// `{type: "float" | "int", description, required, default?}`
+    #[wasm_bindgen(getter)]
+    pub fn arguments(&self) -> Result<JsValue, JsError> {
+        to_plain(&self.inner.qc.arguments)
+    }
+
+    /// The names of the suite's tests, like `gross_range_test`
+    #[wasm_bindgen(getter)]
+    pub fn tests(&self) -> Vec<String> {
+        self.inner
+            .test_names()
+            .into_iter()
+            .map(String::from)
+            .collect()
+    }
+
+    /// Build an ioos_qc config from `args`, an object of argument values by
+    /// name. With `tests`, only those tests are built, and only the arguments
+    /// they need are required. Throws an `Error` listing every missing
+    /// argument and the tests that need it.
+    #[wasm_bindgen]
+    pub fn scaffold(&self, args: JsValue, tests: Option<Vec<String>>) -> Result<JsValue, JsError> {
+        let values: HashMap<String, f64> = serde_wasm_bindgen::from_value(args)
+            .map_err(|e| JsError::new(&format!("arguments must map names to numbers: {e}")))?;
+
+        let mut arguments = HashMap::new();
+        for (name, value) in values {
+            // Like the CLI, ignore values for arguments the suite doesn't take
+            let Some(argument) = self.inner.qc.arguments.get(&name) else {
+                continue;
+            };
+            let value = match argument.argument_type {
+                SuiteArgumentType::Float => ArgumentValue::Float(value),
+                SuiteArgumentType::Int if value.fract() == 0.0 => ArgumentValue::Int(value as i64),
+                SuiteArgumentType::Int => {
+                    return Err(JsError::new(&format!(
+                        "{name} must be a whole number, found {value}"
+                    )))
+                }
+            };
+            arguments.insert(name, value);
+        }
+
+        let config = self
+            .inner
+            .scaffold(arguments, tests.as_deref())
+            .map_err(|e| JsError::new(&e))?;
+        to_plain(&config)
     }
 }
 

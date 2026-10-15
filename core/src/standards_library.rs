@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use crate::qartod::StaticQcTestSuite;
+use crate::qartod::QcTestSuite;
 use crate::standards_filter::StandardsFilter;
 use crate::{standard::Standard, Knowledge};
 
