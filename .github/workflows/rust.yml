@@ -57,8 +57,11 @@ jobs:
     - name: Fail if tests failed
       if: steps.run-tests.outcome == 'failure'
       run: exit 1
+    # Verify in a target dir outside the cache. Cargo treats registry crates
+    # as immutable, so a cached build of the packaged standard_knowledge from
+    # an earlier run is reused even when the core source has since changed.
     - name: Test publishing to crates.io
-      run: cargo publish --workspace --dry-run
+      run: cargo publish --workspace --dry-run --target-dir "$RUNNER_TEMP/publish-target"
 
   upload_crates:
     name: Publish to crates.io
