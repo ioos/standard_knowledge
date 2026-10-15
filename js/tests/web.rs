@@ -34,6 +34,30 @@ fn get_by_alias() {
 }
 
 #[wasm_bindgen_test]
+fn scaffold_gross_range() {
+    let library = loaded_library();
+    let standard = library.get("sea_surface_temperature").unwrap();
+    let suites = standard.qartod();
+    let manual = suites.iter().find(|q| q.slug() == "qartod_manual").unwrap();
+    assert_eq!(manual.tests().len(), 4);
+
+    let args = js_sys::Object::new();
+    for (key, value) in [
+        ("mean", 5.0),
+        ("std", 3.0),
+        ("sensor_min", 1.0),
+        ("sensor_max", 15.0),
+    ] {
+        js_sys::Reflect::set(&args, &key.into(), &value.into()).unwrap();
+    }
+    let config = manual
+        .scaffold(args.into(), Some(vec!["gross_range_test".to_string()]))
+        .unwrap();
+    let qartod = js_sys::Reflect::get(&config, &"qartod".into()).unwrap();
+    assert!(js_sys::Reflect::has(&qartod, &"gross_range_test".into()).unwrap());
+}
+
+#[wasm_bindgen_test]
 fn get_unknown_is_err() {
     let library = loaded_library();
     assert!(library.get("not_a_real_standard").is_err());
