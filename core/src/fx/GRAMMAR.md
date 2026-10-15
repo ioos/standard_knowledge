@@ -7,10 +7,25 @@ it. It follows ioos_qc's parser,
 [`ioos_qc/config_creator/fx_parser.py`](https://github.com/ioos/ioos_qc/blob/main/ioos_qc/config_creator/fx_parser.py),
 which is itself adapted from the `fourFn.py` example that ships with
 pyparsing. Until now that implementation was the only full definition of the
-language. This document is meant to be one.
+language.
 
-The Python test suite in `py/tests/test_fx.py` checks this implementation
-against ioos_qc's parser, including property-based tests with Hypothesis.
+## Examples
+
+With the statistics `min` = 1, `max` = 9, `mean` = 5 and `std` = 2:
+
+| Expression | Result |
+| --- | --- |
+| `mean + 3 * std` | 11 |
+| `min - std * 2` | −3 |
+| `max + std / 2` | 10 |
+| `( max - min ) / 2` | 4 |
+| `abs(min - mean)` | 4 |
+| `round(mean / 3, trunc(1))` | 1.7 |
+| `2 ^ 3 ^ 2` | 512 |
+| `-2^2` | 4 |
+
+The last two show how the rules below can surprise: `^` is right associative,
+and a unary sign binds tighter than `^`.
 
 ## Two levels of the language
 
@@ -50,7 +65,7 @@ Notes on numbers:
 - An exponent is only taken when it is complete. In `1e` the number is `1`
   and the stray `e` makes the whole expression an error.
 - Numbers never carry their own sign. A `-` in front of a number is a unary
-  operator (see below).
+  operator (see Grammar).
 - Values outside the float range become infinity: `1e999` is `inf`.
 
 ## Grammar
@@ -104,39 +119,6 @@ bare constants.
 Calling a bare function name without parentheses (`sin`) is an error, and so
 is calling a function with the wrong number of arguments.
 
-## Evaluation
-
-An expression is compiled to a postfix program and evaluated by popping from
-the end, exactly as ioos_qc's `evaluate_stack` does. For well-formed
-expressions this gives the usual arithmetic result. Two corners of the
-reference implementation behave differently, and this module reproduces both.
-
-**Only minus signs before the first plus count.** A run of unary signs
-contributes one negation per `-`, stopping at the first `+`:
-
-| Expression | Result |
-| --- | --- |
-| `--3` | 3 |
-| `+-3` | 3 |
-| `-+-3` | −3 |
-
-**Calling a constant or statistic leaves its arguments behind.** `PI(…)`,
-`E(…)`, `mean(…)`, `min(…)`, `max(…)` and `std(…)` return the constant or
-statistic and never evaluate their arguments (`PI(1/0)` is π, not an error).
-The arguments stay on the evaluation stack, where a later operator can take
-them as its left operand:
-
-| Expression | Result |
-| --- | --- |
-| `PI(5) + 2` | π + 2 |
-| `2 + PI(5)` | 5 + π, the `2` is never used |
-| `2 + mean(9)` | 9 + mean |
-
-The call form only works with the exact upper-case spelling. `pi(2)` is an
-invalid identifier even though bare `pi` is π. None of this is useful in a
-real configuration. It is recorded here so that the two implementations can
-be compared exactly.
-
 ## Numbers and types
 
 Results follow Python's numeric rules, because that is what ioos_qc produces.
@@ -182,6 +164,39 @@ is 2.67, because 2.675 is stored as slightly less than 2.675.
 | `Domain` | `sin`, `cos`, `tan` of infinity, or `trunc`/`round` of `NaN` | `ValueError` |
 | `NonReal` | A complex intermediate result | none, see below |
 
+## Evaluation
+
+An expression is compiled to a postfix program and evaluated by popping from
+the end, exactly as ioos_qc's `evaluate_stack` does. For well-formed
+expressions this gives the usual arithmetic result. Two corners of the
+reference implementation behave differently, and this module reproduces both.
+
+**Only minus signs before the first plus count.** A run of unary signs
+contributes one negation per `-`, stopping at the first `+`:
+
+| Expression | Result |
+| --- | --- |
+| `--3` | 3 |
+| `+-3` | 3 |
+| `-+-3` | −3 |
+
+**Calling a constant or statistic leaves its arguments behind.** `PI(…)`,
+`E(…)`, `mean(…)`, `min(…)`, `max(…)` and `std(…)` return the constant or
+statistic and never evaluate their arguments (`PI(1/0)` is π, not an error).
+The arguments stay on the evaluation stack, where a later operator can take
+them as its left operand:
+
+| Expression | Result |
+| --- | --- |
+| `PI(5) + 2` | π + 2 |
+| `2 + PI(5)` | 5 + π, the `2` is never used |
+| `2 + mean(9)` | 9 + mean |
+
+The call form only works with the exact upper-case spelling. `pi(2)` is an
+invalid identifier even though bare `pi` is π. None of this is useful in a
+real configuration. It is recorded here so that the two implementations can
+be compared exactly.
+
 ## Known differences from ioos_qc
 
 These are deliberate, and the comparison tests check that they are the only
@@ -208,3 +223,8 @@ ones.
   grows on every call and is never cleared. Results are unaffected, but it
   leaks memory and is not safe across threads. Here each evaluation has its
   own stack.
+
+The Python test suite checks this implementation against ioos_qc's parser.
+`py/tests/test_fx.py` tests the evaluator directly, and
+`py/tests/test_fx_ioos_qc.py` compares it with ioos_qc, including
+property-based tests with Hypothesis.
