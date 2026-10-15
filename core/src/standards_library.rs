@@ -55,7 +55,7 @@ impl StandardsLibrary {
 
                 if let Some(qc) = know.qc {
                     for (slug, qc) in qc {
-                        qartod.push(Box::new(StaticQcTestSuite { slug, qc }));
+                        qartod.push(QcTestSuite { slug, qc });
                     }
                 }
 
@@ -81,22 +81,6 @@ impl StandardsLibrary {
     pub fn load_knowledge(&mut self) {
         let knowledge = crate::library_knowledge::load_knowledge();
         self.apply_knowledge(knowledge);
-    }
-
-    /// Load test suites
-    pub fn load_test_suites(&mut self) {
-        use crate::qartod::test_suites;
-
-        let suites = test_suites();
-        for (name, suite) in suites {
-            if let Some(standard) = self.standards.get(&name) {
-                let new_standard = Standard {
-                    qartod: suite,
-                    ..standard.clone()
-                };
-                self.standards.insert(name, new_standard);
-            }
-        }
     }
 
     /// Return a set of all known IOOS categories

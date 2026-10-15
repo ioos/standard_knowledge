@@ -52,7 +52,6 @@ let library = new StandardsLibrary()
 
 library.loadCfStandards()
 library.loadKnowledge()
-library.loadTestSuites()
 
 let standard = library.get("air_pressure_at_mean_sea_level")
 
@@ -209,6 +208,37 @@ Knowledge keys:
 > [!NOTE]
 >
 > - IOOS categories are not (_currently_) validated, but the set of known values (derived from ERDDAP's internal list) is in [core/src/ioos_categories.rs](./core/src/ioos_categories.rs).
+
+### QARTOD test suites
+
+A `qc` key holds QARTOD test suites, by slug. Each `tests` block has the shape of an ioos_qc stream config. Any number in it can be an [fx expression](./core/src/fx/GRAMMAR.md), written `{expr: "..."}`, that uses the suite's `arguments` (supplied when scaffolding) and `let` constants (evaluated in order).
+
+```yaml
+# core/standards/sea_surface_height_above_geopotential_datum.yaml
+qc:
+  gulf_of_maine:
+    name: Gulf of Maine
+    summary: ...
+    description: ...
+    arguments:
+      mllw:
+        type: float
+        description: Mean lower low water elevation in NAVD 88 meters
+        required: true
+      mhhw:
+        type: float
+        description: Mean higher high water elevation in NAVD 88 meters
+        required: true
+    let:
+      ft: 0.3048
+    tests:
+      qartod:
+        gross_range_test:
+          suspect_span: [{expr: "mllw - 4.5 * ft"}, {expr: "mhhw + 6.0 * ft"}]
+          fail_span: [{expr: "mllw - 4.5 * ft"}, {expr: "mhhw + 6.0 * ft"}]
+```
+
+Arguments have a `type` (`float` or `int`), a `description`, and optionally `required: true` or a `default`. The flat line thresholds must evaluate to whole numbers of seconds.
 
 ## Contributing Code
 

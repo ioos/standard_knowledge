@@ -84,8 +84,6 @@ fn main() {
         }
     }
 
-    library.load_test_suites();
-
     match &cli.command {
         Commands::Get { name, format } => {
             if let Ok(standard) = library.get(name) {
