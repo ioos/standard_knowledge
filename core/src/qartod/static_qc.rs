@@ -4,21 +4,19 @@ use std::collections::{BTreeMap, HashMap};
 use indexmap::IndexMap;
 
 use super::config::{ConfigStream, Num};
-use super::types::{
-    ArgumentType, ArgumentValue, QartodTestTypes, TestArgument, TestSuite, TestSuiteInfo,
-};
+use super::types::{ArgumentType, ArgumentValue, QartodTestTypes, TestArgument, TestSuiteInfo};
 use crate::fx;
 
 include!("./static_qc_include.rs");
 
-#[derive(Debug, Clone)]
-pub struct StaticQcTestSuite {
+#[derive(Debug, Clone, PartialEq)]
+pub struct QcTestSuite {
     pub slug: String,
     pub qc: StaticQc,
 }
 
-impl TestSuite for StaticQcTestSuite {
-    fn info(&self) -> TestSuiteInfo {
+impl QcTestSuite {
+    pub fn info(&self) -> TestSuiteInfo {
         let test_types = QartodTestTypes::tests_in_config(&self.qc.tests);
         let arguments = self
             .qc
@@ -48,7 +46,12 @@ impl TestSuite for StaticQcTestSuite {
         }
     }
 
-    fn scaffold(&self, arguments: HashMap<String, ArgumentValue>) -> Result<ConfigStream, String> {
+    /// This should return a Config that represents an `ioos_qc.Config`
+    /// https://ioos.github.io/ioos_qc/usage.html#config
+    pub fn scaffold(
+        &self,
+        arguments: HashMap<String, ArgumentValue>,
+    ) -> Result<ConfigStream, String> {
         self.qc.scaffold(&arguments)
     }
 }
@@ -165,15 +168,14 @@ mod tests {
         library
     }
 
-    fn suite(library: &StandardsLibrary, standard: &str, slug: &str) -> Box<dyn TestSuite> {
+    fn suite(library: &StandardsLibrary, standard: &str, slug: &str) -> QcTestSuite {
         let standard = library.get(standard).unwrap();
-        dyn_clone::clone_box(
-            &**standard
-                .qartod
-                .iter()
-                .find(|s| s.info().slug == slug)
-                .unwrap_or_else(|| panic!("no {slug} suite for {}", standard.name)),
-        )
+        standard
+            .qartod
+            .iter()
+            .find(|s| s.info().slug == slug)
+            .unwrap_or_else(|| panic!("no {slug} suite for {}", standard.name))
+            .clone()
     }
 
     #[test]

@@ -34,11 +34,6 @@ impl StandardsLibraryJS {
         self.inner.load_knowledge();
     }
 
-    #[wasm_bindgen(js_name = loadTestSuites)]
-    pub fn load_test_suites(&mut self) {
-        self.inner.load_test_suites();
-    }
-
     #[wasm_bindgen]
     pub fn get(&self, name_or_alias: &str) -> Result<StandardJS, JsValue> {
         match self.inner.get(name_or_alias) {

@@ -1,8 +1,6 @@
 use std::collections::HashMap;
 use std::fmt::Display;
 
-use dyn_clone::DynClone;
-
 use super::config::ConfigStream;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -132,13 +130,3 @@ impl Display for QartodTestTypes {
         }
     }
 }
-
-pub trait TestSuite: std::fmt::Debug + Send + Sync + DynClone {
-    fn info(&self) -> TestSuiteInfo;
-
-    /// This should return a Config that represents an `ioos_qc.Config`
-    /// https://ioos.github.io/ioos_qc/usage.html#config
-    fn scaffold(&self, arguments: HashMap<String, ArgumentValue>) -> Result<ConfigStream, String>;
-}
-
-dyn_clone::clone_trait_object!(TestSuite);
