@@ -33,6 +33,11 @@ pub enum QcCommands {
         test_suite: String,
         /// Test configuration arguments
         args: Vec<String>,
+        /// Only generate these tests, comma separated (like
+        /// gross_range_test,flat_line_test), and only require the arguments
+        /// they need
+        #[clap(long, value_delimiter = ',')]
+        tests: Vec<String>,
     },
 }
 
@@ -86,6 +91,7 @@ pub fn execute(qc_args: &QcArgs, library: &StandardsLibrary) {
             standard_name,
             test_suite,
             args,
+            tests,
         } => {
             if let Ok(standard) = library.get(standard_name.as_str()) {
                 if let Some(suite) = standard
@@ -117,7 +123,8 @@ pub fn execute(qc_args: &QcArgs, library: &StandardsLibrary) {
                         }
                     }
 
-                    let config = suite.scaffold(arguments);
+                    let config =
+                        suite.scaffold(arguments, (!tests.is_empty()).then_some(tests.as_slice()));
 
                     if let Err(error) = config {
                         eprintln!("Error generating configuration: {error}");

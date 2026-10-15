@@ -108,6 +108,10 @@ impl QartodTestTypes {
                 QartodTestTypes::RateOfChange,
             ),
             (q.flat_line_test.is_some(), QartodTestTypes::FlatLine),
+            (
+                q.attenuated_signal_test.is_some(),
+                QartodTestTypes::AttenuatedSignal,
+            ),
         ]
         .into_iter()
         .filter_map(|(present, test_type)| present.then_some(test_type))
