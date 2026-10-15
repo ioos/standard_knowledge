@@ -51,10 +51,15 @@ pub struct AttenuatedSignal<N = f64, I = isize> {
 
 #[derive(Default, Clone, PartialEq, Debug, Serialize, Deserialize)]
 pub struct ConfigStreamQartod<N = f64, I = isize> {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub gross_range_test: Option<GrossRangeTest<N>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub location_test: Option<LocationTest<N>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub rate_of_change_test: Option<RateOfChange<N>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub spike_test: Option<Spike<N>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub flat_line_test: Option<FlatLine<N, I>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attenuated_signal_test: Option<AttenuatedSignal<N, I>>,

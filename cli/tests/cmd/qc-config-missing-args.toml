@@ -1,0 +1,10 @@
+bin.name = "standard_knowledge"
+args = ["qc", "config", "sea_surface_temperature", "qartod_manual", "mean=5", "std=3", "sensor_min=1", "sensor_max=15"]
+status.code = 2
+stderr = """
+Error generating configuration: Missing required arguments for QARTOD Temperature and Salinity manual:
+  min_var_fail (attenuated_signal_test)
+  min_var_warn (attenuated_signal_test)
+  sample_interval (rate_of_change_test, flat_line_test)
+  sd (rate_of_change_test)
+"""

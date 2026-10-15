@@ -1,6 +1,6 @@
 #![doc = include_str!("GRAMMAR.md")]
 
-use std::collections::HashMap;
+use std::collections::{BTreeSet, HashMap};
 use std::fmt::Display;
 
 mod eval;
@@ -90,6 +90,21 @@ impl Expression {
     pub fn evaluate(&self, stats: &HashMap<String, f64>) -> Result<f64, FxError> {
         eval::evaluate(&self.tokens, stats)
     }
+
+    /// The variables the expression reads: bare words that aren't function
+    /// names, and the statistics, even when called like `mean(9)`
+    pub fn variables(&self) -> BTreeSet<String> {
+        self.tokens
+            .iter()
+            .filter_map(|token| match token {
+                Token::Ident(name) if !eval::FUNCTIONS.contains(&name.as_str()) => {
+                    Some(name.clone())
+                }
+                Token::Call(name, _) if eval::STATS.contains(&name.as_str()) => Some(name.clone()),
+                _ => None,
+            })
+            .collect()
+    }
 }
 
 /// Whether `name` can be supplied as a variable: a word that isn't a
@@ -116,6 +131,20 @@ pub fn eval_fx(source: &str, stats: &HashMap<String, f64>) -> Result<f64, FxErro
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn vars(source: &str) -> Vec<String> {
+        parse(source).unwrap().variables().into_iter().collect()
+    }
+
+    #[test]
+    fn variables_read_by_expressions() {
+        assert_eq!(vars("mean - k * std"), ["k", "mean", "std"]);
+        assert_eq!(vars("k * k + 2"), ["k"]);
+        assert_eq!(vars("2 * PI * E"), Vec::<String>::new());
+        assert_eq!(vars("sin(x) + abs(y)"), ["x", "y"]);
+        assert_eq!(vars("mean(9) + foo"), ["foo", "mean"]);
+        assert_eq!(vars("sin(PI)"), Vec::<String>::new());
+    }
 
     fn stats() -> HashMap<String, f64> {
         HashMap::from([

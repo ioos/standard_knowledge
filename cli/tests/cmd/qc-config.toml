@@ -10,7 +10,6 @@ qartod:
     fail_span:
     - -1.1716000000000002
     - 4.8288
-  location_test: null
   rate_of_change_test:
     threshold: 0.22860000000000003
   spike_test:
