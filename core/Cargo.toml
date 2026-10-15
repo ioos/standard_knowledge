@@ -19,7 +19,6 @@ name = "standard_knowledge_main"
 path = "src/main.rs"
 
 [dependencies]
-dyn-clone = "1.0.20"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_yaml_ng = "0.10"
 flate2 = "1.1"

@@ -335,7 +335,6 @@ class App extends HTMLElement {
 		this.library = new StandardsLibrary();
 		this.library.loadCfStandards();
 		this.library.loadKnowledge();
-		this.library.loadTestSuites();
 
 		this.innerHTML = `
         <div class="accordion">

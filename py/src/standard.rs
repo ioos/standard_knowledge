@@ -1,7 +1,6 @@
 use std::collections::BTreeMap;
 use std::convert::From;
 
-use dyn_clone;
 use pyo3::prelude::*;
 use standard_knowledge::Standard;
 
@@ -78,7 +77,7 @@ impl PyStandard {
                 .qartod
                 .iter()
                 .map(|test_suite| {
-                    let py_test_suite = PyTestSuite::new(dyn_clone::clone_box(&**test_suite));
+                    let py_test_suite = PyTestSuite::new(test_suite.clone());
                     Py::new(py, py_test_suite)
                 })
                 .collect();
