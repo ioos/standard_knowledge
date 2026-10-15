@@ -121,7 +121,7 @@ is calling a function with the wrong number of arguments.
 
 ### Variables
 
-This module adds one thing to ioos_qc's language. Besides the four
+This module adds variables to ioos_qc's language. Besides the four
 statistics, the caller can supply other named values, such as the arguments
 and constants of a YAML test suite (`mllw - 4.5 * ft`). A variable:
 
