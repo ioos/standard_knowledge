@@ -5,6 +5,26 @@ bit, including the sign of zero) or on the kind of error. The only accepted
 differences are the ones listed under "Known differences" in
 core/src/fx/GRAMMAR.md, and each mismatch is checked against that list by
 re-running ioos_qc with those cases turned into errors.
+
+All four test sets call check(fx, stats), which works like this:
+
+1. Evaluate with ioos_qc (reference) and with the Rust eval_fx. Each result is
+   reduced by outcome() to ("ok", float), ("error", kind) or ("complex", value).
+   Error kinds are mapped by error_kind() to the exception the Rust binding
+   raises for the same failure.
+2. agree() compares the two. Values must match bit for bit, including the sign
+   of zero, and NaN matches NaN. Errors must be of the same kind.
+3. If they disagree, ioos_qc is run again under strict_reference(), where a
+   complex result or an integer above 2^53 raises KnownDifference. If that
+   happens the mismatch is accepted (for a complex result, only when Rust
+   raised ValueError, its NonReal error). Any other mismatch fails the test.
+
+The four sets differ only in where the inputs come from:
+
+- test_named_cases: hand-picked expressions with fixed statistics.
+- test_unusual_stats: a few expressions against edge-case statistics.
+- test_generated_expressions: Hypothesis builds expressions from the grammar.
+- test_raw_text: Hypothesis builds random strings over the language's alphabet.
 """
 
 import math
@@ -29,6 +49,8 @@ def _bounded(power):
     Python computes `int ** int` exactly, which can take minutes for
     generated inputs like `trunc(9)^trunc(9)^trunc(9)`. Such a result can't
     become a float, so the comparison would see an OverflowError anyway.
+    reference() swaps this in for ioos_qc's `^` operator, so that the
+    generated tests finish quickly without changing any outcome.
     """
 
     def wrapper(a, b):
@@ -156,8 +178,11 @@ def check(fx, stats):
         )
 
 
-# Inputs worth checking by name: ioos_qc's examples and every corner the
-# grammar documentation describes.
+# Set 1: named cases. These are written by hand: the examples from ioos_qc's
+# docs, then one or more inputs for every corner described in GRAMMAR.md
+# (lexical oddities, unary signs, constants, each function, each error and
+# overflow rule, complex results). They all run with FIXED_STATS, so a
+# failure points straight at the expression.
 CASES = [
     "3",
     "( 1 + 2 )",
@@ -265,6 +290,10 @@ def test_named_cases(fx):
     check(fx, FIXED_STATS)
 
 
+# Set 2: unusual statistics. A few expressions that divide by, negate or pass
+# through a statistic, run against every set of edge-case statistics: all
+# zeros, negative zero, infinities and NaN, a missing statistic, and none at
+# all. This is the cross product of the two parametrize lists.
 @pytest.mark.parametrize(
     "stats",
     [
@@ -281,9 +310,17 @@ def test_unusual_stats(fx, stats):
     check(fx, stats)
 
 
-# Hypothesis strategies. Expressions are built from the grammar so that most
-# of them parse, with words, functions and spacing chosen to reach every
-# branch of the evaluator, including the error paths.
+# Set 3: generated expressions. Hypothesis strategies. Expressions are built
+# from the grammar so that most of them parse, with words, functions and
+# spacing chosen to reach every branch of the evaluator, including the error
+# paths. The pieces are:
+#   number    integer, float and regex-built literals (with exponents)
+#   word      statistics, constants, unknown names, function names without a call
+#   function  names that can be called, valid and not
+#   signs     runs of unary + and -
+#   space     no whitespace most of the time, sometimes spaces, tabs or newlines
+# `extend` combines sub-expressions with a binary operator, a sign prefix,
+# parentheses or a function call. st.recursive nests it up to 10 leaves.
 
 space = st.sampled_from(["", "", " ", "  ", "\t", "\n"])
 
@@ -345,6 +382,9 @@ def extend(children):
 
 expressions = st.recursive(st.one_of(number, word), extend, max_leaves=10)
 
+# Random statistics for the generated expressions: any float (including NaN
+# and infinity), moderate floats, and small whole numbers. Some dicts have all
+# four statistics and some a random subset, to reach the missing-stat error.
 stat_value = st.one_of(
     st.floats(),
     st.floats(min_value=-1e3, max_value=1e3),
@@ -356,6 +396,7 @@ stats = st.one_of(
 )
 
 
+# 2000 random (expression, stats) pairs per run. The @example cases always run.
 @settings(max_examples=2000, deadline=None)
 @given(fx=expressions, stats=stats)
 @example(fx="2 + PI(5)", stats=FIXED_STATS)
@@ -364,8 +405,11 @@ def test_generated_expressions(fx, stats):
     check(fx, stats)
 
 
-# Raw text over the language's alphabet, mostly invalid, to check that both
-# parsers accept and reject the same strings.
+# Set 4: raw text. Random strings over the language's alphabet (digits,
+# operators, whitespace and the letters that appear in its words), mostly
+# invalid, to check that both parsers accept and reject the same strings.
+# This tests the parser and the lexical rules rather than the arithmetic, so
+# it uses FIXED_STATS.
 alphabet = " \t\n0123456789.eE+-*/^(),abcdeimnorstuxIPS_$"
 
 
