@@ -35,11 +35,14 @@ impl PyTestSuite {
         Ok(dict.into())
     }
 
-    /// Generate a configuration for the test suite
+    /// Generate a configuration for the test suite, optionally only for the
+    /// named tests (like `["gross_range_test"]`)
+    #[pyo3(signature = (arguments, tests=None))]
     fn scaffold(
         &self,
         py: Python<'_>,
         arguments: HashMap<String, Py<PyAny>>,
+        tests: Option<Vec<String>>,
     ) -> PyResult<Py<PyAny>> {
         // Convert Python arguments to ArgumentValue
         let mut rust_args = HashMap::new();
@@ -55,7 +58,7 @@ impl PyTestSuite {
             // Add more types as needed
         }
 
-        match self.test_suite.scaffold(rust_args) {
+        match self.test_suite.scaffold(rust_args, tests.as_deref()) {
             Ok(config) => {
                 // Convert ConfigStream to Python dict
                 let result = PyDict::new(py);
@@ -96,6 +99,25 @@ impl PyTestSuite {
                     let test_dict = PyDict::new(py);
                     test_dict.set_item("threshold", rate_of_change.threshold)?;
                     qartod_dict.set_item("rate_of_change_test", test_dict)?;
+                }
+
+                if let Some(ref attenuated) = qartod_config.attenuated_signal_test {
+                    let test_dict = PyDict::new(py);
+                    test_dict.set_item("suspect_threshold", attenuated.suspect_threshold)?;
+                    test_dict.set_item("fail_threshold", attenuated.fail_threshold)?;
+                    if let Some(test_period) = attenuated.test_period {
+                        test_dict.set_item("test_period", test_period)?;
+                    }
+                    if let Some(min_obs) = attenuated.min_obs {
+                        test_dict.set_item("min_obs", min_obs)?;
+                    }
+                    if let Some(min_period) = attenuated.min_period {
+                        test_dict.set_item("min_period", min_period)?;
+                    }
+                    if let Some(ref check_type) = attenuated.check_type {
+                        test_dict.set_item("check_type", check_type)?;
+                    }
+                    qartod_dict.set_item("attenuated_signal_test", test_dict)?;
                 }
 
                 result.set_item("qartod", qartod_dict)?;

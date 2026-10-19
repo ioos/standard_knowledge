@@ -122,3 +122,96 @@ qc:
     # The tests haven't been written yet
     tests:
       qartod: {}
+  qartod_manual:
+    name: QARTOD Water Level manual
+    summary: QARTOD water level tests with thresholds derived from statistics of your own data
+    description: |
+      Tests from the IOOS QARTOD Manual for Real-Time Quality Control of Water Level Data, Version 2.1 (2021), with thresholds derived from
+      statistics of a historical record at the site, as the manual
+      recommends instead of choosing them arbitrarily.
+
+      - Gross range: fail at the sensor limits (SENSOR_MIN, SENSOR_MAX).
+        Suspect outside `mean ± k × std` of the record.
+      - Rate of change: `n_dev × SD` over TIM_DEV (25 hours) between
+        consecutive observations, converted to m per second for ioos_qc.
+      - Flat line: values within EPS for REP_CNT observations.
+      - Attenuated signal: suspect and fail below MIN_VAR_WARN and
+        MIN_VAR_FAIL, the standard deviation over TST_TIM.
+
+      Defaults are the manual's examples or common choices. Check them
+      against local conditions.
+    arguments:
+      sensor_min:
+        type: float
+        description: Lowest value the sensor can measure, in m (SENSOR_MIN)
+        required: true
+      sensor_max:
+        type: float
+        description: Highest value the sensor can measure, in m (SENSOR_MAX)
+        required: true
+      mean:
+        type: float
+        description: Mean of a historical record at the site, in m
+        required: true
+      std:
+        type: float
+        description: Standard deviation of the historical record, in m
+        required: true
+      k:
+        type: float
+        description: Standard deviations from the mean for the suspect span
+        default: 3
+      sd:
+        type: float
+        description: Standard deviation over the previous 25 hours (SD over TIM_DEV), in m
+        required: true
+      n_dev:
+        type: float
+        description: Number of standard deviations allowed between observations (N_DEV)
+        default: 3
+      sample_interval:
+        type: int
+        description: Seconds between observations
+        required: true
+      eps:
+        type: float
+        description: Largest change, in m, still counted as a repeat (EPS)
+        default: 0.001
+      rep_cnt_suspect:
+        type: int
+        description: Repeated observations before a flat line is suspect (REP_CNT_SUSPECT)
+        default: 3
+      rep_cnt_fail:
+        type: int
+        description: Repeated observations before a flat line fails (REP_CNT_FAIL)
+        default: 5
+      min_var_warn:
+        type: float
+        description: Standard deviation over TST_TIM below which data is suspect, in m (MIN_VAR_WARN)
+        required: true
+      min_var_fail:
+        type: float
+        description: Standard deviation over TST_TIM below which data fails, in m (MIN_VAR_FAIL)
+        required: true
+      tst_tim:
+        type: float
+        description: Hours over which to measure the standard deviation (TST_TIM)
+        default: 12
+    let:
+      hour: 3600
+    tests:
+      qartod:
+        gross_range_test:
+          fail_span: [{expr: "sensor_min"}, {expr: "sensor_max"}]
+          suspect_span: [{expr: "mean - k * std"}, {expr: "mean + k * std"}]
+        rate_of_change_test:
+          threshold: {expr: "n_dev * sd / sample_interval"}
+        flat_line_test:
+          tolerance: {expr: "eps"}
+          suspect_threshold: {expr: "rep_cnt_suspect * sample_interval"}
+          fail_threshold: {expr: "rep_cnt_fail * sample_interval"}
+        attenuated_signal_test:
+          suspect_threshold: {expr: "min_var_warn"}
+          fail_threshold: {expr: "min_var_fail"}
+          test_period: {expr: "tst_tim * hour"}
+          check_type: std

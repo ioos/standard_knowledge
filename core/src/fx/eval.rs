@@ -41,7 +41,7 @@ impl Value {
 /// Threshold `sgn` uses to treat a value as zero
 const EPSILON: f64 = 1e-12;
 
-const STATS: [&str; 4] = ["mean", "min", "max", "std"];
+pub(super) const STATS: [&str; 4] = ["mean", "min", "max", "std"];
 
 /// The functions ioos_qc's fx_parser defines
 pub(super) const FUNCTIONS: [&str; 8] =

@@ -138,9 +138,8 @@ qartod:
     fail_span:
     - -1.1716000000000002
     - 4.8288
-  location_test: null
   rate_of_change_test:
-    rate_threshold: 0.22860000000000003
+    threshold: 0.22860000000000003
   spike_test:
     suspect_threshold: 0.22860000000000003
     fail_threshold: 0.45720000000000005
@@ -148,7 +147,20 @@ qartod:
     tolerance: 0.030480000000000004
     suspect_threshold: 7200
     fail_threshold: 10800
+
+❯ standard_knowledge qc config sea_surface_temperature qartod_manual mean=5 std=3 sensor_min=1 sensor_max=15 --tests=gross_range_test
+Generated configuration for QARTOD Temperature and Salinity manual:
+qartod:
+  gross_range_test:
+    suspect_span:
+    - -4.0
+    - 14.0
+    fail_span:
+    - 1.0
+    - 15.0
 ```
+
+`--tests` takes a comma separated list of tests (like `gross_range_test,flat_line_test`) and only the arguments those tests use are required. Without it, every test in the suite is generated, and any missing arguments are listed along with the tests that need them.
 
 The CLI can also load other sources of knowledge with `--knowledge`/`-k`. Knowledge can be loaded from local paths, including directories, as well as URLs.
 
@@ -239,6 +251,8 @@ qc:
 ```
 
 Arguments have a `type` (`float` or `int`), a `description`, and optionally `required: true` or a `default`. The flat line thresholds must evaluate to whole numbers of seconds.
+
+Suites can use `gross_range_test`, `location_test`, `spike_test`, `rate_of_change_test`, `flat_line_test` and `attenuated_signal_test`. The `qartod_manual` suites follow the QARTOD manuals, with thresholds derived from statistics of a historical record (such as `mean`, `std` and the standard deviation over the manual's TIM_DEV) that the caller supplies as arguments.
 
 ## Contributing Code
 
