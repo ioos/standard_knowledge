@@ -1,4 +1,5 @@
 pub mod cf;
+pub mod fx;
 pub mod ioos_categories;
 pub mod knowledge;
 pub mod library_knowledge;

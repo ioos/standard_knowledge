@@ -32,6 +32,15 @@ standards = library.filter().by_variable_name("pressure")
 under_pressure = library.filter().search("pressure")
 ```
 
+QC thresholds can also be written as expressions of dataset statistics, using
+the same language as ioos_qc's `config_creator`
+(grammar: [core/src/fx/GRAMMAR.md](core/src/fx/GRAMMAR.md)).
+
+```py
+standard_knowledge.eval_fx("mean + 3 * std", {"mean": 10.0, "std": 2.0})
+# 16.0
+```
+
 Or in Javascript ([preview here!](https://gulfofmaine.github.io/standard_knowledge/))
 
 ```js
