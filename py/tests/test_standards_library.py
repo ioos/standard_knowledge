@@ -142,3 +142,65 @@ def test_can_apply_and_get_qc(library):
     config = qc_test.scaffold({})
     assert config["qartod"]["flat_line_test"]["fail_threshold"] == 6
     assert config["qartod"]["spike_test"]["fail_threshold"] == 3.3
+
+
+def test_water_level_suites_from_knowledge(library):
+    library.load_knowledge()
+    standard = library.get("sea_surface_height_above_geopotential_datum")
+    suites = {suite.info()["slug"]: suite for suite in standard.qc}
+    assert set(suites) == {"gulf_of_maine", "long_island_sound"}
+
+    config = suites["gulf_of_maine"].scaffold({"mllw": 0.0, "mhhw": 1.0})["qartod"]
+    assert config["gross_range_test"]["suspect_span"] == [-1.3716000000000002, 2.8288]
+    assert config["rate_of_change_test"]["threshold"] == 0.22860000000000003
+    assert config["flat_line_test"]["suspect_threshold"] == 7200
+
+    with pytest.raises(RuntimeError, match="Missing required argument: mllw"):
+        suites["gulf_of_maine"].scaffold({"mhhw": 1.0})
+
+
+def test_apply_knowledge_with_expressions(library):
+    qc = {
+        "qc": {
+            "derived": {
+                "name": "Derived",
+                "summary": "Thresholds from statistics",
+                "description": "Spike thresholds as multiples of a standard deviation",
+                "arguments": {
+                    "std": {"type": "float", "description": "Standard deviation"},
+                    "k": {"type": "float", "description": "Multiplier", "default": 3},
+                },
+                "let": {"suspect": {"expr": "k * std"}},
+                "tests": {
+                    "qartod": {
+                        "spike_test": {
+                            "suspect_threshold": {"expr": "suspect"},
+                            "fail_threshold": {"expr": "2 * suspect"},
+                        }
+                    }
+                },
+            }
+        }
+    }
+    library.apply_knowledge([{**KNOWLEDGE, **qc}])
+    suite = library.get("air_pressure_at_mean_sea_level").qc[0]
+
+    config = suite.scaffold({"std": 0.5})["qartod"]["spike_test"]
+    assert config == {"suspect_threshold": 1.5, "fail_threshold": 3.0}
+
+
+def test_apply_knowledge_rejects_bad_expressions(library):
+    qc = {
+        "qc": {
+            "broken": {
+                "name": "Broken",
+                "summary": "s",
+                "description": "d",
+                "tests": {
+                    "qartod": {"rate_of_change_test": {"threshold": {"expr": "1 +"}}}
+                },
+            }
+        }
+    }
+    with pytest.raises(ValueError, match="1 \\+"):
+        library.apply_knowledge([{**KNOWLEDGE, **qc}])

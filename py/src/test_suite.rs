@@ -1,16 +1,16 @@
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
-use standard_knowledge::qartod::{types::ArgumentValue, TestSuite};
+use standard_knowledge::qartod::{types::ArgumentValue, QcTestSuite};
 use std::collections::HashMap;
 
 #[pyclass(name = "TestSuite")]
 #[derive(Clone)]
 pub struct PyTestSuite {
-    test_suite: Box<dyn TestSuite>,
+    test_suite: QcTestSuite,
 }
 
 impl PyTestSuite {
-    pub fn new(test_suite: Box<dyn TestSuite>) -> Self {
+    pub fn new(test_suite: QcTestSuite) -> Self {
         Self { test_suite }
     }
 }

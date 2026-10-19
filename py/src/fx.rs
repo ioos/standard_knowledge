@@ -22,7 +22,8 @@ fn to_py_err(error: FxError) -> PyErr {
 
 /// Evaluate an ioos_qc `config_creator` threshold expression
 ///
-/// `variables` supplies `min`, `max`, `mean` and `std`, for example
+/// `variables` supplies the statistics `min`, `max`, `mean` and `std` and any
+/// other named values, for example
 /// `eval_fx("mean + 3 * std", {"mean": 10.0, "std": 2.0})` returns 16.0.
 /// Follows `ioos_qc.config_creator.fx_parser.eval_fx`.
 #[pyfunction]
