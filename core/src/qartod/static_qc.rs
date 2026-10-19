@@ -47,6 +47,12 @@ impl QcTestSuite {
         }
     }
 
+    /// Names of the tests in this suite (like `gross_range_test`), usable
+    /// as the `tests` argument of [`Self::scaffold`]
+    pub fn test_names(&self) -> Vec<&'static str> {
+        present_tests(&self.qc.tests)
+    }
+
     /// This should return a Config that represents an `ioos_qc.Config`
     /// https://ioos.github.io/ioos_qc/usage.html#config
     ///

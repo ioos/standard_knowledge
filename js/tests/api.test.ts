@@ -98,3 +98,56 @@ describe("standard metadata", () => {
 		expect(categories).toContain("Wind");
 	});
 });
+
+describe("qartod test suite scaffolding", () => {
+	const manual = () => {
+		const suite = library
+			.get("sea_surface_temperature")
+			.qartod.find((q) => q.slug === "qartod_manual");
+		if (!suite) throw new Error("no qartod_manual suite");
+		return suite;
+	};
+	const args = { mean: 5, std: 3, sensor_min: 1, sensor_max: 15 };
+
+	test("tests lists the suite's tests", () => {
+		const tests = manual().tests;
+		expect(tests).toHaveLength(4);
+		expect(tests).toContain("gross_range_test");
+		expect(tests).toContain("rate_of_change_test");
+	});
+
+	test("arguments describes each argument as a plain object", () => {
+		const suiteArgs = manual().arguments;
+		expect(suiteArgs.mean.required).toBe(true);
+		expect(suiteArgs.mean.type).toBe("float");
+		expect(suiteArgs.k.default).toBe(3);
+		expect(suiteArgs.sample_interval.type).toBe("int");
+	});
+
+	test("name, slug and description still work", () => {
+		const suite = manual();
+		expect(suite.name).toBeTruthy();
+		expect(suite.description).toBeTruthy();
+	});
+
+	test("scaffold builds a config for the requested tests", () => {
+		const config = manual().scaffold(args, ["gross_range_test"]);
+		expect(config).toEqual({
+			qartod: {
+				gross_range_test: { fail_span: [1, 15], suspect_span: [-4, 14] },
+			},
+		});
+	});
+
+	test("scaffold reports every missing argument", () => {
+		expect(() => manual().scaffold(args)).toThrow(Error);
+		expect(() => manual().scaffold(args)).toThrow(/sample_interval/);
+		expect(() => manual().scaffold(args)).toThrow(/rate_of_change_test/);
+	});
+
+	test("scaffold rejects a fractional int argument", () => {
+		expect(() => manual().scaffold({ ...args, sample_interval: 1.5 })).toThrow(
+			/sample_interval/,
+		);
+	});
+});
