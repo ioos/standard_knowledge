@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use pyo3::exceptions::{
-    PyKeyError, PyOverflowError, PyTypeError, PyValueError, PyZeroDivisionError,
+    PyKeyError, PyOverflowError, PyRecursionError, PyTypeError, PyValueError, PyZeroDivisionError,
 };
 use pyo3::prelude::*;
 use standard_knowledge::fx::{self, FxError};
@@ -13,6 +13,7 @@ fn to_py_err(error: FxError) -> PyErr {
         FxError::Type(_) => PyTypeError::new_err(message),
         FxError::ZeroDivision(_) => PyZeroDivisionError::new_err(message),
         FxError::Overflow(_) => PyOverflowError::new_err(message),
+        FxError::TooDeep(_) => PyRecursionError::new_err(message),
         FxError::Parse { .. }
         | FxError::InvalidIdentifier(_)
         | FxError::Domain(_)

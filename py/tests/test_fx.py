@@ -63,6 +63,15 @@ def test_errors(fx, error):
         eval_fx(fx, STATS)
 
 
+@pytest.mark.parametrize(
+    "fx",
+    ["(" * 200_000 + "1" + ")" * 200_000, "+".join(["1"] * 200_000)],
+)
+def test_too_deep_is_recursion_error(fx):
+    with pytest.raises(RecursionError):
+        eval_fx(fx, STATS)
+
+
 def test_missing_stat_is_key_error():
     with pytest.raises(KeyError, match="std"):
         eval_fx("mean + std", {"mean": 1.0})

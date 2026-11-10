@@ -51,6 +51,9 @@ pub enum FxError {
     /// The result would be a complex number. Python carries complex values
     /// on; this implementation stops here.
     NonReal(String),
+    /// The expression is nested too deeply to parse or evaluate
+    /// (`RecursionError`)
+    TooDeep(String),
 }
 
 impl Display for FxError {
@@ -65,7 +68,8 @@ impl Display for FxError {
             | FxError::ZeroDivision(message)
             | FxError::Overflow(message)
             | FxError::Domain(message)
-            | FxError::NonReal(message) => write!(f, "{message}"),
+            | FxError::NonReal(message)
+            | FxError::TooDeep(message) => write!(f, "{message}"),
         }
     }
 }
@@ -165,6 +169,42 @@ mod tests {
         // Unary minus binds tighter than ^
         assert_eq!(ok("-2^2"), 4.0);
         assert_eq!(ok("2^-2"), 0.25);
+    }
+
+    #[test]
+    fn deeply_nested_parentheses_are_too_deep() {
+        let source = format!("{}1{}", "(".repeat(200_000), ")".repeat(200_000));
+        assert!(matches!(err(&source), FxError::TooDeep(_)));
+    }
+
+    #[test]
+    fn nested_calls_are_too_deep() {
+        let source = format!("{}1{}", "abs(".repeat(200_000), ")".repeat(200_000));
+        assert!(matches!(err(&source), FxError::TooDeep(_)));
+    }
+
+    #[test]
+    fn long_exponent_chain_is_too_deep() {
+        let source = vec!["1"; 200_000].join("^");
+        assert!(matches!(err(&source), FxError::TooDeep(_)));
+    }
+
+    #[test]
+    fn long_sum_is_too_deep() {
+        let source = vec!["1"; 200_000].join("+");
+        assert!(matches!(err(&source), FxError::TooDeep(_)));
+    }
+
+    #[test]
+    fn expressions_inside_the_limits_still_evaluate() {
+        let nested = format!("{}1{}", "(".repeat(100), ")".repeat(100));
+        assert_eq!(ok(&nested), 1.0);
+        let calls = format!("{}1{}", "abs(".repeat(100), ")".repeat(100));
+        assert_eq!(ok(&calls), 1.0);
+        assert_eq!(ok(&vec!["1"; 500].join("+")), 500.0);
+        assert_eq!(ok(&vec!["1"; 100].join("^")), 1.0);
+        // Right operands don't add depth across siblings
+        assert_eq!(ok(&vec!["(1+1)"; 500].join("+")), 1000.0);
     }
 
     #[test]

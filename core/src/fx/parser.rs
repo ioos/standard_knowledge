@@ -13,10 +13,14 @@ fn is_word_char(c: u8) -> bool {
     c.is_ascii_alphanumeric() || c == b'_' || c == b'$'
 }
 
+/// Deepest nesting of parentheses, call arguments and `^` operands
+const MAX_DEPTH: usize = 256;
+
 struct Parser<'a> {
     src: &'a [u8],
     pos: usize,
     out: Vec<Token>,
+    depth: usize,
 }
 
 pub(super) fn parse(source: &str) -> Result<Vec<Token>, FxError> {
@@ -24,6 +28,7 @@ pub(super) fn parse(source: &str) -> Result<Vec<Token>, FxError> {
         src: source.as_bytes(),
         pos: 0,
         out: Vec::new(),
+        depth: 0,
     };
     parser.expr()?;
     parser.skip_whitespace();
@@ -43,6 +48,19 @@ impl Parser<'_> {
             position,
             message: message.to_string(),
         }
+    }
+
+    /// Run one level of nested parsing, failing past `MAX_DEPTH`
+    fn nested(&mut self, parse: fn(&mut Self) -> Result<(), FxError>) -> Result<(), FxError> {
+        if self.depth >= MAX_DEPTH {
+            return Err(FxError::TooDeep(
+                "maximum recursion depth exceeded".to_string(),
+            ));
+        }
+        self.depth += 1;
+        let result = parse(self);
+        self.depth -= 1;
+        result
     }
 
     fn skip_whitespace(&mut self) {
@@ -84,7 +102,7 @@ impl Parser<'_> {
         self.atom()?;
         if self.peek() == Some(b'^') {
             self.pos += 1;
-            self.factor()?;
+            self.nested(Self::factor)?;
             self.out.push(Token::BinOp('^'));
         }
         Ok(())
@@ -101,7 +119,7 @@ impl Parser<'_> {
         match self.peek() {
             Some(b'(') => {
                 self.pos += 1;
-                self.expr()?;
+                self.nested(Self::expr)?;
                 if self.peek() != Some(b')') {
                     return Err(self.error("Expected ')'"));
                 }
@@ -136,7 +154,7 @@ impl Parser<'_> {
             self.pos += 1;
             let mut arg_count = 0;
             loop {
-                self.expr()?;
+                self.nested(Self::expr)?;
                 arg_count += 1;
                 match self.peek() {
                     Some(b',') => self.pos += 1,

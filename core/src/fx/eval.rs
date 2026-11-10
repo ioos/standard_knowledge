@@ -45,10 +45,22 @@ const STATS: [&str; 4] = ["mean", "min", "max", "std"];
 
 pub(super) fn evaluate(tokens: &[Token], variables: &HashMap<String, f64>) -> Result<f64, FxError> {
     let mut stack = tokens;
-    pop_value(&mut stack, variables).map(|v| v.value)
+    pop_value(&mut stack, variables, 0).map(|v| v.value)
 }
 
-fn pop_value(stack: &mut &[Token], variables: &HashMap<String, f64>) -> Result<Value, FxError> {
+/// Deepest evaluation recursion, which a long chain like `1+1+1+...` reaches
+const MAX_DEPTH: usize = 1000;
+
+fn pop_value(
+    stack: &mut &[Token],
+    variables: &HashMap<String, f64>,
+    depth: usize,
+) -> Result<Value, FxError> {
+    if depth > MAX_DEPTH {
+        return Err(FxError::TooDeep(
+            "maximum recursion depth exceeded".to_string(),
+        ));
+    }
     let (token, rest) = stack
         .split_last()
         .ok_or_else(|| FxError::Type("pop from empty list".to_string()))?;
@@ -56,7 +68,7 @@ fn pop_value(stack: &mut &[Token], variables: &HashMap<String, f64>) -> Result<V
 
     match token {
         Token::UnaryMinus => {
-            let v = pop_value(stack, variables)?;
+            let v = pop_value(stack, variables, depth + 1)?;
             if v.is_int {
                 Value::int(-v.value)
             } else {
@@ -65,8 +77,8 @@ fn pop_value(stack: &mut &[Token], variables: &HashMap<String, f64>) -> Result<V
         }
         Token::BinOp(op) => {
             // The right operand is on top of the stack
-            let right = pop_value(stack, variables)?;
-            let left = pop_value(stack, variables)?;
+            let right = pop_value(stack, variables, depth + 1)?;
+            let left = pop_value(stack, variables, depth + 1)?;
             binary(*op, left, right)
         }
         Token::Pi => Ok(Value::float(PI)),
@@ -75,8 +87,8 @@ fn pop_value(stack: &mut &[Token], variables: &HashMap<String, f64>) -> Result<V
             .parse::<f64>()
             .map(Value::float)
             .map_err(|e| FxError::Type(e.to_string())),
-        Token::Ident(name) => named(name, 0, stack, variables),
-        Token::Call(name, arg_count) => named(name, *arg_count, stack, variables),
+        Token::Ident(name) => named(name, 0, stack, variables, depth),
+        Token::Call(name, arg_count) => named(name, *arg_count, stack, variables, depth),
     }
 }
 
@@ -86,6 +98,7 @@ fn named(
     arg_count: usize,
     stack: &mut &[Token],
     variables: &HashMap<String, f64>,
+    depth: usize,
 ) -> Result<Value, FxError> {
     // Constants and statistics ignore any call arguments without evaluating
     // them, leaving them on the stack as ioos_qc does.
@@ -110,7 +123,7 @@ fn named(
     // Arguments are popped last-first, then put back in order
     let mut args = Vec::with_capacity(arg_count);
     for _ in 0..arg_count {
-        args.push(pop_value(stack, variables)?);
+        args.push(pop_value(stack, variables, depth + 1)?);
     }
     args.reverse();
 

@@ -247,6 +247,11 @@ ones.
   Python floats.
 - **Digits are ASCII.** Python's `\d` also matches other Unicode decimal
   digits, so ioos_qc accepts `٣` as 3. Here only `0`–`9` are digits.
+- **Nesting depth.** Python raises `RecursionError` at about 1000 frames,
+  and this module raises `TooDeep` (also a `RecursionError` in Python)
+  rather than overflowing the native stack. Parentheses, call arguments and
+  `^` operands may nest 256 deep, and evaluation recurses to a depth of 1000,
+  so a sum of more than about 1000 terms is too deep.
 - **No shared state.** ioos_qc keeps its stack in a module-level list that
   grows on every call and is never cleared. Results are unaffected, but it
   leaks memory and is not safe across threads. Here each evaluation has its
