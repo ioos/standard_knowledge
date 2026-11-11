@@ -15,7 +15,6 @@ fn loaded_library() -> StandardsLibraryJS {
     let mut library = StandardsLibraryJS::new();
     library.load_cf_standards();
     library.load_knowledge();
-    library.load_test_suites();
     library
 }
 

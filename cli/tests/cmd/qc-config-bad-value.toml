@@ -1,0 +1,6 @@
+bin.name = "standard_knowledge"
+args = ["qc", "config", "sea_surface_height_above_geopotential_datum", "gulf_of_maine", "mllw=abc", "mhhw=3"]
+status.code = 2
+stderr = """
+Invalid value for mllw: "abc" is not a number
+"""

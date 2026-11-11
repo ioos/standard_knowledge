@@ -1,0 +1,6 @@
+bin.name = "standard_knowledge"
+args = ["qc", "config", "sea_surface_height_above_geopotential_datum", "gulf_of_maine", "mllw=0.2", "mhhw=3", "mlw=0"]
+status.code = 2
+stderr = """
+Error generating configuration: Unknown argument(s) for Gulf of Maine: mlw. Its arguments are: mhhw, mllw
+"""

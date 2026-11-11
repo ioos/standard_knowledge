@@ -41,7 +41,11 @@ impl Value {
 /// Threshold `sgn` uses to treat a value as zero
 const EPSILON: f64 = 1e-12;
 
-const STATS: [&str; 4] = ["mean", "min", "max", "std"];
+pub(super) const STATS: [&str; 4] = ["mean", "min", "max", "std"];
+
+/// The functions ioos_qc's fx_parser defines
+pub(super) const FUNCTIONS: [&str; 8] =
+    ["sin", "cos", "tan", "exp", "abs", "trunc", "round", "sgn"];
 
 pub(super) fn evaluate(tokens: &[Token], variables: &HashMap<String, f64>) -> Result<f64, FxError> {
     let mut stack = tokens;
@@ -113,10 +117,15 @@ fn named(
             .map(|v| Value::float(*v))
             .ok_or_else(|| FxError::MissingStat(name.to_string()));
     }
-    if !matches!(
-        name,
-        "sin" | "cos" | "tan" | "exp" | "abs" | "trunc" | "round" | "sgn"
-    ) {
+    let is_function = FUNCTIONS.contains(&name);
+    // Other variables are an extension to ioos_qc, used by YAML test suites.
+    // They can only be used bare, and can't shadow a function.
+    if arg_count == 0 && !is_function {
+        if let Some(value) = variables.get(name) {
+            return Ok(Value::float(*value));
+        }
+    }
+    if !is_function {
         return Err(FxError::InvalidIdentifier(name.to_string()));
     }
 

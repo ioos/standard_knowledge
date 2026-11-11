@@ -5,10 +5,12 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 
 use flate2::{write::GzEncoder, Compression};
-// use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
-include!("./src/qartod/config.rs");
-include!("./src/qartod/static_qc_include.rs");
+// Test suites are passed through as written. The library checks them when
+// it loads the knowledge.
+type StaticQc = serde_yaml_ng::Value;
+
 include!("./src/knowledge_include.rs");
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]

@@ -142,3 +142,199 @@ def test_can_apply_and_get_qc(library):
     config = qc_test.scaffold({})
     assert config["qartod"]["flat_line_test"]["fail_threshold"] == 6
     assert config["qartod"]["spike_test"]["fail_threshold"] == 3.3
+
+
+def test_water_level_suites_from_knowledge(library):
+    library.load_knowledge()
+    standard = library.get("sea_surface_height_above_geopotential_datum")
+    suites = {suite.info()["slug"]: suite for suite in standard.qc}
+    assert set(suites) == {"gulf_of_maine"}
+
+    config = suites["gulf_of_maine"].scaffold({"mllw": 0.0, "mhhw": 1.0})["qartod"]
+    assert config["gross_range_test"]["suspect_span"] == [-1.3716000000000002, 2.8288]
+    assert config["rate_of_change_test"]["threshold"] == 0.22860000000000003
+    assert config["flat_line_test"]["suspect_threshold"] == 7200
+    assert "location_test" not in config
+
+    with pytest.raises(
+        RuntimeError,
+        match="Missing required argument\\(s\\) for Gulf of Maine:\n  mllw",
+    ):
+        suites["gulf_of_maine"].scaffold({"mhhw": 1.0})
+
+    with pytest.raises(
+        RuntimeError, match="Unknown argument\\(s\\) for Gulf of Maine: mlw"
+    ):
+        suites["gulf_of_maine"].scaffold({"mllw": 0.0, "mhhw": 1.0, "mlw": 0.0})
+
+    with pytest.raises(TypeError):
+        suites["gulf_of_maine"].scaffold({"mllw": None})
+
+
+def test_water_level_info(library):
+    library.load_knowledge()
+    standard = library.get("sea_surface_height_above_geopotential_datum")
+    info = standard.qc[0].info()
+
+    assert info["tests"] == [
+        "gross_range_test",
+        "spike_test",
+        "rate_of_change_test",
+        "flat_line_test",
+    ]
+    assert info["test_types"] == ["Gross Range", "Spike", "Rate of Change", "Flat Line"]
+    assert info["arguments"]["mllw"] == {
+        "type": "float",
+        "description": "Mean lower low water elevation in NAVD 88 meters",
+        "required": True,
+    }
+
+
+def test_apply_knowledge_with_expressions(library):
+    qc = {
+        "qc": {
+            "derived": {
+                "name": "Derived",
+                "summary": "Thresholds from statistics",
+                "description": "Spike thresholds as multiples of a standard deviation",
+                "arguments": {
+                    "std": {"type": "float", "description": "Standard deviation"},
+                    "k": {"type": "float", "description": "Multiplier", "default": 3},
+                },
+                "let": {"suspect": {"expr": "k * std"}},
+                "tests": {
+                    "qartod": {
+                        "spike_test": {
+                            "suspect_threshold": {"expr": "suspect"},
+                            "fail_threshold": {"expr": "2 * suspect"},
+                        }
+                    }
+                },
+            }
+        }
+    }
+    library.apply_knowledge([{**KNOWLEDGE, **qc}])
+    suite = library.get("air_pressure_at_mean_sea_level").qc[0]
+
+    config = suite.scaffold({"std": 0.5})["qartod"]["spike_test"]
+    assert config == {"suspect_threshold": 1.5, "fail_threshold": 3.0}
+
+    assert suite.info()["arguments"]["k"] == {
+        "type": "float",
+        "description": "Multiplier",
+        "required": False,
+        "default": 3.0,
+    }
+
+
+def test_int_arguments_must_be_whole(library):
+    qc = {
+        "qc": {
+            "sampled": {
+                "name": "Sampled",
+                "summary": "s",
+                "description": "d",
+                "arguments": {
+                    "sample_interval": {"type": "int", "description": "Seconds"},
+                },
+                "tests": {
+                    "qartod": {
+                        "flat_line_test": {
+                            "tolerance": 0.1,
+                            "suspect_threshold": {"expr": "3 * sample_interval"},
+                            "fail_threshold": {"expr": "5 * sample_interval"},
+                        }
+                    }
+                },
+            }
+        }
+    }
+    library.apply_knowledge([{**KNOWLEDGE, **qc}])
+    suite = library.get("air_pressure_at_mean_sea_level").qc[0]
+
+    config = suite.scaffold({"sample_interval": 600})["qartod"]["flat_line_test"]
+    assert config == {
+        "tolerance": 0.1,
+        "suspect_threshold": 1800,
+        "fail_threshold": 3000,
+    }
+    assert isinstance(config["suspect_threshold"], int)
+
+    with pytest.raises(
+        RuntimeError, match="sample_interval must be a whole number, found 600.5"
+    ):
+        suite.scaffold({"sample_interval": 600.5})
+
+
+def test_location_test_scaffolds(library):
+    qc = {
+        "qc": {
+            "located": {
+                "name": "Located",
+                "summary": "s",
+                "description": "d",
+                "arguments": {"lon": {"type": "float", "description": "Longitude"}},
+                "tests": {
+                    "qartod": {
+                        "location_test": {
+                            "bbox": [{"expr": "lon - 1"}, 40, {"expr": "lon + 1"}, 45]
+                        }
+                    }
+                },
+            }
+        }
+    }
+    library.apply_knowledge([{**KNOWLEDGE, **qc}])
+    suite = library.get("air_pressure_at_mean_sea_level").qc[0]
+
+    config = suite.scaffold({"lon": -70})
+    assert config == {"qartod": {"location_test": {"bbox": [-71.0, 40.0, -69.0, 45.0]}}}
+    assert suite.info()["tests"] == ["location_test"]
+    assert suite.info()["test_types"] == ["Location"]
+
+
+def test_apply_knowledge_rejects_bad_expressions(library):
+    qc = {
+        "qc": {
+            "broken": {
+                "name": "Broken",
+                "summary": "s",
+                "description": "d",
+                "tests": {
+                    "qartod": {"rate_of_change_test": {"threshold": {"expr": "1 +"}}}
+                },
+            }
+        }
+    }
+    with pytest.raises(ValueError, match="1 \\+"):
+        library.apply_knowledge([{**KNOWLEDGE, **qc}])
+
+
+@pytest.mark.parametrize(
+    ("tests", "message"),
+    [
+        (
+            {"rate_of_change_test": {"threshold": {"expr": "k * 2"}}},
+            "unknown variable k",
+        ),
+        ({"spike_tset": {"suspect_threshold": 1, "fail_threshold": 2}}, "spike_tset"),
+        (
+            {"spike_test": {"suspect_treshold": 1, "fail_threshold": 2}},
+            "suspect_treshold",
+        ),
+        ({}, "needs at least one test"),
+    ],
+)
+def test_apply_knowledge_rejects_invalid_suites(library, tests, message):
+    qc = {
+        "qc": {
+            "broken": {
+                "name": "Broken",
+                "summary": "s",
+                "description": "d",
+                "tests": {"qartod": tests},
+            }
+        }
+    }
+    with pytest.raises(ValueError, match=message):
+        library.apply_knowledge([{**KNOWLEDGE, **qc}])

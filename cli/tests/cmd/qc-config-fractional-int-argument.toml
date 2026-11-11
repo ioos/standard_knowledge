@@ -1,0 +1,6 @@
+bin.name = "standard_knowledge"
+args = ["-k", "./tests/qc_knowledge", "qc", "config", "wind_speed", "sampled", "sample_interval=600.5"]
+status.code = 2
+stderr = """
+Error generating configuration: sample_interval must be a whole number, found 600.5
+"""

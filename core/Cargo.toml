@@ -18,8 +18,9 @@ name = "standard_knowledge_main"
 path = "src/main.rs"
 
 [dependencies]
-dyn-clone = "1.0.20"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_yaml_ng = "0.10"
 flate2 = "1.1"
 indicium = "0.6.5"
+indexmap = { version = "2", features = ["serde"] }
+serde_path_to_error = "0.1.20"

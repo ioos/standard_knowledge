@@ -12,8 +12,8 @@ Test types:
 - Flat Line
 
 Arguments:
-- mhhw: Mean higher high water elevation in NAVD 88 meters (required)
-- mllw: Mean lower low water elevation in NAVD 88 meters (required)
+- mhhw (float, required): Mean higher high water elevation in NAVD 88 meters
+- mllw (float, required): Mean lower low water elevation in NAVD 88 meters
 
 
 ### Gross range test configuration for Gulf of Maine (not New England Shelf)

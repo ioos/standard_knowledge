@@ -3,8 +3,6 @@ use standard_knowledge::StandardsLibrary;
 use std::collections::HashMap;
 use std::process;
 
-use standard_knowledge::qartod::types::{ArgumentType, ArgumentValue};
-
 #[derive(Parser)]
 pub struct QcArgs {
     #[clap(subcommand)]
@@ -95,29 +93,21 @@ pub fn execute(qc_args: &QcArgs, library: &StandardsLibrary) {
                 {
                     let info = suite.info();
 
-                    let mut arguments: HashMap<String, ArgumentValue> = HashMap::new();
+                    let mut arguments = HashMap::new();
 
                     for arg in args {
-                        let parts: Vec<&str> = arg.split('=').collect();
-                        if parts.len() == 2 {
-                            let key = parts[0];
-                            let value = parts[1];
-
-                            let arg_type = info
-                                .arguments
-                                .get(key)
-                                .map(|arg| arg.argument_type.clone())
-                                .unwrap_or(ArgumentType::String);
-                            let arg_value = arg_type.value_type(value);
-
-                            arguments.insert(key.to_string(), arg_value);
-                        } else {
-                            eprintln!("Invalid argument format: {arg}");
+                        let Some((key, value)) = arg.split_once('=') else {
+                            eprintln!("Invalid argument format: {arg}, expected name=value");
                             process::exit(2);
-                        }
+                        };
+                        let Ok(value) = value.parse::<f64>() else {
+                            eprintln!("Invalid value for {key}: {value:?} is not a number");
+                            process::exit(2);
+                        };
+                        arguments.insert(key.to_string(), value);
                     }
 
-                    let config = suite.scaffold(arguments);
+                    let config = suite.scaffold(&arguments);
 
                     if let Err(error) = config {
                         eprintln!("Error generating configuration: {error}");
