@@ -104,6 +104,16 @@ jobs:
           install_args: rust uv
           cache: true
 
+      # On macOS, cargo calls made by maturin inside cibuildwheel go through
+      # mise's shim, which re-runs `rustup toolchain install` and sometimes
+      # collides with the earlier install (rust-docs "detected conflict" or
+      # "could not read downloaded file"). Put rustup's proxies ahead of the
+      # shims so cargo uses the toolchain installed above (RUSTUP_TOOLCHAIN
+      # is exported by mise) without mise trying to install it again.
+      - name: Use rustup proxies instead of mise shims on macOS
+        if: runner.os == 'macOS'
+        run: echo "$CARGO_HOME/bin" >> "$GITHUB_PATH"
+
       - name: Add i686-pc-windows-msvc target for windows
         if: matrix.os == 'windows-intel'
         run: rustup target add i686-pc-windows-msvc
