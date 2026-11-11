@@ -62,12 +62,13 @@ pub enum QartodTestTypes {
 }
 
 /// The tests a suite can configure, by ioos_qc name, in QARTOD manual order
-pub static QARTOD_TESTS: [(&str, QartodTestTypes); 5] = [
+pub static QARTOD_TESTS: [(&str, QartodTestTypes); 6] = [
     ("location_test", QartodTestTypes::Location),
     ("gross_range_test", QartodTestTypes::GrossRange),
     ("spike_test", QartodTestTypes::Spike),
     ("rate_of_change_test", QartodTestTypes::RateOfChange),
     ("flat_line_test", QartodTestTypes::FlatLine),
+    ("attenuated_signal_test", QartodTestTypes::AttenuatedSignal),
 ];
 
 impl Display for QartodTestTypes {

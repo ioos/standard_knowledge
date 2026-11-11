@@ -33,8 +33,12 @@ impl QcTestSuite {
 
     /// This should return a Config that represents an `ioos_qc.Config`
     /// https://ioos.github.io/ioos_qc/usage.html#config
-    pub fn scaffold(&self, arguments: &HashMap<String, f64>) -> Result<ConfigStream, String> {
-        self.qc.scaffold(arguments)
+    pub fn scaffold(
+        &self,
+        arguments: &HashMap<String, f64>,
+        tests: Option<&[String]>,
+    ) -> Result<ConfigStream, String> {
+        self.qc.scaffold(arguments, tests)
     }
 }
 
@@ -267,8 +271,14 @@ impl Template {
 }
 
 impl StaticQc {
-    /// Build the ioos_qc config, evaluating any expressions with `arguments`
-    pub fn scaffold(&self, arguments: &HashMap<String, f64>) -> Result<ConfigStream, String> {
+    /// Build the ioos_qc config, evaluating any expressions with `arguments`.
+    /// With a non-empty `tests`, only those tests are built and only the
+    /// arguments they read are required.
+    pub fn scaffold(
+        &self,
+        arguments: &HashMap<String, f64>,
+        tests: Option<&[String]>,
+    ) -> Result<ConfigStream, String> {
         let unknown: BTreeSet<&str> = arguments
             .keys()
             .filter(|name| !self.arguments.contains_key(*name))
@@ -294,19 +304,28 @@ impl StaticQc {
             ));
         }
 
-        // The variables the tests read, and the variables of the constants
+        let selected = self.select(tests)?;
+
+        // The variables each test reads, and the variables of the constants
         // they read. Constants only read earlier constants, so walking them
         // backwards finds everything.
-        let mut needed: BTreeSet<String> = self
-            .fields()
-            .flat_map(|(_, template)| template.nums())
-            .flat_map(variables)
+        let reads: Vec<(&str, BTreeSet<String>)> = selected
+            .iter()
+            .map(|test| {
+                let mut needed: BTreeSet<String> = self.tests.qartod[*test]
+                    .values()
+                    .flat_map(Template::nums)
+                    .flat_map(variables)
+                    .collect();
+                for (name, value) in self.constants.iter().rev() {
+                    if needed.contains(name) {
+                        needed.extend(variables(value));
+                    }
+                }
+                (*test, needed)
+            })
             .collect();
-        for (name, value) in self.constants.iter().rev() {
-            if needed.contains(name) {
-                needed.extend(variables(value));
-            }
-        }
+        let needed: BTreeSet<&String> = reads.iter().flat_map(|(_, names)| names).collect();
 
         let mut scope = HashMap::new();
         let mut missing = Vec::new();
@@ -318,7 +337,14 @@ impl StaticQc {
                     }
                     scope.insert(name.clone(), value);
                 }
-                None if needed.contains(name) => missing.push(name.as_str()),
+                None if needed.contains(name) => {
+                    let users: Vec<&str> = reads
+                        .iter()
+                        .filter(|(_, names)| names.contains(name))
+                        .map(|(test, _)| *test)
+                        .collect();
+                    missing.push(format!("{name} ({})", users.join(", ")));
+                }
                 None => {}
             }
         }
@@ -337,7 +363,27 @@ impl StaticQc {
             }
         }
 
-        self.build(|num| evaluate(num, &scope))
+        self.build(&selected, |num| evaluate(num, &scope))
+    }
+
+    /// The tests to build, in QARTOD manual order. `None` or empty is every test.
+    fn select(&self, tests: Option<&[String]>) -> Result<Vec<&'static str>, String> {
+        let all = self.test_names();
+        let wanted = tests.unwrap_or_default();
+        if let Some(unknown) = wanted.iter().find(|t| !all.contains(&t.as_str())) {
+            return Err(format!(
+                "{} has no test named {unknown}. Its tests are: {}",
+                self.name,
+                all.join(", ")
+            ));
+        }
+        if wanted.is_empty() {
+            return Ok(all);
+        }
+        Ok(all
+            .into_iter()
+            .filter(|name| wanted.iter().any(|t| t == name))
+            .collect())
     }
 
     /// The suite's tests, in QARTOD manual order
@@ -366,10 +412,18 @@ impl StaticQc {
         })
     }
 
-    /// Build the ioos_qc config, with `number` giving the value of each number
-    fn build(&self, number: impl Fn(&Num) -> Result<f64, String>) -> Result<ConfigStream, String> {
+    /// Build the ioos_qc config of the `selected` tests, with `number` giving
+    /// the value of each number
+    fn build(
+        &self,
+        selected: &[&str],
+        number: impl Fn(&Num) -> Result<f64, String>,
+    ) -> Result<ConfigStream, String> {
         let mut qartod = Mapping::new();
         for (test, fields) in &self.tests.qartod {
+            if !selected.contains(&test.as_str()) {
+                continue;
+            }
             let mut config = Mapping::new();
             for (field, template) in fields {
                 let value = template
@@ -423,7 +477,8 @@ impl StaticQc {
         }
 
         // Expressions stand in as 1 to check the shape of each test
-        self.build(|num| match num {
+        let every_test: Vec<&str> = self.tests.qartod.keys().map(String::as_str).collect();
+        self.build(&every_test, |num| match num {
             Num::Value(value) => Ok(*value),
             Num::Expr { .. } => Ok(1.0),
         })
@@ -528,7 +583,7 @@ mod tests {
                     .keys()
                     .map(|name| (name.clone(), 1.0))
                     .collect();
-                suite.scaffold(&arguments).unwrap_or_else(|e| {
+                suite.scaffold(&arguments, None).unwrap_or_else(|e| {
                     panic!("{} {} failed to scaffold: {e}", standard.name, info.slug)
                 });
             }
@@ -583,8 +638,8 @@ mod tests {
     #[test]
     fn gulf_of_maine_scaffold_no_args() {
         assert_eq!(
-            gulf_of_maine().scaffold(&HashMap::new()).unwrap_err(),
-            "Missing required argument(s) for Gulf of Maine:\n  mhhw\n  mllw"
+            gulf_of_maine().scaffold(&HashMap::new(), None).unwrap_err(),
+            "Missing required argument(s) for Gulf of Maine:\n  mhhw (gross_range_test)\n  mllw (gross_range_test)"
         );
     }
 
@@ -592,16 +647,113 @@ mod tests {
     fn gulf_of_maine_missing_arg() {
         assert_eq!(
             gulf_of_maine()
-                .scaffold(&args(&[("mhhw", 1.0)]))
+                .scaffold(&args(&[("mhhw", 1.0)]), None)
                 .unwrap_err(),
-            "Missing required argument(s) for Gulf of Maine:\n  mllw"
+            "Missing required argument(s) for Gulf of Maine:\n  mllw (gross_range_test)"
         );
+    }
+
+    const SELECTION_SUITE: &str = r#"
+arguments:
+  a: {type: float, description: first}
+  b: {type: float, description: second}
+  c: {type: float, description: third}
+let:
+  twice_a: {expr: "2 * a"}
+tests:
+  qartod:
+    flat_line_test:
+      tolerance: {expr: "b"}
+      suspect_threshold: 1
+      fail_threshold: 2
+    gross_range_test:
+      suspect_span: [{expr: "twice_a"}, {expr: "c"}]
+      fail_span: [0, {expr: "a + b"}]
+    rate_of_change_test:
+      threshold: {expr: "twice_a"}
+"#;
+
+    fn names(names: &[&str]) -> Vec<String> {
+        names.iter().map(|n| n.to_string()).collect()
+    }
+
+    #[test]
+    fn missing_arguments_list_the_tests_that_need_them() {
+        let qc = template(SELECTION_SUITE);
+        assert_eq!(
+            qc.scaffold(&HashMap::new(), None).unwrap_err(),
+            "Missing required argument(s) for Example:\n  \
+             a (gross_range_test, rate_of_change_test)\n  \
+             b (gross_range_test, flat_line_test)\n  \
+             c (gross_range_test)"
+        );
+        // Constants count as the tests that read them
+        let selected = names(&["rate_of_change_test"]);
+        assert_eq!(
+            qc.scaffold(&HashMap::new(), Some(&selected)).unwrap_err(),
+            "Missing required argument(s) for Example:\n  a (rate_of_change_test)"
+        );
+    }
+
+    #[test]
+    fn scaffold_only_the_selected_tests() {
+        let qc = template(SELECTION_SUITE);
+        let selected = names(&["rate_of_change_test"]);
+        let config = qc
+            .scaffold(&args(&[("a", 1.5)]), Some(&selected))
+            .unwrap()
+            .qartod;
+        assert_eq!(
+            config.rate_of_change_test,
+            Some(RateOfChange { threshold: 3.0 })
+        );
+        assert_eq!(config.gross_range_test, None);
+        assert_eq!(config.flat_line_test, None);
+
+        // Empty means every test
+        let everything = args(&[("a", 1.0), ("b", 2.0), ("c", 3.0)]);
+        let config = qc.scaffold(&everything, Some(&[])).unwrap().qartod;
+        assert!(config.gross_range_test.is_some() && config.flat_line_test.is_some());
+
+        // Unneeded arguments are still checked
+        let error = qc
+            .scaffold(&args(&[("a", 1.0), ("z", 1.0)]), Some(&selected))
+            .unwrap_err();
+        assert!(error.starts_with("Unknown argument(s)"), "{error}");
+    }
+
+    #[test]
+    fn unknown_test_name_is_an_error() {
+        let qc = template(SELECTION_SUITE);
+        let error = qc
+            .scaffold(&HashMap::new(), Some(&names(&["spike_test"])))
+            .unwrap_err();
+        assert_eq!(
+            error,
+            "Example has no test named spike_test. Its tests are: \
+             gross_range_test, rate_of_change_test, flat_line_test"
+        );
+    }
+
+    #[test]
+    fn test_names_and_types_agree() {
+        for standard in library().standards.values() {
+            for suite in &standard.qartod {
+                let info = suite.info();
+                let names = suite.test_names();
+                assert_eq!(names.len(), info.test_types.len());
+                for (name, test_type) in names.iter().zip(&info.test_types) {
+                    let (_, expected) = QARTOD_TESTS.iter().find(|(n, _)| n == name).unwrap();
+                    assert_eq!(expected, test_type);
+                }
+            }
+        }
     }
 
     #[test]
     fn unknown_argument_is_an_error() {
         let error = gulf_of_maine()
-            .scaffold(&args(&[("mllw", 0.0), ("mhhw", 1.0), ("mlw", 0.0)]))
+            .scaffold(&args(&[("mllw", 0.0), ("mhhw", 1.0), ("mlw", 0.0)]), None)
             .unwrap_err();
         assert_eq!(
             error,
@@ -612,7 +764,7 @@ mod tests {
     #[test]
     fn gulf_of_maine_scaffold_success() {
         let config = gulf_of_maine()
-            .scaffold(&args(&[("mllw", 0.0), ("mhhw", 1.0)]))
+            .scaffold(&args(&[("mllw", 0.0), ("mhhw", 1.0)]), None)
             .unwrap();
 
         assert_eq!(
@@ -677,13 +829,13 @@ tests:
 "#,
         );
         assert!(!qc.arguments["k"].is_required());
-        let config = qc.scaffold(&HashMap::new()).unwrap();
+        let config = qc.scaffold(&HashMap::new(), None).unwrap();
         let spike = config.qartod.spike_test.unwrap();
         assert_eq!(spike.suspect_threshold, 1.5);
         assert_eq!(spike.fail_threshold, 3.0);
 
         let spike = qc
-            .scaffold(&args(&[("k", 2.0)]))
+            .scaffold(&args(&[("k", 2.0)]), None)
             .unwrap()
             .qartod
             .spike_test
@@ -714,7 +866,10 @@ tests:
     fn expressions_that_would_divide_by_zero_with_placeholders_load() {
         let qc = template(DATUM_SUITE);
         let config = qc
-            .scaffold(&args(&[("mhhw", 2.0), ("mllw", 1.0), ("window", 7200.0)]))
+            .scaffold(
+                &args(&[("mhhw", 2.0), ("mllw", 1.0), ("window", 7200.0)]),
+                None,
+            )
             .unwrap();
         assert_eq!(config.qartod.spike_test.unwrap().suspect_threshold, 3.0);
         let flat_line = config.qartod.flat_line_test.unwrap();
@@ -725,7 +880,10 @@ tests:
     #[test]
     fn fractional_integer_field_names_the_field() {
         let error = template(DATUM_SUITE)
-            .scaffold(&args(&[("mhhw", 2.0), ("mllw", 1.0), ("window", 3603.0)]))
+            .scaffold(
+                &args(&[("mhhw", 2.0), ("mllw", 1.0), ("window", 3603.0)]),
+                None,
+            )
             .unwrap_err();
         assert_eq!(
             error,
@@ -736,7 +894,10 @@ tests:
     #[test]
     fn fractional_integer_argument_is_an_error() {
         let error = template(DATUM_SUITE)
-            .scaffold(&args(&[("mhhw", 2.0), ("mllw", 1.0), ("window", 600.5)]))
+            .scaffold(
+                &args(&[("mhhw", 2.0), ("mllw", 1.0), ("window", 600.5)]),
+                None,
+            )
             .unwrap_err();
         assert_eq!(error, "window must be a whole number, found 600.5");
     }
@@ -744,11 +905,11 @@ tests:
     #[test]
     fn missing_arguments_are_all_reported() {
         let error = template(DATUM_SUITE)
-            .scaffold(&args(&[("mhhw", 2.0)]))
+            .scaffold(&args(&[("mhhw", 2.0)]), None)
             .unwrap_err();
         assert_eq!(
             error,
-            "Missing required argument(s) for Example:\n  mllw\n  window"
+            "Missing required argument(s) for Example:\n  mllw (spike_test)\n  window (flat_line_test)"
         );
     }
 
@@ -924,7 +1085,7 @@ tests:
       threshold: {expr: "1 / 0"}
 "#,
         );
-        let error = qc.scaffold(&HashMap::new()).unwrap_err();
+        let error = qc.scaffold(&HashMap::new(), None).unwrap_err();
         assert!(
             error.starts_with("rate_of_change_test.threshold: \"1 / 0\""),
             "{error}"
@@ -943,7 +1104,7 @@ tests:
       bbox: [{expr: "lon - 1"}, 40, {expr: "lon + 1"}, 45]
 "#,
         );
-        let config = qc.scaffold(&args(&[("lon", -70.0)])).unwrap();
+        let config = qc.scaffold(&args(&[("lon", -70.0)]), None).unwrap();
         assert_eq!(
             config.qartod.location_test,
             Some(LocationTest {
@@ -988,6 +1149,90 @@ tests:
     }
 
     #[test]
+    fn qartod_manual_temperature() {
+        use crate::qartod::config::AttenuatedSignal;
+
+        let library = library();
+        let manual = suite(&library, "sea_water_temperature", "qartod_manual");
+        let info = manual.info();
+        assert_eq!(
+            info.test_types,
+            vec![
+                QartodTestTypes::GrossRange,
+                QartodTestTypes::RateOfChange,
+                QartodTestTypes::FlatLine,
+                QartodTestTypes::AttenuatedSignal,
+            ]
+        );
+        assert!(info.arguments["k"].default.is_some());
+        assert!(info.arguments["sd"].default.is_none());
+
+        let config = manual
+            .scaffold(
+                &args(&[
+                    ("sensor_min", -5.0),
+                    ("sensor_max", 35.0),
+                    ("mean", 12.0),
+                    ("std", 4.0),
+                    ("sd", 0.6),
+                    ("sample_interval", 600.0),
+                    ("min_var_warn", 0.02),
+                    ("min_var_fail", 0.01),
+                ]),
+                None,
+            )
+            .unwrap()
+            .qartod;
+        assert_eq!(
+            config.gross_range_test,
+            Some(GrossRangeTest {
+                suspect_span: (0.0, 24.0),
+                fail_span: (-5.0, 35.0),
+            })
+        );
+        assert_eq!(
+            config.rate_of_change_test,
+            Some(RateOfChange {
+                threshold: 3.0 * 0.6 / 600.0,
+            })
+        );
+        assert_eq!(
+            config.flat_line_test,
+            Some(FlatLine {
+                tolerance: 0.05,
+                suspect_threshold: 1800,
+                fail_threshold: 3000,
+            })
+        );
+        assert_eq!(
+            config.attenuated_signal_test,
+            Some(AttenuatedSignal {
+                suspect_threshold: 0.02,
+                fail_threshold: 0.01,
+                test_period: Some(43200),
+                min_obs: None,
+                min_period: None,
+                check_type: Some("std".to_string()),
+            })
+        );
+    }
+
+    #[test]
+    fn attenuated_signal_integers_must_be_whole() {
+        let yaml = |period: &str| {
+            format!(
+                "qartod:\n  attenuated_signal_test:\n    suspect_threshold: 1\n    fail_threshold: 2\n    test_period: {period}\n"
+            )
+        };
+        let whole: ConfigStream = serde_yaml_ng::from_str(&yaml("3600.0")).unwrap();
+        assert_eq!(
+            whole.qartod.attenuated_signal_test.unwrap().test_period,
+            Some(3600)
+        );
+        assert!(serde_yaml_ng::from_str::<ConfigStream>(&yaml("1.5")).is_err());
+    }
+
+    #[test]
     fn every_config_test_is_in_the_table() {
         use crate::qartod::config::ConfigStreamQartod;
 
@@ -997,6 +1242,7 @@ tests:
             rate_of_change_test: Some(Default::default()),
             spike_test: Some(Default::default()),
             flat_line_test: Some(Default::default()),
+            attenuated_signal_test: Some(Default::default()),
         };
         let value = serde_yaml_ng::to_value(every_test).unwrap();
         let config_names: BTreeSet<&str> = value

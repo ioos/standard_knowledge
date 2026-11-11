@@ -1,0 +1,14 @@
+bin.name = "standard_knowledge"
+args = ["qc", "config", "sea_surface_temperature", "qartod_manual", "mean=5", "std=3", "sensor_min=1", "sensor_max=15", "--tests=gross_range_test"]
+stdout = """
+Generated configuration for QARTOD Temperature and Salinity manual:
+qartod:
+  gross_range_test:
+    suspect_span:
+    - -4.0
+    - 14.0
+    fail_span:
+    - 1.0
+    - 15.0
+
+"""

@@ -39,6 +39,35 @@ pub struct FlatLine {
     pub fail_threshold: isize,
 }
 
+/// Low variability over `test_period` seconds, measured with
+/// `check_type` (`std`, the default, or `range`)
+#[derive(Default, Clone, PartialEq, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AttenuatedSignal {
+    pub suspect_threshold: f64,
+    pub fail_threshold: f64,
+    #[serde(
+        default,
+        deserialize_with = "optional_whole_number",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub test_period: Option<isize>,
+    #[serde(
+        default,
+        deserialize_with = "optional_whole_number",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub min_obs: Option<isize>,
+    #[serde(
+        default,
+        deserialize_with = "optional_whole_number",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub min_period: Option<isize>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub check_type: Option<String>,
+}
+
 #[derive(Default, Clone, PartialEq, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ConfigStreamQartod {
@@ -52,6 +81,8 @@ pub struct ConfigStreamQartod {
     pub spike_test: Option<Spike>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub flat_line_test: Option<FlatLine>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub attenuated_signal_test: Option<AttenuatedSignal>,
 }
 
 #[derive(Default, Clone, PartialEq, Debug, Serialize, Deserialize)]
@@ -70,4 +101,13 @@ fn whole_number<'de, D: Deserializer<'de>>(deserializer: D) -> Result<isize, D::
             "expected a whole number, found {value}"
         )))
     }
+}
+
+/// `whole_number`, or nothing
+fn optional_whole_number<'de, D: Deserializer<'de>>(
+    deserializer: D,
+) -> Result<Option<isize>, D::Error> {
+    #[derive(Deserialize)]
+    struct Whole(#[serde(deserialize_with = "whole_number")] isize);
+    Ok(Option::<Whole>::deserialize(deserializer)?.map(|Whole(n)| n))
 }

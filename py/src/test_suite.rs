@@ -53,11 +53,18 @@ impl PyTestSuite {
         Ok(dict.into())
     }
 
-    /// Generate an ioos_qc configuration for the test suite
-    fn scaffold(&self, py: Python<'_>, arguments: HashMap<String, f64>) -> PyResult<Py<PyAny>> {
+    /// Generate an ioos_qc configuration for the test suite, optionally
+    /// only the named `tests`
+    #[pyo3(signature = (arguments, tests=None))]
+    fn scaffold(
+        &self,
+        py: Python<'_>,
+        arguments: HashMap<String, f64>,
+        tests: Option<Vec<String>>,
+    ) -> PyResult<Py<PyAny>> {
         let config = self
             .test_suite
-            .scaffold(&arguments)
+            .scaffold(&arguments, tests.as_deref())
             .map_err(PyRuntimeError::new_err)?;
         // Through a YAML value, so that spans are lists as in the YAML output
         let value =
